@@ -6,4 +6,5 @@ ios/
 *.log
 *.jks
 *.keystore
+.scratch/world-clock-v1/release-artifacts/*.apk
 .DS_Store

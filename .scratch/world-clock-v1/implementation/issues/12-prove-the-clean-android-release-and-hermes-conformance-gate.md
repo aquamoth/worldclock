@@ -10,7 +10,7 @@ Index: [World Clock v1 implementation tickets](../index.md)
 
 **Blocked by:** 11 — [Complete the TalkBack and stable-focus journey](11-complete-the-talkback-and-stable-focus-journey.md).
 
-**Status:** ready-for-agent
+**Status:** in-progress (claimed by `/root/impl_01_live_local`)
 
 **Delivery workflow:** Work directly on `master`; do not create a branch or pull request. Finish with a recorded artifact identity and clean gate. Do not add speculative native timezone code.
 

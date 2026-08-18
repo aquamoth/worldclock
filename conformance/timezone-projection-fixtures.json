@@ -1,0 +1,172 @@
+{
+  "schemaVersion": 1,
+  "projectionCases": [
+    {
+      "id": "stockholm-new-york-winter",
+      "instant": "2026-01-15T12:00:00Z",
+      "localTimeZone": "Europe/Stockholm",
+      "hourPreference": "24-hour",
+      "selected": { "kind": "city", "timeZone": "America/New_York", "name": "New York" },
+      "expected": {
+        "local": { "calendarDate": "2026-01-15", "time": "13:00", "effectiveOffset": "UTC+01:00", "period": null },
+        "selected": { "calendarDate": "2026-01-15", "time": "07:00", "effectiveOffset": "UTC−05:00", "period": null, "dayDifference": null }
+      }
+    },
+    {
+      "id": "stockholm-new-york-summer",
+      "instant": "2026-07-15T12:00:00Z",
+      "localTimeZone": "Europe/Stockholm",
+      "hourPreference": "24-hour",
+      "selected": { "kind": "city", "timeZone": "America/New_York", "name": "New York" },
+      "expected": {
+        "local": { "calendarDate": "2026-07-15", "time": "14:00", "effectiveOffset": "UTC+02:00", "period": null },
+        "selected": { "calendarDate": "2026-07-15", "time": "08:00", "effectiveOffset": "UTC−04:00", "period": null, "dayDifference": null }
+      }
+    },
+    {
+      "id": "new-york-spring-gap-before",
+      "instant": "2026-03-08T06:59:00Z",
+      "localTimeZone": "Europe/Stockholm",
+      "hourPreference": "24-hour",
+      "selected": { "kind": "city", "timeZone": "America/New_York", "name": "New York" },
+      "expected": { "selected": { "time": "01:59", "effectiveOffset": "UTC−05:00", "period": null } }
+    },
+    {
+      "id": "new-york-spring-gap-after",
+      "instant": "2026-03-08T07:00:00Z",
+      "localTimeZone": "Europe/Stockholm",
+      "hourPreference": "24-hour",
+      "selected": { "kind": "city", "timeZone": "America/New_York", "name": "New York" },
+      "expected": { "selected": { "time": "03:00", "effectiveOffset": "UTC−04:00", "period": null } }
+    },
+    {
+      "id": "new-york-autumn-overlap-first",
+      "instant": "2026-11-01T05:30:00Z",
+      "localTimeZone": "Europe/Stockholm",
+      "hourPreference": "24-hour",
+      "selected": { "kind": "city", "timeZone": "America/New_York", "name": "New York" },
+      "expected": { "selected": { "time": "01:30", "effectiveOffset": "UTC−04:00", "period": null } }
+    },
+    {
+      "id": "new-york-autumn-overlap-second",
+      "instant": "2026-11-01T06:30:00Z",
+      "localTimeZone": "Europe/Stockholm",
+      "hourPreference": "24-hour",
+      "selected": { "kind": "city", "timeZone": "America/New_York", "name": "New York" },
+      "expected": { "selected": { "time": "01:30", "effectiveOffset": "UTC−05:00", "period": null } }
+    },
+    {
+      "id": "kathmandu-fractional-offset",
+      "instant": "2026-01-15T12:00:00Z",
+      "localTimeZone": "Europe/Stockholm",
+      "hourPreference": "24-hour",
+      "selected": { "kind": "city", "timeZone": "Asia/Kathmandu", "name": "Kathmandu" },
+      "expected": { "selected": { "calendarDate": "2026-01-15", "time": "17:45", "effectiveOffset": "UTC+05:45", "dayDifference": null } }
+    },
+    {
+      "id": "date-line-plus-two",
+      "instant": "2026-01-01T10:30:00Z",
+      "localTimeZone": "Pacific/Pago_Pago",
+      "hourPreference": "24-hour",
+      "selected": { "kind": "city", "timeZone": "Pacific/Kiritimati", "name": "Kiritimati" },
+      "expected": {
+        "local": { "calendarDate": "2025-12-31", "time": "23:30", "effectiveOffset": "UTC−11:00" },
+        "selected": { "calendarDate": "2026-01-02", "time": "00:30", "effectiveOffset": "UTC+14:00", "dayDifference": "+2" }
+      }
+    },
+    {
+      "id": "date-line-minus-two",
+      "instant": "2026-01-01T10:30:00Z",
+      "localTimeZone": "Pacific/Kiritimati",
+      "hourPreference": "24-hour",
+      "selected": { "kind": "city", "timeZone": "Pacific/Pago_Pago", "name": "Pago Pago" },
+      "expected": {
+        "local": { "calendarDate": "2026-01-02", "time": "00:30", "effectiveOffset": "UTC+14:00" },
+        "selected": { "calendarDate": "2025-12-31", "time": "23:30", "effectiveOffset": "UTC−11:00", "dayDifference": "−2" }
+      }
+    },
+    {
+      "id": "day-difference-plus-one",
+      "instant": "2026-01-01T11:30:00Z",
+      "localTimeZone": "Pacific/Honolulu",
+      "hourPreference": "24-hour",
+      "selected": { "kind": "city", "timeZone": "Pacific/Auckland", "name": "Auckland" },
+      "expected": { "selected": { "dayDifference": "+1" } }
+    },
+    {
+      "id": "day-difference-minus-one",
+      "instant": "2026-01-01T11:30:00Z",
+      "localTimeZone": "Pacific/Auckland",
+      "hourPreference": "24-hour",
+      "selected": { "kind": "city", "timeZone": "Pacific/Honolulu", "name": "Honolulu" },
+      "expected": { "selected": { "dayDifference": "−1" } }
+    },
+    {
+      "id": "day-difference-zero",
+      "instant": "2026-01-01T10:30:00Z",
+      "localTimeZone": "Europe/Stockholm",
+      "hourPreference": "24-hour",
+      "selected": { "kind": "city", "timeZone": "Europe/Paris", "name": "Paris" },
+      "expected": { "selected": { "dayDifference": null } }
+    },
+    {
+      "id": "fixed-offset-minus-twelve",
+      "instant": "2026-01-15T12:00:00Z",
+      "localTimeZone": "UTC",
+      "hourPreference": "24-hour",
+      "selected": { "kind": "custom", "offsetMinutes": -720, "name": "Reference" },
+      "expected": { "selected": { "calendarDate": "2026-01-15", "time": "00:00", "effectiveOffset": "UTC−12:00" } }
+    },
+    {
+      "id": "fixed-offset-zero",
+      "instant": "2026-01-15T12:00:00Z",
+      "localTimeZone": "UTC",
+      "hourPreference": "24-hour",
+      "selected": { "kind": "custom", "offsetMinutes": 0, "name": "Reference" },
+      "expected": { "selected": { "calendarDate": "2026-01-15", "time": "12:00", "effectiveOffset": "UTC+00:00" } }
+    },
+    {
+      "id": "fixed-offset-plus-five-forty-five",
+      "instant": "2026-01-15T12:00:00Z",
+      "localTimeZone": "UTC",
+      "hourPreference": "24-hour",
+      "selected": { "kind": "custom", "offsetMinutes": 345, "name": "Reference" },
+      "expected": { "selected": { "calendarDate": "2026-01-15", "time": "17:45", "effectiveOffset": "UTC+05:45" } }
+    },
+    {
+      "id": "fixed-offset-plus-fourteen",
+      "instant": "2026-01-15T12:00:00Z",
+      "localTimeZone": "UTC",
+      "hourPreference": "24-hour",
+      "selected": { "kind": "custom", "offsetMinutes": 840, "name": "Reference" },
+      "expected": { "selected": { "calendarDate": "2026-01-16", "time": "02:00", "effectiveOffset": "UTC+14:00" } }
+    },
+    {
+      "id": "twelve-hour-midnight",
+      "instant": "2026-01-15T00:05:00Z",
+      "localTimeZone": "UTC",
+      "hourPreference": "12-hour",
+      "expected": { "local": { "time": "12:05", "period": "AM" } }
+    },
+    {
+      "id": "twelve-hour-noon",
+      "instant": "2026-01-15T12:05:00Z",
+      "localTimeZone": "UTC",
+      "hourPreference": "12-hour",
+      "expected": { "local": { "time": "12:05", "period": "PM" } }
+    },
+    {
+      "id": "twelve-hour-afternoon",
+      "instant": "2026-01-15T13:05:00Z",
+      "localTimeZone": "UTC",
+      "hourPreference": "12-hour",
+      "expected": { "local": { "time": "1:05", "period": "PM" } }
+    }
+  ],
+  "fixedOffsetRange": {
+    "instant": "2026-01-15T12:00:00Z",
+    "minimumMinutes": -720,
+    "maximumMinutes": 840,
+    "stepMinutes": 15
+  }
+}
