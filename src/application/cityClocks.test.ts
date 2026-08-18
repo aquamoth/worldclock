@@ -122,11 +122,15 @@ describe("offline city clocks", () => {
       time: "07:00",
       effectiveOffset: "UTC−05:00",
     });
-    expect(app.getScreen().clockRequest).toEqual({
+    expect(app.getScreen().focusRequest).toEqual({
       clockId: "selection-0-city-new-york",
-      sequence: 1,
+      sequence: expect.any(Number),
       scrollIntoView: true,
       focus: true,
+    });
+    expect(app.getScreen().announcement).toEqual({
+      sequence: 1,
+      message: "New York added.",
     });
     await expect(app.addCity("city-detroit")).resolves.toBe(false);
     expect(writes).toHaveLength(1);

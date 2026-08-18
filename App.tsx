@@ -78,6 +78,7 @@ export default function App() {
           onEndRowScrub={application.endRowScrub}
           onCancelRowScrub={application.cancelRowScrub}
           onAdjustRow={application.adjustRow}
+          onFocusClock={application.reportClockFocus}
           onBackToLive={application.backToLive}
         />
         <StatusBar style="auto" />

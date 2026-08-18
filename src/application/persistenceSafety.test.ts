@@ -198,6 +198,10 @@ describe("retryable persistence", () => {
     await expect(app.initialize()).resolves.toBeUndefined();
     expect(app.getScreen().isReady).toBe(false);
     expect(app.getScreen().persistenceError?.operation).toBe("load");
+    expect(app.getScreen().announcement).toEqual({
+      sequence: 1,
+      message: "Couldn’t load your timezones.",
+    });
     expect(writes).toEqual([]);
   });
 
@@ -233,8 +237,19 @@ describe("retryable persistence", () => {
       expect(app.getScreen().clocks.some(({ id }) => id === "custom-0")).toBe(
         operation !== "add",
       );
-      expect(app.getScreen().clockRequest).toBeUndefined();
-      expect(app.getScreen().announcement).toBeUndefined();
+      expect(app.getScreen().focusRequest).toMatchObject({
+        overlay:
+          operation === "add"
+            ? "selector-search"
+            : operation === "edit"
+              ? "custom-name"
+              : "delete-cancel",
+        focus: true,
+      });
+      expect(app.getScreen().announcement).toEqual({
+        sequence: 1,
+        message: "Couldn’t save changes.",
+      });
       expect(app.getScreen().persistenceError).toMatchObject({
         operation: "write",
         message: "Couldn’t save changes.",
@@ -305,7 +320,7 @@ describe("retryable persistence", () => {
     expect(beforeRetry.app.getScreen().clocks.find(({ id }) => id === "custom-0")?.name).toBe("Custom 0");
     expect(beforeRetry.app.getScreen()).not.toHaveProperty("customForm");
     expect(beforeRetry.app.getScreen()).not.toHaveProperty("persistenceError");
-    expect(beforeRetry.app.getScreen()).not.toHaveProperty("clockRequest");
+    expect(beforeRetry.app.getScreen()).not.toHaveProperty("focusRequest");
 
     shouldFail = false;
     await expect(first.app.retryPersistence()).resolves.toBe(true);

@@ -30,4 +30,4 @@ All tickets are single-session tracer-bullet slices. Work directly on `master`; 
 
 ## Current frontier
 
-[11 — Complete the TalkBack and stable-focus journey](issues/11-complete-the-talkback-and-stable-focus-journey.md) is now the sole frontier after completion of [09 — Preserve Virtual time through lifecycle and collection changes](issues/09-preserve-virtual-time-through-lifecycle-and-collection-changes.md) and [10 — Finish responsive light/dark and reduced-motion presentation](issues/10-finish-responsive-light-dark-and-reduced-motion-presentation.md). Follow the dependency table for the final accessibility and release joins.
+[12 — Prove the clean Android release and Hermes conformance gate](issues/12-prove-the-clean-android-release-and-hermes-conformance-gate.md) is now the sole frontier after completion of [11 — Complete the TalkBack and stable-focus journey](issues/11-complete-the-talkback-and-stable-focus-journey.md). Physical Pixel 7a acceptance remains blocked on that release gate.

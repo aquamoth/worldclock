@@ -1,4 +1,5 @@
-import { act, fireEvent, render, screen } from "@testing-library/react-native";
+import { act, fireEvent, render, screen, waitFor } from "@testing-library/react-native";
+import { useSyncExternalStore } from "react";
 import {
   AccessibilityInfo,
   Animated,
@@ -13,7 +14,11 @@ import {
   getByGestureTestId,
 } from "react-native-gesture-handler/jest-utils";
 
-import type { LiveClockScreenModel } from "../application/liveClock";
+import {
+  createLiveClockApplication,
+  type LiveClockApplication,
+  type LiveClockScreenModel,
+} from "../application/liveClock";
 import { ClockScreen } from "./ClockScreen";
 import { revealClock } from "./nativeClockReveal";
 
@@ -66,8 +71,48 @@ const actions = () => ({
   onEndRowScrub: jest.fn(),
   onCancelRowScrub: jest.fn(),
   onAdjustRow: jest.fn(),
+  onFocusClock: jest.fn(),
   onBackToLive: jest.fn(),
 });
+
+function ConnectedClockScreen({ application }: { readonly application: LiveClockApplication }) {
+  const model = useSyncExternalStore(
+    application.subscribe,
+    application.getScreen,
+    application.getScreen,
+  );
+  return (
+    <ClockScreen
+      model={model}
+      onOpenSelector={application.openSelector}
+      onSearchSelector={application.searchSelector}
+      onCancelSelector={application.cancelSelector}
+      onAddCity={(catalogId) => { void application.addCity(catalogId); }}
+      onOpenCustomCreator={application.openCustomCreator}
+      onOpenCustomEditor={application.openCustomEditor}
+      onUpdateCustomName={application.updateCustomName}
+      onSelectCustomOffset={application.selectCustomOffset}
+      onCancelCustomForm={application.cancelCustomForm}
+      onSaveCustom={() => { void application.saveCustom(); }}
+      onOpenDelete={application.openDelete}
+      onCancelDelete={application.cancelDelete}
+      onConfirmDelete={() => { void application.confirmDelete(); }}
+      onRetryPersistence={() => { void application.retryPersistence(); }}
+      onBeginStatusScrub={application.beginStatusScrub}
+      onUpdateStatusScrub={application.updateStatusScrub}
+      onEndStatusScrub={application.endStatusScrub}
+      onCancelStatusScrub={application.cancelStatusScrub}
+      onAdjustStatus={application.adjustStatus}
+      onBeginRowScrub={application.beginRowScrub}
+      onUpdateRowScrub={application.updateRowScrub}
+      onEndRowScrub={application.endRowScrub}
+      onCancelRowScrub={application.cancelRowScrub}
+      onAdjustRow={application.adjustRow}
+      onFocusClock={application.reportClockFocus}
+      onBackToLive={application.backToLive}
+    />
+  );
+}
 
 const runAnimationFramesImmediately = () =>
   jest.spyOn(global, "requestAnimationFrame").mockImplementation((callback) => {
@@ -508,14 +553,14 @@ describe("clock collection screen", () => {
           wallMinuteOfDay: 7 * 60 + 5,
         },
       ],
-      clockRequest: {
+      focusRequest: {
         clockId: "added",
         sequence: 1,
         scrollIntoView: true,
         focus: true,
       },
     };
-    const { clockRequest: _clockRequest, ...modelWithoutRequest } = model;
+    const { focusRequest: _focusRequest, ...modelWithoutRequest } = model;
     const view = await render(
       <ClockScreen
         model={modelWithoutRequest}
@@ -571,7 +616,7 @@ describe("clock collection screen", () => {
 
     expect(
       screen.getByRole("summary", {
-        name: "Kiritimati, UTC+14:00, +1 day",
+        name: "Kiritimati, Selected clock, UTC+14:00, +1 day",
       }),
     ).toBeOnTheScreen();
     expect(screen.queryByText("Kiribati")).not.toBeOnTheScreen();
@@ -583,11 +628,117 @@ describe("clock collection screen", () => {
       minWidth: 48,
       minHeight: 48,
     });
-    expect(screen.getByText("×")).toBeOnTheScreen();
+    expect(screen.getByText("×", { includeHiddenElements: true })).toHaveProp(
+      "importantForAccessibility",
+      "no-hide-descendants",
+    );
     await fireEvent.press(remove);
     expect(callbacks.onOpenDelete).toHaveBeenCalledWith("kiritimati");
     expect(screen.queryByRole("button", { name: "Delete Local" })).not.toBeOnTheScreen();
     expect(screen.queryByText(/edit/i)).not.toBeOnTheScreen();
+  });
+
+  it("exposes the logical nonvisual row journey and reports stable row focus", async () => {
+    const callbacks = actions();
+    const view = await render(
+      <ClockScreen
+        model={{
+          ...emptyModel,
+          clocks: [
+            localClock,
+            {
+              id: "office",
+              kind: "custom",
+              name: "Office",
+              canDelete: true,
+              canEdit: true,
+              calendarDate: "2026-01-16",
+              time: "17:50",
+              effectiveOffset: "UTC+05:45",
+              wallMinuteOfDay: 17 * 60 + 50,
+              dayDifference: "+1",
+            },
+          ],
+        }}
+        {...callbacks}
+      />,
+    );
+
+    expect(accessibilityLabelsInOrder(view.toJSON())).toEqual(
+      expect.arrayContaining([
+        "13:05",
+        "Local, Local clock, UTC+01:00",
+        "17:50",
+        "Office, Selected clock, UTC+05:45, +1 day",
+        "Edit Office",
+        "Delete Office",
+        "Add timezone",
+      ]),
+    );
+    await fireEvent(screen.getByRole("adjustable", { name: "17:50" }), "focus");
+    expect(callbacks.onFocusClock).toHaveBeenCalledWith("office");
+    await fireEvent(
+      screen.getByRole("adjustable", { name: "Adjust comparison time" }),
+      "focus",
+    );
+    expect(callbacks.onFocusClock).toHaveBeenLastCalledWith(undefined);
+    expect(screen.getByRole("adjustable", { name: "17:50" })).toHaveProp(
+      "nativeID",
+      "clock-time-office",
+    );
+    expect(screen.getByRole("summary", { name: /Office/u })).toHaveProp(
+      "nativeID",
+      "clock-details-office",
+    );
+  });
+
+  it.each([
+    ["selector-search", "Search timezones"],
+    ["custom-name", "Custom timezone name"],
+    ["delete-cancel", "Cancel deletion"],
+  ] as const)("accessibility-focuses the %s overlay entry target", async (target, label) => {
+    runAnimationFramesImmediately();
+    const base = {
+      ...emptyModel,
+      focusRequest: {
+        overlay: target,
+        sequence: 8,
+        scrollIntoView: false,
+        focus: true as const,
+      },
+    };
+    const model: LiveClockScreenModel =
+      target === "selector-search"
+        ? { ...base, selector: { query: "", isAdding: false, results: [] } }
+        : target === "custom-name"
+          ? {
+              ...base,
+              customForm: {
+                mode: "create",
+                name: "",
+                offsetMinutes: 0,
+                offsetOptions: [0],
+                isSaving: false,
+              },
+            }
+          : {
+              ...base,
+              deleteConfirmation: {
+                selectionId: "office",
+                name: "Office",
+                isDeleting: false,
+              },
+            };
+
+    await render(<ClockScreen model={model} {...actions()} />);
+    expect(screen.getByLabelText(label)).toBeOnTheScreen();
+    expect(revealClockMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        clockView: expect.anything(),
+        scrollIntoView: false,
+        focus: true,
+      }),
+    );
   });
 
   it("opens the separate custom path and renders an accessible selected-offset form", async () => {
@@ -624,10 +775,7 @@ describe("clock collection screen", () => {
     expect(screen.getByText("UTC+00:00")).toBeOnTheScreen();
     await fireEvent.press(screen.getByRole("button", { name: "Increase offset" }));
     expect(callbacks.onSelectCustomOffset).toHaveBeenCalledWith(15);
-    expect(screen.getByText("Enter a name.").props).toMatchObject({
-      accessibilityRole: "alert",
-      accessibilityLiveRegion: "polite",
-    });
+    expect(screen.getByLabelText("Enter a name.")).toBeOnTheScreen();
     await fireEvent.press(screen.getByRole("button", { name: "Save custom timezone" }));
     expect(callbacks.onSaveCustom).toHaveBeenCalledTimes(1);
   });
@@ -716,9 +864,7 @@ describe("clock collection screen", () => {
         {...callbacks}
       />,
     );
-    expect(
-      screen.getByRole("alert", { name: "Couldn’t load your timezones." }),
-    ).toHaveProp("accessibilityLiveRegion", "polite");
+    expect(screen.getByLabelText("Couldn’t load your timezones.")).toBeOnTheScreen();
     await fireEvent.press(screen.getByRole("button", { name: "Retry" }));
     expect(callbacks.onRetryPersistence).toHaveBeenCalledTimes(1);
 
@@ -742,9 +888,7 @@ describe("clock collection screen", () => {
         {...callbacks}
       />,
     );
-    expect(
-      screen.getByRole("alert", { name: "Couldn’t save changes." }),
-    ).toBeOnTheScreen();
+    expect(screen.getByLabelText("Couldn’t save changes.")).toBeOnTheScreen();
   });
 
   it("shows a named irreversible modal whose Cancel and Android Back dismiss without deleting", async () => {
@@ -824,7 +968,7 @@ describe("clock collection screen", () => {
       .spyOn(AccessibilityInfo, "announceForAccessibility")
       .mockImplementation(() => undefined);
     runAnimationFramesImmediately();
-    const clockRequest = {
+    const focusRequest = {
       clockId: "local",
       sequence: 2,
       scrollIntoView: false,
@@ -833,7 +977,7 @@ describe("clock collection screen", () => {
     const announcement = { sequence: 1, message: "New York removed." };
     const model: LiveClockScreenModel = {
       ...emptyModel,
-      clockRequest,
+      focusRequest,
       announcement,
     };
     const view = await render(<ClockScreen model={model} {...actions()} />);
@@ -860,7 +1004,7 @@ describe("clock collection screen", () => {
         model={{
           ...emptyModel,
           clocks: [],
-          clockRequest: {
+          focusRequest: {
             addTimezone: true,
             sequence: 3,
             scrollIntoView: false,
@@ -877,6 +1021,92 @@ describe("clock collection screen", () => {
         scrollIntoView: false,
         focus: true,
       }),
+    );
+  });
+
+  it("connects a complete nonpointer search, mutation, adjustment, Back, and delete journey", async () => {
+    const announce = jest
+      .spyOn(AccessibilityInfo, "announceForAccessibility")
+      .mockImplementation(() => undefined);
+    const city = {
+      id: "city-new-york",
+      ianaId: "America/New_York",
+      city: "New York",
+      primaryCountryCode: "US",
+      countries: [{ code: "US", name: "United States" }],
+      aliases: ["NYC"],
+    };
+    const application = createLiveClockApplication({
+      time: {
+        now: () => Date.parse("2026-01-15T12:00:00Z"),
+        schedule: () => () => undefined,
+      },
+      devicePreferences: {
+        read: () => ({
+          timeZone: "Europe/Stockholm",
+          locale: "en-US",
+          uses24HourClock: true,
+        }),
+      },
+      timezoneRules: {
+        project: (_instantMs, timeZone) =>
+          timeZone === "America/New_York"
+            ? {
+                calendarDate: "2026-01-15",
+                hour: 7,
+                minute: 0,
+                effectiveOffsetMinutes: -300,
+              }
+            : {
+                calendarDate: "2026-01-15",
+                hour: 13,
+                minute: 0,
+                effectiveOffsetMinutes: 60,
+              },
+      },
+      catalog: {
+        search: () => [city],
+        findById: (catalogId) => (catalogId === city.id ? city : undefined),
+      },
+      selectedClockStorage: {
+        load: async () => null,
+        replace: async () => undefined,
+      },
+    });
+    await application.initialize();
+    await render(<ConnectedClockScreen application={application} />);
+
+    await fireEvent.press(screen.getByRole("button", { name: "Add timezone" }));
+    await fireEvent.changeText(screen.getByLabelText("Search timezones"), "new york");
+    await fireEvent.press(
+      screen.getByRole("button", { name: "Add New York, United States" }),
+    );
+    await waitFor(() =>
+      expect(screen.getByRole("button", { name: "Delete New York" })).toBeOnTheScreen(),
+    );
+
+    const status = screen.getByRole("adjustable", { name: "Adjust comparison time" });
+    await fireEvent(status, "accessibilityAction", {
+      nativeEvent: { actionName: "decrement" },
+    });
+    expect(screen.getByRole("button", { name: "Back" })).toBeOnTheScreen();
+    await fireEvent.press(screen.getByRole("button", { name: "Back" }));
+    expect(screen.queryByRole("button", { name: "Back" })).not.toBeOnTheScreen();
+
+    await fireEvent.press(screen.getByRole("button", { name: "Delete New York" }));
+    await fireEvent.press(
+      screen.getAllByRole("button", { name: "Delete New York" }).at(-1)!,
+    );
+    await waitFor(() =>
+      expect(screen.queryByRole("button", { name: "Delete New York" })).not.toBeOnTheScreen(),
+    );
+    expect(announce.mock.calls.map(([message]) => message)).toEqual(
+      expect.arrayContaining([
+        "New York added.",
+        expect.stringMatching(/^Virtual time,/u),
+        "Live time.",
+        "New York removed.",
+      ]),
     );
   });
 
@@ -958,7 +1188,7 @@ describe("clock collection screen", () => {
           const readingOrder = accessibilityLabelsInOrder(view.toJSON());
           const rowOrder = [
             "23:45",
-            "A very long custom timezone name, UTC+05:45, +1 day",
+            "A very long custom timezone name, Selected clock, UTC+05:45, +1 day",
             "Edit A very long custom timezone name",
             "Delete A very long custom timezone name",
           ];

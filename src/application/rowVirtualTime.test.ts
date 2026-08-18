@@ -84,7 +84,7 @@ describe("clock-row Virtual time", () => {
       sampledInstantMs: Date.parse("2026-01-15T07:30:00Z"),
       status: { offset: "−0:02" },
       announcement: { message: "Virtual time, 2 minutes earlier, 07:30." },
-      clockRequest: {
+      focusRequest: {
         clockId: "local",
         scrollIntoView: false,
         focus: true,
@@ -105,7 +105,7 @@ describe("clock-row Virtual time", () => {
       mode: "virtual",
       sampledInstantMs: Date.parse("2026-01-15T08:00:00Z"),
       status: { offset: "+0:28" },
-      clockRequest: {
+      focusRequest: {
         clockId: "office",
         scrollIntoView: false,
         focus: true,
@@ -196,7 +196,7 @@ describe("clock-row Virtual time", () => {
       "flip-city",
       "office",
     ]);
-    expect(app.getScreen().clockRequest).toMatchObject({
+    expect(app.getScreen().focusRequest).toMatchObject({
       clockId: "local",
       scrollIntoView: false,
       focus: true,

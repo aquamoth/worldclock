@@ -139,9 +139,9 @@ describe("selected-clock deletion", () => {
       "office",
     ]);
     expect(app.getScreen().deleteConfirmation).toBeUndefined();
-    expect(app.getScreen().clockRequest).toEqual({
+    expect(app.getScreen().focusRequest).toEqual({
       clockId: "local",
-      sequence: 1,
+      sequence: expect.any(Number),
       scrollIntoView: false,
       focus: true,
     });
@@ -162,7 +162,7 @@ describe("selected-clock deletion", () => {
 
     await expect(app.confirmDelete()).resolves.toBe(true);
 
-    expect(app.getScreen().clockRequest).toMatchObject({
+    expect(app.getScreen().focusRequest).toMatchObject({
       clockId: "local",
       scrollIntoView: false,
       focus: true,
@@ -206,7 +206,10 @@ describe("selected-clock deletion", () => {
       name: "New York",
       isDeleting: false,
     });
-    expect(app.getScreen().announcement).toBeUndefined();
+    expect(app.getScreen().announcement).toEqual({
+      sequence: 1,
+      message: "Couldn’t save changes.",
+    });
     expect(app.getScreen().persistenceError).toMatchObject({
       operation: "write",
       retryLabel: "Retry",

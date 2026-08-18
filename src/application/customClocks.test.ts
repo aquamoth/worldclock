@@ -86,11 +86,15 @@ describe("custom timezone create and edit", () => {
       effectiveOffset: "UTC+05:45",
       canEdit: true,
     });
-    expect(app.getScreen().clockRequest).toEqual({
+    expect(app.getScreen().focusRequest).toEqual({
       clockId: "selection-0-custom",
-      sequence: 1,
+      sequence: expect.any(Number),
       scrollIntoView: true,
       focus: true,
+    });
+    expect(app.getScreen().announcement).toEqual({
+      sequence: 1,
+      message: "Nepal office added.",
     });
     expect(writes[0]?.selectedClocks[0]).toMatchObject({
       selectionId: "selection-0-custom",
@@ -137,10 +141,14 @@ describe("custom timezone create and edit", () => {
       }],
     });
     expect(app.getScreen().clocks.map(({ id }) => id)).toEqual(["stable-custom", "local"]);
-    const request = app.getScreen().clockRequest;
+    const request = app.getScreen().focusRequest;
     expect(request !== undefined && "clockId" in request ? request.clockId : undefined).toBe(
       "stable-custom",
     );
+    expect(app.getScreen().announcement).toEqual({
+      sequence: 1,
+      message: "Early office updated.",
+    });
   });
 
   it("keeps invalid and duplicate edits in place without changing visible or stored clocks", async () => {
@@ -164,6 +172,7 @@ describe("custom timezone create and edit", () => {
     app.updateCustomName("Office\n");
     await expect(app.saveCustom()).resolves.toBe(false);
     expect(app.getScreen().customForm?.nameError).toMatch(/one line/u);
+    expect(app.getScreen().announcement?.message).toMatch(/one line/u);
 
     app.updateCustomName("  STRASSE\u2003");
     app.selectCustomOffset(120);
@@ -184,6 +193,10 @@ describe("custom timezone create and edit", () => {
     app.updateCustomName("Discarded");
     app.cancelCustomForm();
     expect(app.getScreen().selector?.query).toBe("kept query");
+    expect(app.getScreen().focusRequest).toMatchObject({
+      overlay: "selector-search",
+      focus: true,
+    });
 
     app.cancelSelector();
     app.openCustomEditor("stable-custom");

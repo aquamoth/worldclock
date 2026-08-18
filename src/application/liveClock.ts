@@ -98,6 +98,12 @@ export type FocusRequestModel =
       readonly sequence: number;
       readonly scrollIntoView: boolean;
       readonly focus: true;
+    }
+  | {
+      readonly overlay: "selector-search" | "custom-name" | "delete-cancel";
+      readonly sequence: number;
+      readonly scrollIntoView: boolean;
+      readonly focus: true;
     };
 
 interface LiveClockScreenBase {
@@ -109,7 +115,7 @@ interface LiveClockScreenBase {
   readonly selector?: ClockSelectorModel;
   readonly customForm?: CustomTimezoneFormModel;
   readonly deleteConfirmation?: DeleteConfirmationModel;
-  readonly clockRequest?: FocusRequestModel;
+  readonly focusRequest?: FocusRequestModel;
   readonly announcement?: {
     readonly sequence: number;
     readonly message: string;
@@ -178,6 +184,7 @@ export interface LiveClockApplication {
   updateRowScrub(signedStepsFromGestureStart: number): void;
   endRowScrub(): void;
   cancelRowScrub(): void;
+  reportClockFocus(clockId: string | undefined): void;
   backToLive(): void;
 }
 
@@ -247,8 +254,9 @@ export function createLiveClockApplication(
         duplicateError?: string | undefined;
       }
     | undefined;
-  let clockRequest: LiveClockScreenModel["clockRequest"];
-  let clockRequestSequence = 0;
+  let focusRequest: LiveClockScreenModel["focusRequest"];
+  let focusRequestSequence = 0;
+  let focusedClockId: string | undefined;
   let deleteConfirmation: DeleteConfirmationModel | undefined;
   let announcement: LiveClockScreenModel["announcement"];
   let announcementSequence = 0;
@@ -411,7 +419,7 @@ export function createLiveClockApplication(
             },
           }),
       ...(deleteConfirmation === undefined ? {} : { deleteConfirmation }),
-      ...(clockRequest === undefined ? {} : { clockRequest }),
+      ...(focusRequest === undefined ? {} : { focusRequest }),
       ...(announcement === undefined ? {} : { announcement }),
       ...(persistenceError === undefined ? {} : { persistenceError }),
     };
@@ -424,7 +432,29 @@ export function createLiveClockApplication(
   };
 
   const resample = (): void => {
-    screen = sampleScreen();
+    const previousFocusedIndex =
+      focusedClockId === undefined
+        ? -1
+        : screen.clocks.findIndex(({ id }) => id === focusedClockId);
+    const nextScreen = sampleScreen();
+    const nextFocusedIndex =
+      focusedClockId === undefined
+        ? -1
+        : nextScreen.clocks.findIndex(({ id }) => id === focusedClockId);
+    if (
+      heldClockOrder === undefined &&
+      selectorQuery === undefined &&
+      customForm === undefined &&
+      deleteConfirmation === undefined &&
+      previousFocusedIndex >= 0 &&
+      nextFocusedIndex >= 0 &&
+      previousFocusedIndex !== nextFocusedIndex
+    ) {
+      requestFocus({ clockId: focusedClockId! }, false);
+      screen = sampleScreen();
+    } else {
+      screen = nextScreen;
+    }
     notify();
   };
 
@@ -477,6 +507,7 @@ export function createLiveClockApplication(
       .catch(() => {
         isReady = false;
         persistenceState = { status: "load-failed" };
+        announce("Couldn’t load your timezones.");
         resample();
       })
       .finally(() => {
@@ -502,6 +533,7 @@ export function createLiveClockApplication(
         status: "write-failed",
         retry: () => commitSnapshot(candidate, setPending, complete),
       };
+      announce("Couldn’t save changes.");
       resample();
       return false;
     }
@@ -526,13 +558,18 @@ export function createLiveClockApplication(
   };
 
   const requestFocus = (
-    target: { readonly clockId: string } | { readonly addTimezone: true },
+    target:
+      | { readonly clockId: string }
+      | { readonly addTimezone: true }
+      | {
+          readonly overlay: "selector-search" | "custom-name" | "delete-cancel";
+        },
     scrollIntoView: boolean,
   ): void => {
-    clockRequestSequence += 1;
-    clockRequest = {
+    focusRequestSequence += 1;
+    focusRequest = {
       ...target,
-      sequence: clockRequestSequence,
+      sequence: focusRequestSequence,
       scrollIntoView,
       focus: true,
     };
@@ -618,6 +655,7 @@ export function createLiveClockApplication(
       }
       selectorQuery = "";
       heldClockOrder = screen.clocks.map(({ id }) => id);
+      requestFocus({ overlay: "selector-search" }, false);
       resample();
     },
     searchSelector: (query) => {
@@ -683,6 +721,7 @@ export function createLiveClockApplication(
           selectorQuery = undefined;
           heldClockOrder = undefined;
           requestFocus({ clockId: selectionId }, true);
+          announce(`${entry.city} added.`);
         },
       );
     },
@@ -704,6 +743,7 @@ export function createLiveClockApplication(
         returnSelectorQuery,
         isSaving: false,
       };
+      requestFocus({ overlay: "custom-name" }, false);
       resample();
       return true;
     },
@@ -729,6 +769,7 @@ export function createLiveClockApplication(
         offsetMinutes: selected.offsetMinutes,
         isSaving: false,
       };
+      requestFocus({ overlay: "custom-name" }, false);
       resample();
       return true;
     },
@@ -761,7 +802,9 @@ export function createLiveClockApplication(
       const cancelledSelectionId = customForm.selectionId;
       customForm = undefined;
       selectorQuery = returnSelectorQuery;
-      if (returnSelectorQuery === undefined) {
+      if (returnSelectorQuery !== undefined) {
+        requestFocus({ overlay: "selector-search" }, false);
+      } else {
         heldClockOrder = undefined;
         if (cancelledSelectionId !== undefined) {
           requestFocus({ clockId: cancelledSelectionId }, false);
@@ -782,6 +825,11 @@ export function createLiveClockApplication(
           offsetError: validation.offsetError,
           duplicateError: undefined,
         };
+        announce(
+          validation.nameError ??
+            validation.offsetError ??
+            "Check the custom timezone details.",
+        );
         resample();
         return false;
       }
@@ -804,11 +852,13 @@ export function createLiveClockApplication(
           duplicateError:
             "A custom timezone with this name and offset already exists.",
         };
+        announce("A custom timezone with this name and offset already exists.");
         resample();
         return false;
       }
 
       const editingId = customForm.selectionId;
+      const mutationMode = customForm.mode;
       const addSequence = snapshot.nextAddSequence;
       const selectionId = editingId ?? `selection-${addSequence}-custom`;
       const selectedClocks =
@@ -857,6 +907,9 @@ export function createLiveClockApplication(
           selectorQuery = undefined;
           heldClockOrder = undefined;
           requestFocus({ clockId: selectionId }, true);
+          announce(
+            `${validation.value.name} ${mutationMode === "create" ? "added" : "updated"}.`,
+          );
         },
       );
     },
@@ -880,6 +933,7 @@ export function createLiveClockApplication(
         name: selected.kind === "city" ? selected.city : selected.name,
         isDeleting: false,
       };
+      requestFocus({ overlay: "delete-cancel" }, false);
       resample();
       return true;
     },
@@ -1050,6 +1104,11 @@ export function createLiveClockApplication(
       const startSession = rowGesture.startSession;
       rowGesture = undefined;
       restoreScrubStart(startSession);
+    },
+    reportClockFocus: (clockId) => {
+      if (clockId === undefined || screen.clocks.some(({ id }) => id === clockId)) {
+        focusedClockId = clockId;
+      }
     },
     backToLive: () => {
       if (virtualSession === undefined) return;

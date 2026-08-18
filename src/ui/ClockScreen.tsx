@@ -70,6 +70,7 @@ interface ClockScreenProps {
     clockId: string,
     direction: "earlier" | "later",
   ) => void;
+  readonly onFocusClock: (clockId: string | undefined) => void;
   readonly onBackToLive: () => void;
 }
 
@@ -77,7 +78,10 @@ const semanticTime = (clock: ClockCollectionProjection): string =>
   clock.period ? `${clock.time} ${clock.period}` : clock.time;
 
 const semanticClockDetails = (clock: ClockCollectionProjection): string => {
-  const parts = [clock.name];
+  const parts = [
+    clock.name,
+    clock.kind === "local" ? "Local clock" : "Selected clock",
+  ];
   parts.push(clock.effectiveOffset);
   if (clock.kind !== "local" && clock.dayDifference !== undefined) {
     const magnitude = Number.parseInt(clock.dayDifference.replace("−", "-"), 10);
@@ -131,6 +135,7 @@ const useChevronPulse = (): Animated.Value => {
 
 function ScrubSurface({
   testId,
+  nativeId,
   accessibilityLabel,
   accessibilityHint,
   accessibilityValue,
@@ -144,8 +149,10 @@ function ScrubSurface({
   onEnd,
   onCancel,
   onAdjust,
+  onFocus,
 }: {
   readonly testId: string;
+  readonly nativeId?: string;
   readonly accessibilityLabel: string;
   readonly accessibilityHint?: string;
   readonly accessibilityValue: string;
@@ -159,6 +166,7 @@ function ScrubSurface({
   readonly onEnd: () => void;
   readonly onCancel: () => void;
   readonly onAdjust: (direction: "earlier" | "later") => void;
+  readonly onFocus?: () => void;
 }) {
   const gestureAxis = useRef<"horizontal" | "vertical" | null>(null);
   const panGesture = useMemo(
@@ -213,6 +221,7 @@ function ScrubSurface({
     <GestureDetector gesture={panGesture}>
       <View
         {...hardwareKeyProps}
+        nativeID={nativeId}
         ref={targetRef}
         accessible
         focusable
@@ -228,6 +237,7 @@ function ScrubSurface({
           if (nativeEvent.actionName === "decrement") onAdjust("earlier");
           if (nativeEvent.actionName === "increment") onAdjust("later");
         }}
+        onFocus={onFocus}
         style={style}
       >
         {children}
@@ -253,6 +263,7 @@ function ClockRow({
   onEndScrub,
   onCancelScrub,
   onAdjust,
+  onFocus,
 }: {
   readonly clock: ClockCollectionProjection;
   readonly model: LiveClockScreenModel;
@@ -273,6 +284,7 @@ function ClockRow({
     clockId: string,
     direction: "earlier" | "later",
   ) => void;
+  readonly onFocus: (clockId: string) => void;
 }) {
   const scrubValue =
     model.mode === "live"
@@ -302,6 +314,7 @@ function ClockRow({
       >
         <ScrubSurface
           testId={`row-scrub-${clock.id}`}
+          nativeId={`clock-time-${clock.id}`}
           accessibilityLabel={semanticTime(clock)}
           accessibilityHint={`Adjust ${clock.name} time`}
           accessibilityValue={scrubValue}
@@ -317,6 +330,7 @@ function ClockRow({
           onEnd={onEndScrub}
           onCancel={onCancelScrub}
           onAdjust={handleAdjust}
+          onFocus={() => onFocus(clock.id)}
         >
           <View
             testID={`clock-time-line-${clock.id}`}
@@ -365,7 +379,9 @@ function ClockRow({
         <View
           accessible
           accessibilityRole="summary"
+          nativeID={`clock-details-${clock.id}`}
           accessibilityLabel={semanticClockDetails(clock)}
+          onFocus={() => onFocus(clock.id)}
           style={styles.clockDetails}
         >
           <View accessibilityElementsHidden>
@@ -390,7 +406,9 @@ function ClockRow({
           {clock.kind === "custom" ? (
             <Pressable
               accessibilityRole="button"
+              nativeID={`clock-edit-${clock.id}`}
               accessibilityLabel={`Edit ${clock.name}`}
+              onFocus={() => onFocus(clock.id)}
               onPress={() => onEdit(clock.id)}
               style={({ pressed }) => [styles.rowAction, { opacity: pressed ? 0.7 : 1 }]}
             >
@@ -399,11 +417,13 @@ function ClockRow({
           ) : null}
           <Pressable
             accessibilityRole="button"
+            nativeID={`clock-delete-${clock.id}`}
             accessibilityLabel={`Delete ${clock.name}`}
+            onFocus={() => onFocus(clock.id)}
             onPress={() => onDelete(clock.id)}
             style={({ pressed }) => [styles.rowAction, { opacity: pressed ? 0.7 : 1 }]}
           >
-            <Text style={[styles.deleteGlyph, { color: colors.accent }]}>×</Text>
+            <Text importantForAccessibility="no-hide-descendants" style={[styles.deleteGlyph, { color: colors.accent }]}>×</Text>
           </Pressable>
         </View>
       )}
@@ -480,9 +500,7 @@ function PersistenceError({
     >
       <Text
         accessible
-        accessibilityRole="alert"
         accessibilityLabel={error.message}
-        accessibilityLiveRegion="polite"
         style={[styles.errorMessage, { color: colors.primary }]}
       >
         {error.message}
@@ -512,6 +530,7 @@ function StatusSurface({
   onBack,
   scrollGesture,
   onHorizontalLockChange,
+  onFocus,
 }: {
   readonly model: LiveClockScreenModel;
   readonly colors: SemanticTheme;
@@ -525,6 +544,7 @@ function StatusSurface({
   readonly onBack: () => void;
   readonly scrollGesture: ReturnType<(typeof Gesture)["Native"]>;
   readonly onHorizontalLockChange: (locked: boolean) => void;
+  readonly onFocus: () => void;
 }) {
   const status = model.status;
 
@@ -548,6 +568,7 @@ function StatusSurface({
         onEnd={onEndScrub}
         onCancel={onCancelScrub}
         onAdjust={onAdjust}
+        onFocus={onFocus}
       >
         <View
           testID="status-text"
@@ -630,6 +651,7 @@ export function ClockScreen({
   onEndRowScrub,
   onCancelRowScrub,
   onAdjustRow,
+  onFocusClock,
   onBackToLive,
 }: ClockScreenProps) {
   const colorScheme = useColorScheme() === "dark" ? "dark" : "light";
@@ -640,6 +662,9 @@ export function ClockScreen({
   const clockViews = useRef(new Map<string, View>());
   const clockPositions = useRef(new Map<string, number>());
   const addTimezoneView = useRef<View>(null);
+  const selectorSearchView = useRef<TextInput>(null);
+  const customNameView = useRef<TextInput>(null);
+  const deleteCancelView = useRef<View>(null);
   const addTimezonePosition = useRef<number | undefined>(undefined);
   const scrollGesture = useMemo(() => Gesture.Native(), []);
   const chevronPulse = useChevronPulse();
@@ -679,24 +704,38 @@ export function ClockScreen({
   ]);
 
   useEffect(() => {
-    const request = model.clockRequest;
+    const request = model.focusRequest;
     if (request === undefined) return;
     const targetsAddTimezone = "addTimezone" in request;
+    const overlayTarget =
+      "overlay" in request
+        ? request.overlay === "selector-search"
+          ? selectorSearchView.current
+          : request.overlay === "custom-name"
+            ? customNameView.current
+            : deleteCancelView.current
+        : null;
     const frame = requestAnimationFrame(() => {
       revealClock({
-        scrollView: scrollView.current,
-        clockView: targetsAddTimezone
-          ? addTimezoneView.current
-          : (clockViews.current.get(request.clockId) ?? null),
+        scrollView: "overlay" in request ? null : scrollView.current,
+        clockView:
+          overlayTarget ??
+          (targetsAddTimezone
+            ? addTimezoneView.current
+            : "clockId" in request
+              ? (clockViews.current.get(request.clockId) ?? null)
+              : null),
         position: targetsAddTimezone
           ? addTimezonePosition.current
-          : clockPositions.current.get(request.clockId),
+          : "clockId" in request
+            ? clockPositions.current.get(request.clockId)
+            : undefined,
         scrollIntoView: request.scrollIntoView,
         focus: request.focus,
       });
     });
     return () => cancelAnimationFrame(frame);
-  }, [model.clockRequest]);
+  }, [model.focusRequest]);
 
   useEffect(() => {
     if (model.announcement === undefined) return;
@@ -750,6 +789,7 @@ export function ClockScreen({
         <View style={[styles.form, { paddingHorizontal: presentation.horizontalPadding }]}>
           <Text style={[styles.fieldLabel, { color: colors.primary }]}>Name</Text>
           <TextInput
+            ref={customNameView}
             accessibilityLabel="Custom timezone name"
             value={form.name}
             onChangeText={onUpdateCustomName}
@@ -759,7 +799,7 @@ export function ClockScreen({
             style={[styles.searchInput, styles.formInput, { color: colors.primary, backgroundColor: colors.surface, borderColor: colors.border }]}
           />
           {form.nameError === undefined ? null : (
-            <Text accessibilityRole="alert" accessibilityLiveRegion="polite" style={[styles.error, { color: colors.primary }]}>{form.nameError}</Text>
+            <Text accessible accessibilityLabel={form.nameError} style={[styles.error, { color: colors.primary }]}>{form.nameError}</Text>
           )}
           <Text style={[styles.fieldLabel, { color: colors.primary }]}>UTC offset</Text>
           <View
@@ -788,10 +828,10 @@ export function ClockScreen({
             ><Text style={[styles.offsetActionText, { color: colors.accent }]}>+15 min</Text></Pressable>
           </View>
           {form.offsetError === undefined ? null : (
-            <Text accessibilityRole="alert" accessibilityLiveRegion="polite" style={[styles.error, { color: colors.primary }]}>{form.offsetError}</Text>
+            <Text accessible accessibilityLabel={form.offsetError} style={[styles.error, { color: colors.primary }]}>{form.offsetError}</Text>
           )}
           {form.duplicateError === undefined ? null : (
-            <Text accessibilityRole="alert" accessibilityLiveRegion="polite" style={[styles.error, { color: colors.primary }]}>{form.duplicateError}</Text>
+            <Text accessible accessibilityLabel={form.duplicateError} style={[styles.error, { color: colors.primary }]}>{form.duplicateError}</Text>
           )}
           <Pressable
             accessibilityRole="button"
@@ -843,6 +883,7 @@ export function ClockScreen({
           />
         )}
         <TextInput
+          ref={selectorSearchView}
           accessibilityLabel="Search timezones"
           value={model.selector.query}
           onChangeText={onSearchSelector}
@@ -934,6 +975,7 @@ export function ClockScreen({
           onEndScrub={onEndStatusScrub}
           onCancelScrub={onCancelStatusScrub}
           onAdjust={onAdjustStatus}
+          onFocus={() => onFocusClock(undefined)}
           onBack={onBackToLive}
           scrollGesture={scrollGesture}
           onHorizontalLockChange={handleHorizontalLockChange}
@@ -985,6 +1027,7 @@ export function ClockScreen({
                 onEndScrub={onEndRowScrub}
                 onCancelScrub={onCancelRowScrub}
                 onAdjust={onAdjustRow}
+                onFocus={onFocusClock}
               />
             ))}
           </View>
@@ -1003,6 +1046,7 @@ export function ClockScreen({
             accessibilityRole="button"
             accessibilityLabel="Add timezone"
             accessibilityHint={model.addTimezoneUnavailableReason}
+            onFocus={() => onFocusClock(undefined)}
             disabled={
               !model.isReady || model.addTimezoneUnavailableReason !== undefined
             }
@@ -1075,6 +1119,7 @@ export function ClockScreen({
                 ]}
               >
                 <Pressable
+                  ref={deleteCancelView}
                   accessibilityRole="button"
                   accessibilityLabel="Cancel deletion"
                   accessibilityState={{

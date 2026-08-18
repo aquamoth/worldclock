@@ -174,7 +174,7 @@ describe("lifecycle-aware Live and Virtual time", () => {
       mode: "virtual",
       sampledInstantMs: frozenComparison,
       clocks: [{ id: "office" }, { id: "local" }],
-      clockRequest: {
+      focusRequest: {
         clockId: "office",
         scrollIntoView: false,
         focus: true,
@@ -182,11 +182,54 @@ describe("lifecycle-aware Live and Virtual time", () => {
     });
   });
 
+  it("restores a focused stable clock identity when automatic projection reorders it", async () => {
+    const { app, setPreferences } = createLifecycleHarness();
+    await app.initialize();
+    app.reportClockFocus("office");
+
+    setPreferences({
+      timeZone: "Test/East",
+      locale: "en-GB",
+      uses24HourClock: true,
+    });
+    app.refresh();
+
+    expect(app.getScreen()).toMatchObject({
+      clocks: [{ id: "office" }, { id: "local" }],
+      focusRequest: {
+        clockId: "office",
+        scrollIntoView: false,
+        focus: true,
+      },
+    });
+  });
+
+  it("does not steal focus after the user leaves a clock row", async () => {
+    const { app, setPreferences } = createLifecycleHarness();
+    await app.initialize();
+    app.reportClockFocus("office");
+    app.reportClockFocus(undefined);
+
+    setPreferences({
+      timeZone: "Test/East",
+      locale: "en-GB",
+      uses24HourClock: true,
+    });
+    app.refresh();
+
+    expect(app.getScreen().clocks.map(({ id }) => id)).toEqual(["office", "local"]);
+    expect(app.getScreen().focusRequest).toBeUndefined();
+  });
+
   it("reconciles selector and delete overlays onto their stable return targets", async () => {
     const selectorHarness = createLifecycleHarness();
     await selectorHarness.app.initialize();
     selectorHarness.app.adjustStatus("later");
     selectorHarness.app.openSelector();
+    expect(selectorHarness.app.getScreen().focusRequest).toMatchObject({
+      overlay: "selector-search",
+      focus: true,
+    });
     selectorHarness.setPreferences({
       timeZone: "Test/East",
       locale: "en-GB",
@@ -200,7 +243,7 @@ describe("lifecycle-aware Live and Virtual time", () => {
     selectorHarness.app.cancelSelector();
     expect(selectorHarness.app.getScreen()).toMatchObject({
       clocks: [{ id: "office" }, { id: "local" }],
-      clockRequest: {
+      focusRequest: {
         addTimezone: true,
         scrollIntoView: false,
         focus: true,
@@ -211,6 +254,10 @@ describe("lifecycle-aware Live and Virtual time", () => {
     await deleteHarness.app.initialize();
     deleteHarness.app.adjustStatus("later");
     deleteHarness.app.openDelete("office");
+    expect(deleteHarness.app.getScreen().focusRequest).toMatchObject({
+      overlay: "delete-cancel",
+      focus: true,
+    });
     deleteHarness.setPreferences({
       timeZone: "Test/East",
       locale: "en-GB",
@@ -224,7 +271,7 @@ describe("lifecycle-aware Live and Virtual time", () => {
     deleteHarness.app.cancelDelete();
     expect(deleteHarness.app.getScreen()).toMatchObject({
       clocks: [{ id: "office" }, { id: "local" }],
-      clockRequest: {
+      focusRequest: {
         clockId: "office",
         scrollIntoView: false,
         focus: true,

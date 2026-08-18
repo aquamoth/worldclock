@@ -1,7 +1,6 @@
 import {
   AccessibilityInfo,
   findNodeHandle,
-  type View,
 } from "react-native";
 
 interface ScrollTarget {
@@ -10,14 +9,16 @@ interface ScrollTarget {
 
 export interface ClockRevealInput {
   readonly scrollView: ScrollTarget | null;
-  readonly clockView: View | null;
+  readonly clockView: AccessibilityTarget | null;
   readonly position: number | undefined;
   readonly scrollIntoView: boolean;
   readonly focus: boolean;
 }
 
+type AccessibilityTarget = NonNullable<Parameters<typeof findNodeHandle>[0]>;
+
 interface NativeClockRevealDependencies {
-  readonly findNodeHandle: (view: View) => number | null;
+  readonly findNodeHandle: (view: AccessibilityTarget) => number | null;
   readonly setAccessibilityFocus: (nativeTag: number) => void;
 }
 
