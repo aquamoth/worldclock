@@ -9,7 +9,7 @@ const STEP_MINUTES = 15;
 const WINDOW_EDGE_MINUTES = 24 * 60;
 const WINDOW_SPAN_MINUTES = 48 * 60;
 
-const wrapOffset = (offsetMinutes: number): StatusOffsetResult => {
+export const wrapVirtualOffset = (offsetMinutes: number): StatusOffsetResult => {
   let wrappedOffset = offsetMinutes;
   while (wrappedOffset > WINDOW_EDGE_MINUTES) {
     wrappedOffset -= WINDOW_SPAN_MINUTES;
@@ -28,7 +28,7 @@ export function stepStatusOffset(
   direction: VirtualDirection,
 ): StatusOffsetResult {
   const delta = direction === "earlier" ? -STEP_MINUTES : STEP_MINUTES;
-  return wrapOffset(offsetMinutes + delta);
+  return wrapVirtualOffset(offsetMinutes + delta);
 }
 
 export function moveStatusOffset(
@@ -38,7 +38,7 @@ export function moveStatusOffset(
   if (signedSteps === 0) {
     return { offsetMinutes: gestureStartOffsetMinutes, wrapped: false };
   }
-  return wrapOffset(
+  return wrapVirtualOffset(
     gestureStartOffsetMinutes + signedSteps * STEP_MINUTES,
   );
 }

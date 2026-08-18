@@ -43,6 +43,7 @@ export interface LocalClockProjection extends ClockProjection {
   readonly kind: "local";
   readonly name: "Local";
   readonly canDelete: false;
+  readonly wallMinuteOfDay: number;
 }
 
 export interface CityClockProjection extends ClockProjection {
@@ -51,6 +52,7 @@ export interface CityClockProjection extends ClockProjection {
   readonly name: string;
   readonly countryName: string;
   readonly canDelete: true;
+  readonly wallMinuteOfDay: number;
   readonly dayDifference?: string;
 }
 
@@ -60,6 +62,7 @@ export interface CustomClockProjection extends ClockProjection {
   readonly name: string;
   readonly canDelete: true;
   readonly canEdit: true;
+  readonly wallMinuteOfDay: number;
   readonly dayDifference?: string;
 }
 
@@ -151,6 +154,7 @@ export function projectClockCollection(
     kind: "local" as const,
     name: "Local" as const,
     canDelete: false as const,
+    wallMinuteOfDay: localFields.hour * 60 + localFields.minute,
     minuteOfDay: localFields.hour * 60 + localFields.minute,
     ...localProjection,
   };
@@ -180,6 +184,7 @@ export function projectClockCollection(
         name: definition.name,
         canDelete: true,
         canEdit: true,
+        wallMinuteOfDay: fields.hour * 60 + fields.minute,
         addSequence: definition.addSequence,
         minuteOfDay: fields.hour * 60 + fields.minute,
         ...projection,
@@ -204,6 +209,7 @@ export function projectClockCollection(
       name: definition.city,
       countryName: resolvePrimaryCountryName(definition),
       canDelete: true as const,
+      wallMinuteOfDay: fields.hour * 60 + fields.minute,
       addSequence: definition.addSequence,
       minuteOfDay: fields.hour * 60 + fields.minute,
       ...projection,

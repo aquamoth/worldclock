@@ -15,6 +15,10 @@ import {
   validateCustomTimezoneDraft,
 } from "../domain/customTimezone";
 import {
+  moveRowOffset,
+  stepRowOffset,
+} from "../domain/rowWallGrid";
+import {
   moveStatusOffset,
   stepStatusOffset,
   type VirtualDirection,
@@ -134,6 +138,7 @@ type LiveClockStatusState =
         readonly label: "Virtual time";
         readonly offset: string;
         readonly offsetMinutes: number;
+        readonly offsetAccessibilityLabel: string;
         readonly accessibilityValue: string;
       };
     };
@@ -166,6 +171,11 @@ export interface LiveClockApplication {
   updateStatusScrub(signedStepsFromGestureStart: number): void;
   endStatusScrub(): void;
   cancelStatusScrub(): void;
+  adjustRow(clockId: string, direction: VirtualDirection): boolean;
+  beginRowScrub(clockId: string): boolean;
+  updateRowScrub(signedStepsFromGestureStart: number): void;
+  endRowScrub(): void;
+  cancelRowScrub(): void;
   backToLive(): void;
 }
 
@@ -257,6 +267,15 @@ export function createLiveClockApplication(
         readonly startOffsetMinutes: number;
       }
     | undefined;
+  let rowGesture:
+    | {
+        readonly clockId: string;
+        readonly startSession: typeof virtualSession;
+        readonly liveReferenceMs: number;
+        readonly startOffsetMinutes: number;
+        readonly rowWallMinuteOfDay: number;
+      }
+    | undefined;
 
   const selectorResults = (): readonly SelectorResultModel[] => {
     if (selectorQuery === undefined) return [];
@@ -335,6 +354,9 @@ export function createLiveClockApplication(
               label: "Virtual time",
               offset: formatVirtualOffset(virtualSession.offsetMinutes),
               offsetMinutes: virtualSession.offsetMinutes,
+              offsetAccessibilityLabel: `${formatOffsetDuration(
+                virtualSession.offsetMinutes,
+              )} ${virtualSession.offsetMinutes < 0 ? "earlier" : "later"}`,
               accessibilityValue: formatAccessibleOffset(
                 virtualSession.offsetMinutes,
                 localTime,
@@ -525,6 +547,17 @@ export function createLiveClockApplication(
       return;
     }
     resample();
+  };
+
+  const restoreScrubStart = (startSession: typeof virtualSession): void => {
+    virtualSession = startSession;
+    heldClockOrder = undefined;
+    if (virtualSession === undefined) {
+      announce("Live time.");
+      resample();
+    } else {
+      publishVirtualChange("");
+    }
   };
 
   return {
@@ -910,7 +943,7 @@ export function createLiveClockApplication(
       applyVirtualOffset(result.offsetMinutes, result.wrapped);
     },
     beginStatusScrub: () => {
-      if (statusGesture !== undefined) return;
+      if (statusGesture !== undefined || rowGesture !== undefined) return;
       statusGesture = {
         startSession: virtualSession,
         liveReferenceMs:
@@ -939,20 +972,82 @@ export function createLiveClockApplication(
     },
     cancelStatusScrub: () => {
       if (statusGesture === undefined) return;
-      virtualSession = statusGesture.startSession;
+      const startSession = statusGesture.startSession;
       statusGesture = undefined;
+      restoreScrubStart(startSession);
+    },
+    adjustRow: (clockId, direction) => {
+      if (statusGesture !== undefined || rowGesture !== undefined) return false;
+      const clock = screen.clocks.find(({ id }) => id === clockId);
+      if (clock?.wallMinuteOfDay === undefined) return false;
+      const result = stepRowOffset(
+        virtualSession?.offsetMinutes ?? 0,
+        clock.wallMinuteOfDay,
+        direction,
+      );
+      clockRequestSequence += 1;
+      clockRequest = {
+        clockId,
+        sequence: clockRequestSequence,
+        scrollIntoView: false,
+        focus: true,
+      };
+      applyVirtualOffset(result.offsetMinutes, result.wrapped);
+      return true;
+    },
+    beginRowScrub: (clockId) => {
+      if (statusGesture !== undefined || rowGesture !== undefined) return false;
+      const clock = screen.clocks.find(({ id }) => id === clockId);
+      if (clock?.wallMinuteOfDay === undefined) return false;
+      rowGesture = {
+        clockId,
+        startSession: virtualSession,
+        liveReferenceMs:
+          virtualSession?.liveReferenceMs ?? dependencies.time.now(),
+        startOffsetMinutes: virtualSession?.offsetMinutes ?? 0,
+        rowWallMinuteOfDay: clock.wallMinuteOfDay,
+      };
+      heldClockOrder = screen.clocks.map(({ id }) => id);
+      return true;
+    },
+    updateRowScrub: (signedStepsFromGestureStart) => {
+      if (rowGesture === undefined) return;
+      const result = moveRowOffset(
+        rowGesture.startOffsetMinutes,
+        rowGesture.rowWallMinuteOfDay,
+        signedStepsFromGestureStart,
+      );
+      applyVirtualOffset(
+        result.offsetMinutes,
+        result.wrapped,
+        rowGesture.liveReferenceMs,
+      );
+    },
+    endRowScrub: () => {
+      if (rowGesture === undefined) return;
+      const clockId = rowGesture.clockId;
+      rowGesture = undefined;
       heldClockOrder = undefined;
-      if (virtualSession === undefined) {
-        announce("Live time.");
-        resample();
-      } else {
-        publishVirtualChange("");
-      }
+      clockRequestSequence += 1;
+      clockRequest = {
+        clockId,
+        sequence: clockRequestSequence,
+        scrollIntoView: false,
+        focus: true,
+      };
+      resample();
+    },
+    cancelRowScrub: () => {
+      if (rowGesture === undefined) return;
+      const startSession = rowGesture.startSession;
+      rowGesture = undefined;
+      restoreScrubStart(startSession);
     },
     backToLive: () => {
       if (virtualSession === undefined) return;
       virtualSession = undefined;
       statusGesture = undefined;
+      rowGesture = undefined;
       heldClockOrder = undefined;
       announce("Live time.");
       resample();

@@ -76,6 +76,11 @@ export default function App() {
           onEndStatusScrub={application.endStatusScrub}
           onCancelStatusScrub={application.cancelStatusScrub}
           onAdjustStatus={application.adjustStatus}
+          onBeginRowScrub={application.beginRowScrub}
+          onUpdateRowScrub={application.updateRowScrub}
+          onEndRowScrub={application.endRowScrub}
+          onCancelRowScrub={application.cancelRowScrub}
+          onAdjustRow={application.adjustRow}
           onBackToLive={application.backToLive}
         />
         <StatusBar style="auto" />

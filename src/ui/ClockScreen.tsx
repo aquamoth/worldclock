@@ -22,6 +22,8 @@ import {
   useMemo,
   useRef,
   useState,
+  type ComponentProps,
+  type ReactNode,
   type Ref,
 } from "react";
 
@@ -32,7 +34,7 @@ import type {
 import type { ClockCollectionProjection } from "../domain/clockCollection";
 import { formatEffectiveOffset } from "../domain/clock";
 import { revealClock } from "./nativeClockReveal";
-import { statusStepsFromTravel } from "./statusScrubGesture";
+import { scrubStepsFromTravel } from "./scrubGesture";
 
 interface ClockScreenProps {
   readonly model: LiveClockScreenModel;
@@ -55,6 +57,14 @@ interface ClockScreenProps {
   readonly onEndStatusScrub: () => void;
   readonly onCancelStatusScrub: () => void;
   readonly onAdjustStatus: (direction: "earlier" | "later") => void;
+  readonly onBeginRowScrub: (clockId: string) => void;
+  readonly onUpdateRowScrub: (translationX: number) => void;
+  readonly onEndRowScrub: () => void;
+  readonly onCancelRowScrub: () => void;
+  readonly onAdjustRow: (
+    clockId: string,
+    direction: "earlier" | "later",
+  ) => void;
   readonly onBackToLive: () => void;
 }
 
@@ -96,21 +106,201 @@ const semanticClockLabel = (clock: ClockCollectionProjection): string => {
   return parts.join(", ");
 };
 
+const useChevronPulse = (): Animated.Value => {
+  const [reduceMotion, setReduceMotion] = useState(true);
+  const pulse = useRef(new Animated.Value(0.55)).current;
+  useEffect(() => {
+    let active = true;
+    void AccessibilityInfo.isReduceMotionEnabled().then((enabled) => {
+      if (active) setReduceMotion(enabled);
+    });
+    const subscription = AccessibilityInfo.addEventListener(
+      "reduceMotionChanged",
+      setReduceMotion,
+    );
+    return () => {
+      active = false;
+      subscription.remove();
+    };
+  }, []);
+  useEffect(() => {
+    if (reduceMotion) {
+      pulse.stopAnimation();
+      pulse.setValue(0.55);
+      return;
+    }
+    const animation = Animated.loop(
+      Animated.sequence([
+        Animated.timing(pulse, {
+          toValue: 0.82,
+          duration: 900,
+          useNativeDriver: true,
+        }),
+        Animated.timing(pulse, {
+          toValue: 0.42,
+          duration: 900,
+          useNativeDriver: true,
+        }),
+      ]),
+    );
+    animation.start();
+    return () => animation.stop();
+  }, [pulse, reduceMotion]);
+  return pulse;
+};
+
+function ScrubSurface({
+  testId,
+  accessibilityLabel,
+  accessibilityValue,
+  targetRef,
+  style,
+  children,
+  scrollGesture,
+  onHorizontalLockChange,
+  onBegin,
+  onUpdate,
+  onEnd,
+  onCancel,
+  onAdjust,
+}: {
+  readonly testId: string;
+  readonly accessibilityLabel: string;
+  readonly accessibilityValue: string;
+  readonly targetRef?: Ref<View>;
+  readonly style: ComponentProps<typeof View>["style"];
+  readonly children: ReactNode;
+  readonly scrollGesture: ReturnType<(typeof Gesture)["Native"]>;
+  readonly onHorizontalLockChange: (locked: boolean) => void;
+  readonly onBegin: () => void;
+  readonly onUpdate: (signedStepsFromGestureStart: number) => void;
+  readonly onEnd: () => void;
+  readonly onCancel: () => void;
+  readonly onAdjust: (direction: "earlier" | "later") => void;
+}) {
+  const gestureAxis = useRef<"horizontal" | "vertical" | null>(null);
+  const panGesture = useMemo(
+    () =>
+      Gesture.Pan()
+        .withTestId(testId)
+        .simultaneousWithExternalGesture(scrollGesture)
+        .runOnJS(true)
+        .onStart(({ translationX, translationY }) => {
+          gestureAxis.current =
+            Math.abs(translationX) > Math.abs(translationY)
+              ? "horizontal"
+              : "vertical";
+          if (gestureAxis.current !== "horizontal") return;
+          onHorizontalLockChange(true);
+          onBegin();
+          onUpdate(scrubStepsFromTravel(translationX));
+        })
+        .onUpdate(({ translationX }) => {
+          if (gestureAxis.current === "horizontal") {
+            onUpdate(scrubStepsFromTravel(translationX));
+          }
+        })
+        .onEnd(() => {
+          if (gestureAxis.current === "horizontal") onEnd();
+        })
+        .onFinalize((_event, succeeded) => {
+          if (gestureAxis.current === "horizontal" && !succeeded) onCancel();
+          if (gestureAxis.current === "horizontal") {
+            onHorizontalLockChange(false);
+          }
+          gestureAxis.current = null;
+        }),
+    [
+      onBegin,
+      onCancel,
+      onEnd,
+      onHorizontalLockChange,
+      onUpdate,
+      scrollGesture,
+      testId,
+    ],
+  );
+  const hardwareKeyProps = {
+    onKeyDown: (event: { readonly nativeEvent: { readonly key?: string } }) => {
+      if (event.nativeEvent.key === "ArrowRight") onAdjust("earlier");
+      if (event.nativeEvent.key === "ArrowLeft") onAdjust("later");
+    },
+  };
+
+  return (
+    <GestureDetector gesture={panGesture}>
+      <View
+        {...hardwareKeyProps}
+        ref={targetRef}
+        accessible
+        focusable
+        accessibilityRole="adjustable"
+        accessibilityLabel={accessibilityLabel}
+        accessibilityValue={{ text: accessibilityValue }}
+        accessibilityActions={[
+          { name: "decrement", label: "Earlier" },
+          { name: "increment", label: "Later" },
+        ]}
+        onAccessibilityAction={({ nativeEvent }) => {
+          if (nativeEvent.actionName === "decrement") onAdjust("earlier");
+          if (nativeEvent.actionName === "increment") onAdjust("later");
+        }}
+        style={style}
+      >
+        {children}
+      </View>
+    </GestureDetector>
+  );
+}
+
 function ClockRow({
   clock,
+  model,
   colors,
+  chevronPulse,
   rowRef,
   onLayout,
   onEdit,
   onDelete,
+  scrollGesture,
+  onHorizontalLockChange,
+  onBeginScrub,
+  onUpdateScrub,
+  onEndScrub,
+  onCancelScrub,
+  onAdjust,
 }: {
   readonly clock: ClockCollectionProjection;
+  readonly model: LiveClockScreenModel;
   readonly colors: Palette;
+  readonly chevronPulse: Animated.Value;
   readonly rowRef: Ref<View>;
   readonly onLayout: (event: LayoutChangeEvent) => void;
   readonly onEdit: (selectionId: string) => void;
   readonly onDelete: (selectionId: string) => void;
+  readonly scrollGesture: ReturnType<(typeof Gesture)["Native"]>;
+  readonly onHorizontalLockChange: (locked: boolean) => void;
+  readonly onBeginScrub: (clockId: string) => void;
+  readonly onUpdateScrub: (signedStepsFromGestureStart: number) => void;
+  readonly onEndScrub: () => void;
+  readonly onCancelScrub: () => void;
+  readonly onAdjust: (
+    clockId: string,
+    direction: "earlier" | "later",
+  ) => void;
 }) {
+  const scrubValue =
+    model.mode === "live"
+      ? "Live time"
+      : `${model.status.offsetAccessibilityLabel}, ${semanticTime(clock)}`;
+  const handleBeginScrub = useCallback(
+    () => onBeginScrub(clock.id),
+    [clock.id, onBeginScrub],
+  );
+  const handleAdjust = useCallback(
+    (direction: "earlier" | "later") => onAdjust(clock.id, direction),
+    [clock.id, onAdjust],
+  );
   return (
     <View
       onLayout={onLayout}
@@ -120,30 +310,70 @@ function ClockRow({
         { backgroundColor: colors.surface, borderColor: colors.border },
       ]}
     >
-      <View
-        ref={rowRef}
-        accessible
-        accessibilityRole="summary"
-        accessibilityLabel={semanticClockLabel(clock)}
-        style={styles.clockSummary}
-      >
-        <View style={styles.timeLine} accessibilityElementsHidden>
-          <Text style={[styles.time, { color: colors.primary }]}>{clock.time}</Text>
-          {clock.period ? (
-            <Text style={[styles.period, { color: colors.secondary }]}>{clock.period}</Text>
-          ) : null}
-        </View>
-        <View style={styles.clockDetails} accessibilityElementsHidden>
-          <Text style={[styles.clockName, { color: colors.primary }]}>{clock.name}</Text>
-          <View style={styles.metadataLine}>
-            <Text style={[styles.offset, { color: colors.secondary }]}>
-              {clock.effectiveOffset}
+      <View style={styles.clockSummary}>
+        <ScrubSurface
+          testId={`row-scrub-${clock.id}`}
+          accessibilityLabel={`Adjust ${clock.name} time`}
+          accessibilityValue={scrubValue}
+          targetRef={rowRef}
+          style={styles.rowTimeAdjustable}
+          scrollGesture={scrollGesture}
+          onHorizontalLockChange={onHorizontalLockChange}
+          onBegin={handleBeginScrub}
+          onUpdate={onUpdateScrub}
+          onEnd={onEndScrub}
+          onCancel={onCancelScrub}
+          onAdjust={handleAdjust}
+        >
+          <View style={styles.timeLine} accessibilityElementsHidden>
+            <Animated.Text
+              importantForAccessibility="no-hide-descendants"
+              style={[
+                styles.rowChevron,
+                { color: colors.accent, opacity: chevronPulse },
+              ]}
+            >
+              ‹
+            </Animated.Text>
+            <Text style={[styles.time, { color: colors.primary }]}>
+              {clock.time}
             </Text>
-            {clock.kind !== "local" && clock.dayDifference !== undefined ? (
-              <Text style={[styles.dayDifference, { color: colors.primary }]}>
-                {clock.dayDifference}
+            {clock.period ? (
+              <Text style={[styles.period, { color: colors.secondary }]}>
+                {clock.period}
               </Text>
             ) : null}
+            <Animated.Text
+              importantForAccessibility="no-hide-descendants"
+              style={[
+                styles.rowChevron,
+                { color: colors.accent, opacity: chevronPulse },
+              ]}
+            >
+              ›
+            </Animated.Text>
+          </View>
+        </ScrubSurface>
+        <View
+          accessible
+          accessibilityRole="summary"
+          accessibilityLabel={semanticClockLabel(clock)}
+          style={styles.clockDetails}
+        >
+          <View accessibilityElementsHidden>
+            <Text style={[styles.clockName, { color: colors.primary }]}>
+              {clock.name}
+            </Text>
+            <View style={styles.metadataLine}>
+              <Text style={[styles.offset, { color: colors.secondary }]}>
+                {clock.effectiveOffset}
+              </Text>
+              {clock.kind !== "local" && clock.dayDifference !== undefined ? (
+                <Text style={[styles.dayDifference, { color: colors.primary }]}>
+                  {clock.dayDifference}
+                </Text>
+              ) : null}
+            </View>
           </View>
         </View>
       </View>
@@ -255,6 +485,7 @@ function PersistenceError({
 function StatusSurface({
   model,
   colors,
+  chevronPulse,
   onBeginScrub,
   onUpdateScrub,
   onEndScrub,
@@ -266,6 +497,7 @@ function StatusSurface({
 }: {
   readonly model: LiveClockScreenModel;
   readonly colors: Palette;
+  readonly chevronPulse: Animated.Value;
   readonly onBeginScrub: () => void;
   readonly onUpdateScrub: (translationX: number) => void;
   readonly onEndScrub: () => void;
@@ -276,94 +508,6 @@ function StatusSurface({
   readonly onHorizontalLockChange: (locked: boolean) => void;
 }) {
   const status = model.status;
-  const gestureAxis = useRef<"horizontal" | "vertical" | null>(null);
-  const [reduceMotion, setReduceMotion] = useState(true);
-  const chevronPulse = useRef(new Animated.Value(0.55)).current;
-  useEffect(() => {
-    let active = true;
-    void AccessibilityInfo.isReduceMotionEnabled().then((enabled) => {
-      if (active) setReduceMotion(enabled);
-    });
-    const subscription = AccessibilityInfo.addEventListener(
-      "reduceMotionChanged",
-      setReduceMotion,
-    );
-    return () => {
-      active = false;
-      subscription.remove();
-    };
-  }, []);
-  useEffect(() => {
-    if (reduceMotion) {
-      chevronPulse.stopAnimation();
-      chevronPulse.setValue(0.55);
-      return;
-    }
-    const animation = Animated.loop(
-      Animated.sequence([
-        Animated.timing(chevronPulse, {
-          toValue: 0.82,
-          duration: 900,
-          useNativeDriver: true,
-        }),
-        Animated.timing(chevronPulse, {
-          toValue: 0.42,
-          duration: 900,
-          useNativeDriver: true,
-        }),
-      ]),
-    );
-    animation.start();
-    return () => animation.stop();
-  }, [chevronPulse, reduceMotion]);
-  const panGesture = useMemo(
-    () =>
-      Gesture.Pan()
-        .withTestId("status-scrub-gesture")
-        .simultaneousWithExternalGesture(scrollGesture)
-        .runOnJS(true)
-        .onStart(({ translationX, translationY }) => {
-          gestureAxis.current =
-            Math.abs(translationX) > Math.abs(translationY)
-              ? "horizontal"
-              : "vertical";
-          if (gestureAxis.current !== "horizontal") return;
-          onHorizontalLockChange(true);
-          onBeginScrub();
-          onUpdateScrub(statusStepsFromTravel(translationX));
-        })
-        .onUpdate(({ translationX }) => {
-          if (gestureAxis.current === "horizontal") {
-            onUpdateScrub(statusStepsFromTravel(translationX));
-          }
-        })
-        .onEnd(() => {
-          if (gestureAxis.current === "horizontal") onEndScrub();
-        })
-        .onFinalize((_event, succeeded) => {
-          if (gestureAxis.current === "horizontal" && !succeeded) {
-            onCancelScrub();
-          }
-          if (gestureAxis.current === "horizontal") {
-            onHorizontalLockChange(false);
-          }
-          gestureAxis.current = null;
-        }),
-    [
-      onBeginScrub,
-      onCancelScrub,
-      onEndScrub,
-      onHorizontalLockChange,
-      onUpdateScrub,
-      scrollGesture,
-    ],
-  );
-  const hardwareKeyProps = {
-    onKeyDown: (event: { readonly nativeEvent: { readonly key?: string } }) => {
-      if (event.nativeEvent.key === "ArrowRight") onAdjust("earlier");
-      if (event.nativeEvent.key === "ArrowLeft") onAdjust("later");
-    },
-  };
 
   return (
     <View
@@ -372,52 +516,48 @@ function StatusSurface({
         { backgroundColor: colors.surface, borderColor: colors.border },
       ]}
     >
-      <GestureDetector gesture={panGesture}>
-        <View
-          {...hardwareKeyProps}
-          accessible
-          focusable
-          accessibilityRole="adjustable"
-          accessibilityLabel="Adjust comparison time"
-          accessibilityValue={{ text: status.accessibilityValue }}
-          accessibilityActions={[
-            { name: "decrement", label: "Earlier" },
-            { name: "increment", label: "Later" },
-          ]}
-          onAccessibilityAction={({ nativeEvent }) => {
-            if (nativeEvent.actionName === "decrement") onAdjust("earlier");
-            if (nativeEvent.actionName === "increment") onAdjust("later");
-          }}
-          style={styles.statusAdjustable}
-        >
-          <View style={styles.statusText} accessibilityElementsHidden>
-            <Text style={[styles.statusLabel, { color: colors.primary }]}>
-              {status.label}
+      <ScrubSurface
+        testId="status-scrub-gesture"
+        accessibilityLabel="Adjust comparison time"
+        accessibilityValue={status.accessibilityValue}
+        style={styles.statusAdjustable}
+        scrollGesture={scrollGesture}
+        onHorizontalLockChange={onHorizontalLockChange}
+        onBegin={onBeginScrub}
+        onUpdate={onUpdateScrub}
+        onEnd={onEndScrub}
+        onCancel={onCancelScrub}
+        onAdjust={onAdjust}
+      >
+        <View style={styles.statusText} accessibilityElementsHidden>
+          <Text style={[styles.statusLabel, { color: colors.primary }]}>
+            {status.label}
+          </Text>
+          <View style={styles.statusOffsetLine}>
+            <Animated.Text
+              importantForAccessibility="no-hide-descendants"
+              style={[
+                styles.chevron,
+                { color: colors.accent, opacity: chevronPulse },
+              ]}
+            >
+              ‹
+            </Animated.Text>
+            <Text style={[styles.statusOffset, { color: colors.primary }]}>
+              {status.offset}
             </Text>
-            <View style={styles.statusOffsetLine}>
-              <Animated.Text
-                importantForAccessibility="no-hide-descendants"
-                style={[
-                  styles.chevron,
-                  { color: colors.accent, opacity: chevronPulse },
-                ]}
-              >
-                ‹
-              </Animated.Text>
-              <Text style={[styles.statusOffset, { color: colors.primary }]}>{status.offset}</Text>
-              <Animated.Text
-                importantForAccessibility="no-hide-descendants"
-                style={[
-                  styles.chevron,
-                  { color: colors.accent, opacity: chevronPulse },
-                ]}
-              >
-                ›
-              </Animated.Text>
-            </View>
+            <Animated.Text
+              importantForAccessibility="no-hide-descendants"
+              style={[
+                styles.chevron,
+                { color: colors.accent, opacity: chevronPulse },
+              ]}
+            >
+              ›
+            </Animated.Text>
           </View>
         </View>
-      </GestureDetector>
+      </ScrubSurface>
       {model.mode === "virtual" ? (
         <Pressable
           accessibilityRole="button"
@@ -461,6 +601,11 @@ export function ClockScreen({
   onEndStatusScrub,
   onCancelStatusScrub,
   onAdjustStatus,
+  onBeginRowScrub,
+  onUpdateRowScrub,
+  onEndRowScrub,
+  onCancelRowScrub,
+  onAdjustRow,
   onBackToLive,
 }: ClockScreenProps) {
   const colorScheme = useColorScheme() === "dark" ? "dark" : "light";
@@ -472,6 +617,7 @@ export function ClockScreen({
   const addTimezoneView = useRef<View>(null);
   const addTimezonePosition = useRef<number | undefined>(undefined);
   const scrollGesture = useMemo(() => Gesture.Native(), []);
+  const chevronPulse = useChevronPulse();
   const [scrollEnabled, setScrollEnabled] = useState(true);
   const handleHorizontalLockChange = useCallback((locked: boolean) => {
     setScrollEnabled(!locked);
@@ -711,6 +857,7 @@ export function ClockScreen({
         <StatusSurface
           model={model}
           colors={colors}
+          chevronPulse={chevronPulse}
           onBeginScrub={onBeginStatusScrub}
           onUpdateScrub={onUpdateStatusScrub}
           onEndScrub={onEndStatusScrub}
@@ -746,7 +893,9 @@ export function ClockScreen({
               <ClockRow
                 key={clock.id}
                 clock={clock}
+                model={model}
                 colors={colors}
+                chevronPulse={chevronPulse}
                 rowRef={(view) => {
                   if (view === null) clockViews.current.delete(clock.id);
                   else clockViews.current.set(clock.id, view);
@@ -756,6 +905,13 @@ export function ClockScreen({
                 }}
                 onEdit={onOpenCustomEditor}
                 onDelete={onOpenDelete}
+                scrollGesture={scrollGesture}
+                onHorizontalLockChange={handleHorizontalLockChange}
+                onBeginScrub={onBeginRowScrub}
+                onUpdateScrub={onUpdateRowScrub}
+                onEndScrub={onEndRowScrub}
+                onCancelScrub={onCancelRowScrub}
+                onAdjust={onAdjustRow}
               />
             ))}
           </View>
@@ -903,7 +1059,9 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   clockSummary: { flex: 1, minWidth: 0, flexDirection: "row", alignItems: "center", gap: 20 },
+  rowTimeAdjustable: { minHeight: 48, justifyContent: "center", flexShrink: 0 },
   timeLine: { flexDirection: "row", alignItems: "baseline", flexShrink: 0 },
+  rowChevron: { fontSize: 21, fontWeight: "700", marginHorizontal: 4 },
   time: {
     fontSize: 42,
     fontVariant: ["tabular-nums"],

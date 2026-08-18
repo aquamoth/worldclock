@@ -27,6 +27,7 @@ const localClock = {
   calendarDate: "2026-01-15",
   time: "13:05",
   effectiveOffset: "UTC+01:00",
+  wallMinuteOfDay: 13 * 60 + 5,
 };
 
 const emptyModel: LiveClockScreenModel = {
@@ -58,6 +59,11 @@ const actions = () => ({
   onEndStatusScrub: jest.fn(),
   onCancelStatusScrub: jest.fn(),
   onAdjustStatus: jest.fn(),
+  onBeginRowScrub: jest.fn(),
+  onUpdateRowScrub: jest.fn(),
+  onEndRowScrub: jest.fn(),
+  onCancelRowScrub: jest.fn(),
+  onAdjustRow: jest.fn(),
   onBackToLive: jest.fn(),
 });
 
@@ -84,9 +90,10 @@ describe("clock collection screen", () => {
     const callbacks = actions();
     await render(<ClockScreen model={emptyModel} {...callbacks} />);
 
-    expect(
-      screen.getByRole("summary", { name: "Local, 13:05, UTC+01:00" }),
-    ).toBeOnTheScreen();
+    const localTime = screen.getByRole("adjustable", {
+      name: "Adjust Local time",
+    });
+    expect(localTime).toHaveAccessibilityValue({ text: "Live time" });
     expect(
       screen.getByText("Add a timezone to compare times around the world."),
     ).toBeOnTheScreen();
@@ -119,6 +126,7 @@ describe("clock collection screen", () => {
             label: "Virtual time",
             offset: "−0:15",
             offsetMinutes: -15,
+            offsetAccessibilityLabel: "15 minutes earlier",
             accessibilityValue: "15 minutes earlier, 12:50",
           },
         }}
@@ -129,7 +137,7 @@ describe("clock collection screen", () => {
     const status = screen.getByRole("adjustable", {
       name: "Adjust comparison time",
     });
-    expect(screen.getAllByRole("adjustable")).toHaveLength(1);
+    expect(screen.getAllByRole("adjustable")).toHaveLength(2);
     expect(status).toHaveAccessibilityValue({
       text: "15 minutes earlier, 12:50",
     });
@@ -246,6 +254,99 @@ describe("clock collection screen", () => {
     expect(callbacks.onEndStatusScrub).not.toHaveBeenCalled();
   });
 
+  it("exposes every row time as a separate adjustable with directional keyboard and accessibility mappings", async () => {
+    const callbacks = actions();
+    await render(
+      <ClockScreen
+        model={{
+          ...emptyModel,
+          mode: "virtual",
+          status: {
+            label: "Virtual time",
+            offset: "+0:13",
+            offsetMinutes: 13,
+            offsetAccessibilityLabel: "13 minutes later",
+            accessibilityValue: "13 minutes later, 13:18",
+          },
+          clocks: [{ ...localClock, time: "13:18", wallMinuteOfDay: 13 * 60 + 18 }],
+        }}
+        {...callbacks}
+      />,
+    );
+
+    const rowTime = screen.getByRole("adjustable", {
+      name: "Adjust Local time",
+    });
+    expect(rowTime).toHaveAccessibilityValue({
+      text: "13 minutes later, 13:18",
+    });
+    await fireEvent(rowTime, "accessibilityAction", {
+      nativeEvent: { actionName: "decrement" },
+    });
+    await fireEvent(rowTime, "accessibilityAction", {
+      nativeEvent: { actionName: "increment" },
+    });
+    await fireEvent(rowTime, "keyDown", { nativeEvent: { key: "ArrowRight" } });
+    await fireEvent(rowTime, "keyDown", { nativeEvent: { key: "ArrowLeft" } });
+    expect(callbacks.onAdjustRow.mock.calls).toEqual([
+      ["local", "earlier"],
+      ["local", "later"],
+      ["local", "earlier"],
+      ["local", "later"],
+    ]);
+
+    expect(screen.getAllByText("‹", { includeHiddenElements: true })).toHaveLength(2);
+    expect(screen.getAllByText("›", { includeHiddenElements: true })).toHaveLength(2);
+  });
+
+  it("forwards accepted row travel from gesture start and leaves vertical/tap/cancel paths nonmutating", async () => {
+    const callbacks = actions();
+    await render(<ClockScreen model={emptyModel} {...callbacks} />);
+    const gesture = getByGestureTestId("row-scrub-local");
+
+    await act(async () => {
+      fireGestureHandler(gesture, [
+        { state: State.BEGAN, translationX: 0, translationY: 0 },
+        { state: State.ACTIVE, translationX: 9, translationY: 1 },
+        { state: State.ACTIVE, translationX: 18, translationY: 1 },
+        { state: State.END, translationX: 18, translationY: 1 },
+      ]);
+    });
+    expect(callbacks.onBeginRowScrub).toHaveBeenCalledWith("local");
+    expect(callbacks.onUpdateRowScrub.mock.calls).toEqual([[-1], [-2]]);
+    expect(callbacks.onEndRowScrub).toHaveBeenCalledTimes(1);
+    expect(screen.getByTestId("clock-scroll")).toHaveProp("scrollEnabled", true);
+
+    callbacks.onBeginRowScrub.mockClear();
+    callbacks.onUpdateRowScrub.mockClear();
+    callbacks.onEndRowScrub.mockClear();
+    await act(async () => {
+      fireGestureHandler(gesture, [
+        { state: State.BEGAN, translationX: 0, translationY: 0 },
+        { state: State.ACTIVE, translationX: 10, translationY: 12 },
+        { state: State.END, translationX: 18, translationY: 12 },
+      ]);
+    });
+    expect(callbacks.onBeginRowScrub).not.toHaveBeenCalled();
+    expect(callbacks.onUpdateRowScrub).not.toHaveBeenCalled();
+    expect(callbacks.onEndRowScrub).not.toHaveBeenCalled();
+    expect(screen.getByTestId("clock-scroll")).toHaveProp("scrollEnabled", true);
+
+    await act(async () => {
+      gesture.handlers.onFinalize?.({ translationX: 2, translationY: 1 } as never, false);
+    });
+    expect(callbacks.onBeginRowScrub).not.toHaveBeenCalled();
+
+    await act(async () => {
+      fireGestureHandler(gesture, [
+        { state: State.BEGAN, translationX: 0, translationY: 0 },
+        { state: State.ACTIVE, translationX: -9, translationY: 1 },
+        { state: State.CANCELLED, translationX: -9, translationY: 1 },
+      ]);
+    });
+    expect(callbacks.onCancelRowScrub).toHaveBeenCalledTimes(1);
+  });
+
   it("searches, adds available cities, marks selected cities unavailable, and cancels", async () => {
     const callbacks = actions();
     const selectorModel: LiveClockScreenModel = {
@@ -345,6 +446,7 @@ describe("clock collection screen", () => {
           calendarDate: "2026-01-15",
           time: "07:05",
           effectiveOffset: "UTC−05:00",
+          wallMinuteOfDay: 7 * 60 + 5,
         },
       ],
       clockRequest: {
@@ -398,6 +500,7 @@ describe("clock collection screen", () => {
               calendarDate: "2026-01-16",
               time: "00:30",
               effectiveOffset: "UTC+14:00",
+              wallMinuteOfDay: 30,
               dayDifference: "+1",
             },
             localClock,
@@ -492,6 +595,7 @@ describe("clock collection screen", () => {
               calendarDate: "2026-01-15",
               time: "17:50",
               effectiveOffset: "UTC+05:45",
+              wallMinuteOfDay: 17 * 60 + 50,
             },
           ],
         }}
@@ -600,6 +704,7 @@ describe("clock collection screen", () => {
               calendarDate: "2026-01-15",
               time: "07:05",
               effectiveOffset: "UTC−05:00",
+              wallMinuteOfDay: 7 * 60 + 5,
             },
           ],
         }}

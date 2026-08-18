@@ -10,7 +10,9 @@ Index: [World Clock v1 implementation tickets](../index.md)
 
 **Blocked by:** 07 — [Compare time through the status-surface offset grid](07-compare-time-through-the-status-surface-offset-grid.md).
 
-**Status:** ready-for-agent
+**Status:** closed
+
+**Assignee:** Codex
 
 **Delivery workflow:** Work directly on `master`; do not create a branch or pull request. Finish green and demoable.
 
@@ -20,13 +22,13 @@ Row-grid reanchor/wrap domain transitions; gesture-start snapshot and move quant
 
 ## Acceptance criteria
 
-- [ ] Every row time is a scrub/adjustable surface separate from sibling collection actions.
-- [ ] First movement directionally reanchors the scrubbed row to its previous/next quarter, including moving away from an exact boundary.
-- [ ] Switching rows reanchors through the new row; switching back to status continues from the resulting virtual offset.
-- [ ] Pointer right/left, hardware right/left, and accessibility decrement/increment all map to earlier/later as specified.
-- [ ] Touch slop, tap, cancellation, vertical win, and horizontal axis lock behave deterministically from gesture-start state.
-- [ ] Vertical row-origin gestures scroll without time change; the active row remains fixed during a continuous pointer scrub and reconciles on end.
-- [ ] Nonzero row-derived lattices wrap correctly, and decorative chevrons do not enter the accessibility tree.
+- [x] Every row time is a scrub/adjustable surface separate from sibling collection actions.
+- [x] First movement directionally reanchors the scrubbed row to its previous/next quarter, including moving away from an exact boundary.
+- [x] Switching rows reanchors through the new row; switching back to status continues from the resulting virtual offset.
+- [x] Pointer right/left, hardware right/left, and accessibility decrement/increment all map to earlier/later as specified.
+- [x] Touch slop, tap, cancellation, vertical win, and horizontal axis lock behave deterministically from gesture-start state.
+- [x] Vertical row-origin gestures scroll without time change; the active row remains fixed during a continuous pointer scrub and reconciles on end.
+- [x] Nonzero row-derived lattices wrap correctly, and decorative chevrons do not enter the accessibility tree.
 
 ## Automated acceptance subset
 
@@ -35,3 +37,7 @@ At 07:32 assert row right/left = 07:30/07:45 and −0:02/+0:13; at 07:30 assert 
 ## Later Pixel 7a checkpoint
 
 Scrub at least three rows, verify quarter-grid feel and switches, perform ten row-origin vertical scrolls with zero false activation, exercise non-quarter wrap, and confirm active-row stability. Defer to ticket 13.
+
+## Resolution
+
+Every row time now shares the native scrub recognizer while retaining its own directional wall-quarter reanchor. Application coordination preserves one live reference/comparison instant, derives pointer movement from gesture-start state, holds chronological order until pointer completion, and restores stable focus after reconciliation. Row and status surfaces share platform touch slop, dominant-axis locking, approximately 9dp quarter steps, keyboard/TalkBack mappings, human-readable values, and accessibility-hidden animated chevrons. Pure grid, application, gesture, and native UI suites cover the automated acceptance subset; Expo prebuild and the Android debug build pass. The physical Pixel checkpoint remains deferred as specified.
