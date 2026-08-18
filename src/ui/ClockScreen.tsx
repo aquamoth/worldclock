@@ -34,6 +34,11 @@ import type {
 import type { ClockCollectionProjection } from "../domain/clockCollection";
 import { formatEffectiveOffset } from "../domain/clock";
 import { revealClock } from "./nativeClockReveal";
+import {
+  resolvePresentation,
+  semanticThemes,
+  type SemanticTheme,
+} from "./presentation";
 import { scrubStepsFromTravel } from "./scrubGesture";
 
 interface ClockScreenProps {
@@ -67,31 +72,6 @@ interface ClockScreenProps {
   ) => void;
   readonly onBackToLive: () => void;
 }
-
-const palette = {
-  light: {
-    background: "#F7F7F2",
-    surface: "#FFFFFF",
-    primary: "#171916",
-    secondary: "#52584F",
-    border: "#D7DBD2",
-    accent: "#175F48",
-    disabled: "#747A72",
-    virtualBackground: "#DDEFE8",
-  },
-  dark: {
-    background: "#11130F",
-    surface: "#1D211B",
-    primary: "#F4F6EF",
-    secondary: "#B9C0B4",
-    border: "#444B40",
-    accent: "#79D8B4",
-    disabled: "#92998E",
-    virtualBackground: "#173A31",
-  },
-} as const;
-
-type Palette = (typeof palette)[keyof typeof palette];
 
 const semanticTime = (clock: ClockCollectionProjection): string =>
   clock.period ? `${clock.time} ${clock.period}` : clock.time;
@@ -257,6 +237,7 @@ function ClockRow({
   clock,
   model,
   colors,
+  stackDenseContent,
   chevronPulse,
   rowRef,
   onLayout,
@@ -272,7 +253,8 @@ function ClockRow({
 }: {
   readonly clock: ClockCollectionProjection;
   readonly model: LiveClockScreenModel;
-  readonly colors: Palette;
+  readonly colors: SemanticTheme;
+  readonly stackDenseContent: boolean;
   readonly chevronPulse: Animated.Value;
   readonly rowRef: Ref<View>;
   readonly onLayout: (event: LayoutChangeEvent) => void;
@@ -307,10 +289,14 @@ function ClockRow({
       testID={`clock-${clock.id}`}
       style={[
         styles.clockSurface,
+        stackDenseContent && styles.clockSurfaceDense,
         { backgroundColor: colors.surface, borderColor: colors.border },
       ]}
     >
-      <View style={styles.clockSummary}>
+      <View
+        testID={`clock-summary-${clock.id}`}
+        style={[styles.clockSummary, stackDenseContent && styles.clockSummaryStacked]}
+      >
         <ScrubSurface
           testId={`row-scrub-${clock.id}`}
           accessibilityLabel={`Adjust ${clock.name} time`}
@@ -378,7 +364,7 @@ function ClockRow({
         </View>
       </View>
       {clock.kind === "local" ? null : (
-        <View style={styles.rowActions}>
+        <View testID={`clock-actions-${clock.id}`} style={styles.rowActions}>
           {clock.kind === "custom" ? (
             <Pressable
               accessibilityRole="button"
@@ -411,7 +397,7 @@ function SelectorResult({
 }: {
   readonly result: SelectorResultModel;
   readonly isAdding: boolean;
-  readonly colors: Palette;
+  readonly colors: SemanticTheme;
   readonly onAddCity: (catalogId: string) => void;
 }) {
   const disabled = !result.available || isAdding;
@@ -453,14 +439,23 @@ function SelectorResult({
 function PersistenceError({
   error,
   colors,
+  stackDenseContent,
   onRetry,
 }: {
   readonly error: NonNullable<LiveClockScreenModel["persistenceError"]>;
-  readonly colors: Palette;
+  readonly colors: SemanticTheme;
+  readonly stackDenseContent: boolean;
   readonly onRetry: () => void;
 }) {
   return (
-    <View style={[styles.errorBanner, { borderColor: colors.border }]}>
+    <View
+      testID="persistence-error"
+      style={[
+        styles.errorBanner,
+        stackDenseContent && styles.errorBannerStacked,
+        { borderColor: colors.border },
+      ]}
+    >
       <Text
         accessible
         accessibilityRole="alert"
@@ -485,6 +480,7 @@ function PersistenceError({
 function StatusSurface({
   model,
   colors,
+  stackDenseContent,
   chevronPulse,
   onBeginScrub,
   onUpdateScrub,
@@ -496,7 +492,8 @@ function StatusSurface({
   onHorizontalLockChange,
 }: {
   readonly model: LiveClockScreenModel;
-  readonly colors: Palette;
+  readonly colors: SemanticTheme;
+  readonly stackDenseContent: boolean;
   readonly chevronPulse: Animated.Value;
   readonly onBeginScrub: () => void;
   readonly onUpdateScrub: (translationX: number) => void;
@@ -513,6 +510,7 @@ function StatusSurface({
     <View
       style={[
         styles.statusSurface,
+        stackDenseContent && styles.statusSurfaceDense,
         { backgroundColor: colors.surface, borderColor: colors.border },
       ]}
     >
@@ -529,7 +527,11 @@ function StatusSurface({
         onCancel={onCancelScrub}
         onAdjust={onAdjust}
       >
-        <View style={styles.statusText} accessibilityElementsHidden>
+        <View
+          testID="status-text"
+          style={[styles.statusText, stackDenseContent && styles.statusTextStacked]}
+          accessibilityElementsHidden
+        >
           <Text style={[styles.statusLabel, { color: colors.primary }]}>
             {status.label}
           </Text>
@@ -610,7 +612,8 @@ export function ClockScreen({
 }: ClockScreenProps) {
   const colorScheme = useColorScheme() === "dark" ? "dark" : "light";
   const viewport = useWindowDimensions();
-  const colors = palette[colorScheme];
+  const colors = semanticThemes[colorScheme];
+  const presentation = resolvePresentation(viewport);
   const scrollView = useRef<ScrollView>(null);
   const clockViews = useRef(new Map<string, View>());
   const clockPositions = useRef(new Map<string, number>());
@@ -685,7 +688,14 @@ export function ClockScreen({
     const nextOffset = optionIndex >= 0 ? form.offsetOptions[optionIndex + 1] : undefined;
     return (
       <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.background }]}>
-        <View style={styles.selectorHeader}>
+        <View
+          testID="custom-form-header"
+          style={[
+            styles.selectorHeader,
+            presentation.stackDenseContent && styles.selectorHeaderStacked,
+            { paddingHorizontal: presentation.horizontalPadding },
+          ]}
+        >
           <Text style={[styles.selectorTitle, { color: colors.primary }]}>
             {form.mode === "create" ? "Create custom timezone" : "Edit custom timezone"}
           </Text>
@@ -700,14 +710,21 @@ export function ClockScreen({
             <Text style={[styles.headerActionText, { color: colors.accent }]}>Cancel</Text>
           </Pressable>
         </View>
-        {model.persistenceError === undefined ? null : (
-          <PersistenceError
-            error={model.persistenceError}
-            colors={colors}
-            onRetry={onRetryPersistence}
-          />
-        )}
-        <View style={styles.form}>
+        <ScrollView
+          testID="custom-form-scroll"
+          horizontal={false}
+          keyboardShouldPersistTaps="handled"
+          contentContainerStyle={styles.formScrollContent}
+        >
+          {model.persistenceError === undefined ? null : (
+            <PersistenceError
+              error={model.persistenceError}
+              colors={colors}
+              stackDenseContent={presentation.stackDenseContent}
+              onRetry={onRetryPersistence}
+            />
+          )}
+        <View style={[styles.form, { paddingHorizontal: presentation.horizontalPadding }]}>
           <Text style={[styles.fieldLabel, { color: colors.primary }]}>Name</Text>
           <TextInput
             accessibilityLabel="Custom timezone name"
@@ -722,7 +739,13 @@ export function ClockScreen({
             <Text accessibilityRole="alert" accessibilityLiveRegion="polite" style={[styles.error, { color: colors.primary }]}>{form.nameError}</Text>
           )}
           <Text style={[styles.fieldLabel, { color: colors.primary }]}>UTC offset</Text>
-          <View style={styles.offsetPicker}>
+          <View
+            testID="offset-picker"
+            style={[
+              styles.offsetPicker,
+              presentation.stackDenseContent && styles.offsetPickerStacked,
+            ]}
+          >
             <Pressable
               accessibilityRole="button"
               accessibilityLabel="Decrease offset"
@@ -756,6 +779,7 @@ export function ClockScreen({
             style={[styles.addButton, { borderColor: colors.border, backgroundColor: colors.surface }]}
           ><Text style={[styles.addButtonText, { color: colors.accent }]}>Save</Text></Pressable>
         </View>
+        </ScrollView>
       </SafeAreaView>
     );
   }
@@ -765,7 +789,14 @@ export function ClockScreen({
       <SafeAreaView
         style={[styles.safeArea, { backgroundColor: colors.background }]}
       >
-        <View style={styles.selectorHeader}>
+        <View
+          testID="selector-header"
+          style={[
+            styles.selectorHeader,
+            presentation.stackDenseContent && styles.selectorHeaderStacked,
+            { paddingHorizontal: presentation.horizontalPadding },
+          ]}
+        >
           <Text style={[styles.selectorTitle, { color: colors.primary }]}>Add timezone</Text>
           <Pressable
             accessibilityRole="button"
@@ -784,6 +815,7 @@ export function ClockScreen({
           <PersistenceError
             error={model.persistenceError}
             colors={colors}
+            stackDenseContent={presentation.stackDenseContent}
             onRetry={onRetryPersistence}
           />
         )}
@@ -797,6 +829,7 @@ export function ClockScreen({
           autoCorrect={false}
           style={[
             styles.searchInput,
+            { marginHorizontal: presentation.horizontalPadding },
             {
               color: colors.primary,
               backgroundColor: colors.surface,
@@ -809,13 +842,22 @@ export function ClockScreen({
           accessibilityLabel="Create custom timezone"
           disabled={model.selector.isAdding}
           onPress={onOpenCustomCreator}
-          style={[styles.customPath, { borderColor: colors.border, backgroundColor: colors.surface }]}
+          style={[
+            styles.customPath,
+            { marginHorizontal: presentation.horizontalPadding },
+            { borderColor: colors.border, backgroundColor: colors.surface },
+          ]}
         ><Text style={[styles.addButtonText, { color: colors.accent }]}>Create custom timezone</Text></Pressable>
         <FlatList
+          testID="selector-results"
+          horizontal={false}
           data={model.selector.results}
           keyExtractor={({ catalogId }) => catalogId}
           keyboardShouldPersistTaps="handled"
-          contentContainerStyle={styles.results}
+          contentContainerStyle={[
+            styles.results,
+            { paddingHorizontal: presentation.horizontalPadding },
+          ]}
           renderItem={({ item }) => (
             <SelectorResult
               result={item}
@@ -849,14 +891,19 @@ export function ClockScreen({
         <ScrollView
           ref={scrollView}
           testID="clock-scroll"
+          horizontal={false}
           scrollEnabled={scrollEnabled}
-          contentContainerStyle={styles.viewport}
+          contentContainerStyle={[
+            styles.viewport,
+            { paddingHorizontal: presentation.horizontalPadding },
+          ]}
           alwaysBounceVertical={false}
           stickyHeaderIndices={[0]}
         >
         <StatusSurface
           model={model}
           colors={colors}
+          stackDenseContent={presentation.stackDenseContent}
           chevronPulse={chevronPulse}
           onBeginScrub={onBeginStatusScrub}
           onUpdateScrub={onUpdateStatusScrub}
@@ -872,7 +919,7 @@ export function ClockScreen({
           style={[
             styles.content,
             {
-              maxWidth: Math.min(viewport.width - 40, 680),
+              maxWidth: presentation.contentMaxWidth,
               minHeight: Math.max(viewport.height - 48, 0),
             },
           ]}
@@ -884,6 +931,7 @@ export function ClockScreen({
             <PersistenceError
               error={model.persistenceError}
               colors={colors}
+              stackDenseContent={presentation.stackDenseContent}
               onRetry={onRetryPersistence}
             />
           )}
@@ -895,6 +943,7 @@ export function ClockScreen({
                 clock={clock}
                 model={model}
                 colors={colors}
+                stackDenseContent={presentation.stackDenseContent}
                 chevronPulse={chevronPulse}
                 rowRef={(view) => {
                   if (view === null) clockViews.current.delete(clock.id);
@@ -970,6 +1019,12 @@ export function ClockScreen({
           }}
         >
           <View style={styles.modalBackdrop}>
+            <ScrollView
+              testID="delete-dialog-scroll"
+              horizontal={false}
+              contentContainerStyle={styles.modalScrollContent}
+              style={{ maxHeight: presentation.modalMaxHeight }}
+            >
             <View
               accessibilityViewIsModal
               style={[styles.modalSurface, { backgroundColor: colors.surface }]}
@@ -984,10 +1039,17 @@ export function ClockScreen({
                 <PersistenceError
                   error={model.persistenceError}
                   colors={colors}
+                  stackDenseContent={presentation.stackDenseContent}
                   onRetry={onRetryPersistence}
                 />
               )}
-              <View style={styles.modalActions}>
+              <View
+                testID="delete-dialog-actions"
+                style={[
+                  styles.modalActions,
+                  presentation.stackDenseContent && styles.modalActionsStacked,
+                ]}
+              >
                 <Pressable
                   accessibilityRole="button"
                   accessibilityLabel="Cancel deletion"
@@ -1010,10 +1072,11 @@ export function ClockScreen({
                   onPress={onConfirmDelete}
                   style={styles.modalAction}
                 >
-                  <Text style={[styles.modalActionText, styles.destructiveAction]}>Delete</Text>
+                  <Text style={[styles.modalActionText, { color: colors.destructive }]}>Delete</Text>
                 </Pressable>
               </View>
             </View>
+            </ScrollView>
           </View>
         </Modal>
       )}
@@ -1038,7 +1101,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 16,
   },
+  statusSurfaceDense: { paddingLeft: 12 },
   statusText: { flex: 1, minWidth: 0, flexDirection: "row", alignItems: "center", gap: 12 },
+  statusTextStacked: { flexDirection: "column", alignItems: "flex-start", gap: 2, paddingVertical: 8 },
   statusAdjustable: { flex: 1, minHeight: 64, justifyContent: "center" },
   statusLabel: { fontSize: 18, fontWeight: "700" },
   statusOffsetLine: { flexDirection: "row", alignItems: "center", gap: 6 },
@@ -1058,7 +1123,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 8,
   },
+  clockSurfaceDense: { paddingHorizontal: 12, paddingVertical: 14, alignItems: "flex-start" },
   clockSummary: { flex: 1, minWidth: 0, flexDirection: "row", alignItems: "center", gap: 20 },
+  clockSummaryStacked: { flexDirection: "column", alignItems: "stretch", gap: 8 },
   rowTimeAdjustable: { minHeight: 48, justifyContent: "center", flexShrink: 0 },
   timeLine: { flexDirection: "row", alignItems: "baseline", flexShrink: 0 },
   rowChevron: { fontSize: 21, fontWeight: "700", marginHorizontal: 4 },
@@ -1071,11 +1138,11 @@ const styles = StyleSheet.create({
   period: { fontSize: 16, fontWeight: "600", marginLeft: 5 },
   clockDetails: { flex: 1, minWidth: 0 },
   clockName: { fontSize: 19, fontWeight: "600" },
-  metadataLine: { flexDirection: "row", alignItems: "center", gap: 10, marginTop: 4 },
+  metadataLine: { flexDirection: "row", alignItems: "center", flexWrap: "wrap", gap: 10, marginTop: 4 },
   offset: { fontSize: 15, fontVariant: ["tabular-nums"] },
   dayDifference: { fontSize: 15, fontWeight: "700" },
-  rowAction: { minWidth: 48, minHeight: 48, alignItems: "center", justifyContent: "center" },
-  rowActions: { flexDirection: "row", alignItems: "center" },
+  rowAction: { width: 48, minWidth: 48, minHeight: 48, alignItems: "center", justifyContent: "center" },
+  rowActions: { width: 48, flexDirection: "column", alignItems: "center" },
   rowActionText: { fontSize: 15, fontWeight: "700" },
   deleteGlyph: { fontSize: 28, fontWeight: "400", lineHeight: 32 },
   guidance: { fontSize: 16, lineHeight: 23, marginTop: 20 },
@@ -1097,7 +1164,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
   },
-  selectorTitle: { fontSize: 26, fontWeight: "700" },
+  selectorHeaderStacked: { flexDirection: "column", alignItems: "stretch", paddingVertical: 8 },
+  selectorTitle: { minWidth: 0, flexShrink: 1, fontSize: 26, fontWeight: "700" },
   headerAction: { minWidth: 48, minHeight: 48, justifyContent: "center", alignItems: "flex-end" },
   headerActionText: { fontSize: 16, fontWeight: "700" },
   searchInput: {
@@ -1110,14 +1178,17 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   customPath: { minHeight: 48, marginHorizontal: 20, marginBottom: 12, borderWidth: 1, borderRadius: 14, alignItems: "center", justifyContent: "center" },
+  formScrollContent: { flexGrow: 1, paddingBottom: 24 },
   form: { paddingHorizontal: 20 },
   fieldLabel: { fontSize: 16, fontWeight: "700", marginBottom: 8, marginTop: 12 },
   formInput: { marginHorizontal: 0, marginBottom: 0 },
   error: { fontSize: 14, lineHeight: 20, marginTop: 6 },
   errorBanner: { marginHorizontal: 20, marginBottom: 12, borderWidth: 1, borderRadius: 14, paddingHorizontal: 14, paddingVertical: 10, flexDirection: "row", alignItems: "center", gap: 8 },
+  errorBannerStacked: { flexDirection: "column", alignItems: "stretch" },
   errorMessage: { flex: 1, fontSize: 15, lineHeight: 21 },
   retryAction: { minWidth: 48, minHeight: 48, alignItems: "center", justifyContent: "center" },
   offsetPicker: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 8 },
+  offsetPickerStacked: { flexDirection: "column", alignItems: "stretch" },
   offsetAction: { minWidth: 80, minHeight: 48, alignItems: "center", justifyContent: "center" },
   offsetActionText: { fontSize: 15, fontWeight: "700" },
   selectedOffset: { fontSize: 20, fontWeight: "700", fontVariant: ["tabular-nums"] },
@@ -1142,6 +1213,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
+  modalScrollContent: { flexGrow: 1, justifyContent: "center" },
   modalSurface: { borderRadius: 20, padding: 24 },
   modalTitle: { fontSize: 22, fontWeight: "700" },
   modalBody: { fontSize: 16, lineHeight: 23, marginTop: 12 },
@@ -1151,6 +1223,7 @@ const styles = StyleSheet.create({
     gap: 8,
     marginTop: 20,
   },
+  modalActionsStacked: { flexDirection: "column", alignItems: "stretch" },
   modalAction: {
     minWidth: 72,
     minHeight: 48,
@@ -1158,5 +1231,4 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   modalActionText: { fontSize: 16, fontWeight: "700" },
-  destructiveAction: { color: "#B3261E" },
 });

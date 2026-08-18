@@ -1,6 +1,7 @@
 import { act, fireEvent, render, screen } from "@testing-library/react-native";
 import {
   AccessibilityInfo,
+  Animated,
   BackHandler,
   Dimensions,
   StyleSheet,
@@ -851,5 +852,222 @@ describe("clock collection screen", () => {
         focus: true,
       }),
     );
+  });
+
+  it.each([
+    [320, 568, 1],
+    [320, 568, 1.35],
+    [320, 568, 2],
+    [411, 914, 1],
+    [411, 914, 1.35],
+    [411, 914, 2],
+  ])(
+    "keeps Live and Virtual rows responsive at %d×%d and font scale %s",
+    async (width, height, fontScale) => {
+      const colorScheme = jest.spyOn(ReactNative, "useColorScheme");
+      jest.spyOn(AccessibilityInfo, "isReduceMotionEnabled").mockResolvedValue(true);
+      const customClock = {
+        id: "custom-responsive",
+        kind: "custom" as const,
+        name: "A very long custom timezone name",
+        canDelete: true as const,
+        canEdit: true as const,
+        calendarDate: "2026-01-16",
+        time: "23:45",
+        effectiveOffset: "UTC+05:45",
+        wallMinuteOfDay: 23 * 60 + 45,
+        dayDifference: "+1",
+      };
+      const shouldStack = width <= 360 || fontScale >= 1.6;
+
+      for (const scheme of ["light", "dark"] as const) {
+        colorScheme.mockReturnValue(scheme);
+        Dimensions.set({
+          window: { width, height, scale: 2.625, fontScale },
+          screen: { width, height, scale: 2.625, fontScale },
+        });
+        for (const mode of ["live", "virtual"] as const) {
+          const model: LiveClockScreenModel =
+            mode === "live"
+              ? { ...emptyModel, clocks: [localClock, customClock] }
+              : {
+                  ...emptyModel,
+                  mode: "virtual",
+                  status: {
+                    label: "Virtual time",
+                    offset: "+5:45",
+                    offsetMinutes: 345,
+                    offsetAccessibilityLabel: "5 hours 45 minutes later",
+                    accessibilityValue: "5 hours 45 minutes later, 18:50",
+                  },
+                  clocks: [localClock, customClock],
+                };
+          const view = await render(<ClockScreen model={model} {...actions()} />);
+
+          expect(screen.getByTestId("clock-scroll")).toHaveProp("horizontal", false);
+          expect(screen.getAllByRole("adjustable")[0]).toHaveAccessibilityValue({
+            text: model.status.accessibilityValue,
+          });
+          expect(StyleSheet.flatten(screen.getByTestId("clock-actions-custom-responsive").props.style)).toMatchObject({
+            width: 48,
+            flexDirection: "column",
+          });
+          expect(StyleSheet.flatten(screen.getByRole("button", { name: "Edit A very long custom timezone name" }).props.style)).toMatchObject({
+            width: 48,
+            minHeight: 48,
+          });
+          expect(StyleSheet.flatten(screen.getByTestId("clock-summary-custom-responsive").props.style)).toMatchObject({
+            flexDirection: shouldStack ? "column" : "row",
+          });
+          expect(screen.getByTestId("clock-screen")).toHaveProp(
+            "accessibilityLabel",
+            mode === "virtual" ? "Virtual time screen" : "Live time screen",
+          );
+          if (mode === "virtual") {
+            expect(screen.getByText("Virtual time", { includeHiddenElements: true })).toBeOnTheScreen();
+          }
+          expect(JSON.stringify(view.toJSON())).not.toMatch(
+            /timeline dot|15-minute steps|prototype|relative label|webview/i,
+          );
+          await view.unmount();
+        }
+      }
+    },
+  );
+
+  it("makes compact large-text form and confirmation surfaces vertically scrollable", async () => {
+    Dimensions.set({
+      window: { width: 320, height: 568, scale: 2.625, fontScale: 2 },
+      screen: { width: 320, height: 568, scale: 2.625, fontScale: 2 },
+    });
+    const callbacks = actions();
+    const view = await render(
+      <ClockScreen
+        model={{
+          ...emptyModel,
+          customForm: {
+            mode: "create",
+            name: "A long custom timezone name",
+            offsetMinutes: 0,
+            offsetOptions: [-15, 0, 15],
+            isSaving: false,
+            duplicateError: "That custom timezone is already selected.",
+          },
+          persistenceError: {
+            operation: "write",
+            message: "Couldn’t save changes.",
+            retryLabel: "Retry",
+          },
+        }}
+        {...callbacks}
+      />,
+    );
+    expect(screen.getByTestId("custom-form-scroll")).toHaveProp("horizontal", false);
+    expect(StyleSheet.flatten(screen.getByTestId("custom-form-header").props.style)).toMatchObject({
+      flexDirection: "column",
+    });
+    expect(StyleSheet.flatten(screen.getByTestId("offset-picker").props.style)).toMatchObject({
+      flexDirection: "column",
+    });
+    expect(StyleSheet.flatten(screen.getByTestId("persistence-error").props.style)).toMatchObject({
+      flexDirection: "column",
+    });
+
+    await view.rerender(
+      <ClockScreen
+        model={{
+          ...emptyModel,
+          selector: {
+            query: "",
+            isAdding: false,
+            results: [
+              {
+                catalogId: "city-long",
+                city: "A city with a long readable name",
+                countryName: "A country with a long readable name",
+                ianaId: "Etc/UTC",
+                available: true,
+              },
+            ],
+          },
+        }}
+        {...callbacks}
+      />,
+    );
+    expect(screen.getByTestId("selector-results")).toHaveProp("horizontal", false);
+    expect(StyleSheet.flatten(screen.getByTestId("selector-header").props.style)).toMatchObject({
+      flexDirection: "column",
+    });
+    expect(screen.getByRole("button", { name: "Add A city with a long readable name, A country with a long readable name" })).toHaveStyle({
+      minHeight: 64,
+    });
+
+    await view.rerender(
+      <ClockScreen
+        model={{
+          ...emptyModel,
+          addTimezoneUnavailableReason: "Maximum of 24 timezones reached",
+          persistenceError: {
+            operation: "load",
+            message: "Couldn’t load your timezones.",
+            retryLabel: "Retry",
+          },
+        }}
+        {...callbacks}
+      />,
+    );
+    expect(screen.getByText("Add a timezone to compare times around the world.")).toBeOnTheScreen();
+    expect(screen.getByText("Maximum of 24 timezones reached")).toBeOnTheScreen();
+    expect(StyleSheet.flatten(screen.getByTestId("persistence-error").props.style)).toMatchObject({
+      flexDirection: "column",
+    });
+
+    await view.rerender(
+      <ClockScreen
+        model={{
+          ...emptyModel,
+          deleteConfirmation: {
+            selectionId: "custom-responsive",
+            name: "A very long custom timezone name",
+            isDeleting: false,
+          },
+        }}
+        {...callbacks}
+      />,
+    );
+    expect(screen.getByTestId("delete-dialog-scroll")).toHaveProp("horizontal", false);
+    expect(StyleSheet.flatten(screen.getByTestId("delete-dialog-scroll").props.style)).toMatchObject({
+      maxHeight: 520,
+    });
+    expect(StyleSheet.flatten(screen.getByTestId("delete-dialog-actions").props.style)).toMatchObject({
+      flexDirection: "column",
+    });
+    for (const name of ["Cancel deletion", "Delete A very long custom timezone name"]) {
+      expect(StyleSheet.flatten(screen.getByRole("button", { name }).props.style)).toMatchObject({
+        minHeight: 48,
+      });
+    }
+  });
+
+  it("stops chevron pulsing for reduced motion while keeping the scrub affordance", async () => {
+    const loop = jest.spyOn(Animated, "loop").mockReturnValue({
+      start: jest.fn(),
+      stop: jest.fn(),
+      reset: jest.fn(),
+    } as never);
+    jest.spyOn(AccessibilityInfo, "isReduceMotionEnabled").mockResolvedValue(true);
+    const reduced = await render(<ClockScreen model={emptyModel} {...actions()} />);
+    await act(async () => Promise.resolve());
+
+    expect(loop).not.toHaveBeenCalled();
+    expect(screen.getAllByText("‹", { includeHiddenElements: true }).length).toBeGreaterThan(0);
+    expect(screen.getAllByText("›", { includeHiddenElements: true }).length).toBeGreaterThan(0);
+    expect(screen.getByRole("adjustable", { name: "Adjust Local time" })).toBeOnTheScreen();
+    await reduced.unmount();
+
+    jest.mocked(AccessibilityInfo.isReduceMotionEnabled).mockResolvedValue(false);
+    await render(<ClockScreen model={emptyModel} {...actions()} />);
+    await act(async () => Promise.resolve());
+    expect(loop).toHaveBeenCalledTimes(1);
   });
 });

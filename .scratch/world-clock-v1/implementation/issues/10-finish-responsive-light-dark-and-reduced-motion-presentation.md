@@ -10,7 +10,9 @@ Index: [World Clock v1 implementation tickets](../index.md)
 
 **Blocked by:** 04 — [Create and edit custom timezones](04-create-and-edit-custom-timezones.md); 05 — [Delete selected clocks safely](05-delete-selected-clocks-safely.md); 06 — [Make collection persistence and capacity failure-safe](06-make-collection-persistence-and-capacity-failure-safe.md); 08 — [Scrub any clock row without stealing vertical scroll](08-scrub-any-clock-row-without-stealing-vertical-scroll.md).
 
-**Status:** ready-for-agent
+**Status:** claimed
+
+**Assignee:** Codex
 
 **Delivery workflow:** Work directly on `master`; do not create a branch or pull request. Finish green and demoable. This is cross-surface completion, not a redesign or WebView port.
 
