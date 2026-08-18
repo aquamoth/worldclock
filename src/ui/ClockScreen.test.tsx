@@ -382,7 +382,6 @@ describe("clock collection screen", () => {
             operation: "load",
             message: "Couldn’t load your timezones.",
             retryLabel: "Retry",
-            isRetrying: false,
           },
         }}
         {...callbacks}
@@ -409,7 +408,6 @@ describe("clock collection screen", () => {
             operation: "write",
             message: "Couldn’t save changes.",
             retryLabel: "Retry",
-            isRetrying: false,
           },
         }}
         {...callbacks}

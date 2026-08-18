@@ -225,8 +225,6 @@ function PersistenceError({
       <Pressable
         accessibilityRole="button"
         accessibilityLabel={error.retryLabel}
-        accessibilityState={{ disabled: error.isRetrying }}
-        disabled={error.isRetrying}
         onPress={onRetry}
         style={styles.retryAction}
       >

@@ -200,7 +200,30 @@ export function decodeSelectedClockSnapshot(raw: string): SelectedClockSnapshot 
 export function encodeSelectedClockSnapshot(
   snapshot: SelectedClockSnapshot,
 ): string {
-  return JSON.stringify(snapshot);
+  return JSON.stringify({
+    version: 1,
+    nextAddSequence: snapshot.nextAddSequence,
+    selectedClocks: snapshot.selectedClocks.map((clock) =>
+      clock.kind === "city"
+        ? {
+            kind: "city",
+            selectionId: clock.selectionId,
+            addSequence: clock.addSequence,
+            catalogId: clock.catalogId,
+            city: clock.city,
+            primaryCountryCode: clock.primaryCountryCode,
+            countries: clock.countries.map(({ code, name }) => ({ code, name })),
+            ianaId: clock.ianaId,
+          }
+        : {
+            kind: "custom",
+            selectionId: clock.selectionId,
+            addSequence: clock.addSequence,
+            name: clock.name,
+            offsetMinutes: clock.offsetMinutes,
+          },
+    ),
+  });
 }
 
 export const emptySelectedClockSnapshot = (): SelectedClockSnapshot => ({

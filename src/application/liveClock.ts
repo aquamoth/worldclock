@@ -112,7 +112,6 @@ export interface LiveClockScreenModel {
       | "Couldn’t load your timezones."
       | "Couldn’t save changes.";
     readonly retryLabel: "Retry";
-    readonly isRetrying: boolean;
   };
 }
 
@@ -150,6 +149,16 @@ export interface LiveClockDependencies {
 const EMPTY_GUIDANCE = "Add a timezone to compare times around the world.";
 const MAX_SELECTED_CLOCKS = 24;
 
+type PersistenceState =
+  | { readonly status: "idle" }
+  | { readonly status: "load-pending" }
+  | { readonly status: "load-failed" }
+  | { readonly status: "mutation-pending" }
+  | {
+      readonly status: "write-failed";
+      readonly retry: () => Promise<boolean>;
+    };
+
 export function createLiveClockApplication(
   dependencies: LiveClockDependencies,
 ): LiveClockApplication {
@@ -179,9 +188,7 @@ export function createLiveClockApplication(
   let announcementSequence = 0;
   let cancelScheduledTick: (() => void) | undefined;
   let initialization: Promise<void> | undefined;
-  let mutationPending = false;
-  let retryMutation: (() => Promise<boolean>) | undefined;
-  let persistenceError: LiveClockScreenModel["persistenceError"];
+  let persistenceState: PersistenceState = { status: "idle" };
 
   const selectorResults = (): readonly SelectorResultModel[] => {
     if (selectorQuery === undefined) return [];
@@ -223,6 +230,21 @@ export function createLiveClockApplication(
           (heldPosition.get(right.id) ?? Number.MAX_SAFE_INTEGER),
       );
     }
+
+    const persistenceError: LiveClockScreenModel["persistenceError"] =
+      persistenceState.status === "load-failed"
+        ? {
+            operation: "load",
+            message: "Couldn’t load your timezones.",
+            retryLabel: "Retry",
+          }
+        : persistenceState.status === "write-failed"
+          ? {
+              operation: "write",
+              message: "Couldn’t save changes.",
+              retryLabel: "Retry",
+            }
+          : undefined;
 
     return {
       mode: "live",
@@ -296,22 +318,28 @@ export function createLiveClockApplication(
 
   const initialize = (): Promise<void> => {
     if (isReady) return Promise.resolve();
+    if (persistenceState.status === "load-pending") {
+      return initialization ?? Promise.resolve();
+    }
+    persistenceState = { status: "load-pending" };
     initialization ??= dependencies.selectedClockStorage
       .load()
       .then((loaded) => {
+        const previousSnapshot = snapshot;
         snapshot = loaded ?? emptySelectedClockSnapshot();
         isReady = true;
-        persistenceError = undefined;
-        resample();
+        persistenceState = { status: "idle" };
+        try {
+          resample();
+        } catch (error) {
+          snapshot = previousSnapshot;
+          isReady = false;
+          throw error;
+        }
       })
       .catch(() => {
         isReady = false;
-        persistenceError = {
-          operation: "load",
-          message: "Couldn’t load your timezones.",
-          retryLabel: "Retry",
-          isRetrying: false,
-        };
+        persistenceState = { status: "load-failed" };
         resample();
       })
       .finally(() => {
@@ -325,41 +353,34 @@ export function createLiveClockApplication(
     setPending: (pending: boolean) => void,
     complete: () => void,
   ): Promise<boolean> => {
-    if (mutationPending) return false;
-    mutationPending = true;
+    if (persistenceState.status === "mutation-pending") return false;
+    persistenceState = { status: "mutation-pending" };
     setPending(true);
-    persistenceError = undefined;
     resample();
     try {
       await dependencies.selectedClockStorage.replace(candidate);
     } catch {
-      mutationPending = false;
       setPending(false);
-      persistenceError = {
-        operation: "write",
-        message: "Couldn’t save changes.",
-        retryLabel: "Retry",
-        isRetrying: false,
+      persistenceState = {
+        status: "write-failed",
+        retry: () => commitSnapshot(candidate, setPending, complete),
       };
-      retryMutation = () => commitSnapshot(candidate, setPending, complete);
       resample();
       return false;
     }
 
-    mutationPending = false;
     snapshot = candidate;
     setPending(false);
-    retryMutation = undefined;
-    persistenceError = undefined;
+    persistenceState = { status: "idle" };
     complete();
     resample();
     return true;
   };
 
   const discardWriteRetry = (): void => {
-    if (persistenceError?.operation !== "write") return;
-    retryMutation = undefined;
-    persistenceError = undefined;
+    if (persistenceState.status === "write-failed") {
+      persistenceState = { status: "idle" };
+    }
   };
 
   return {
@@ -406,7 +427,7 @@ export function createLiveClockApplication(
       if (
         selectorQuery === undefined ||
         isAdding ||
-        mutationPending ||
+        persistenceState.status === "mutation-pending" ||
         snapshot.selectedClocks.length >= MAX_SELECTED_CLOCKS
       ) {
         return false;
@@ -509,6 +530,7 @@ export function createLiveClockApplication(
     },
     updateCustomName: (name) => {
       if (customForm === undefined || customForm.isSaving) return;
+      discardWriteRetry();
       customForm = {
         ...customForm,
         name,
@@ -519,6 +541,7 @@ export function createLiveClockApplication(
     },
     selectCustomOffset: (offsetMinutes) => {
       if (customForm === undefined || customForm.isSaving) return;
+      discardWriteRetry();
       customForm = {
         ...customForm,
         offsetMinutes,
@@ -724,16 +747,15 @@ export function createLiveClockApplication(
       );
     },
     retryPersistence: async () => {
-      const error = persistenceError;
-      if (error === undefined || error.isRetrying) return false;
-      persistenceError = { ...error, isRetrying: true };
-      resample();
-      if (error.operation === "load") {
+      if (persistenceState.status === "load-failed") {
+        persistenceState = { status: "idle" };
+        resample();
         await initialize();
         return isReady;
       }
-      const retry = retryMutation;
-      if (retry === undefined) return false;
+      if (persistenceState.status !== "write-failed") return false;
+      const retry = persistenceState.retry;
+      persistenceState = { status: "idle" };
       return retry();
     },
   };

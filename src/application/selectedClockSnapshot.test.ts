@@ -37,11 +37,23 @@ describe("selected-clock snapshot codec", () => {
   });
 
   it("stores no projection, ordering, device, or transient fields", () => {
-    const encoded = encodeSelectedClockSnapshot(snapshot);
+    const pollutedSnapshot = {
+      ...snapshot,
+      theme: "dark",
+      displayOrder: ["local"],
+      comparisonInstant: 123,
+      selectedClocks: snapshot.selectedClocks.map((clock) => ({
+        ...clock,
+        formattedTime: "13:00",
+        effectiveOffset: "UTC+01:00",
+      })),
+    };
+    const encoded = encodeSelectedClockSnapshot(pollutedSnapshot);
 
     expect(encoded).not.toMatch(
       /displayOrder|calendarDate|effectiveOffset|dayDifference|timeZonePreference|sampledInstant|comparisonInstant|virtualOffset|selector|focus|scroll|theme/u,
     );
+    expect(encoded).not.toContain("formattedTime");
   });
 
   it.each([
@@ -102,6 +114,20 @@ describe("selected-clock snapshot codec", () => {
         },
       ],
     });
+  });
+
+  it("preserves all records when a legacy migration is above the current cap", () => {
+    const selectedClocks = Array.from({ length: 25 }, (_value, index) => ({
+      kind: "custom",
+      selectionId: `legacy-${index}`,
+      name: `Legacy ${index}`,
+      offsetMinutes: 0,
+    }));
+    const migrated = decodeSelectedClockSnapshot(
+      JSON.stringify({ version: 0, selectedClocks }),
+    );
+    expect(migrated.selectedClocks).toHaveLength(25);
+    expect(migrated.nextAddSequence).toBe(25);
   });
 
   it.each([

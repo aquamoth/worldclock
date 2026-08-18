@@ -27,10 +27,17 @@ const createHarness = ({
   initial = snapshotWith(0),
   load,
   replace,
+  project,
 }: {
   initial?: SelectedClockSnapshot;
   load?: () => Promise<SelectedClockSnapshot | null>;
   replace?: (snapshot: SelectedClockSnapshot) => Promise<void>;
+  project?: (timeZone: string) => {
+    calendarDate: string;
+    hour: number;
+    minute: number;
+    effectiveOffsetMinutes: number;
+  };
 } = {}) => {
   let stored = initial;
   const writes: SelectedClockSnapshot[] = [];
@@ -43,12 +50,13 @@ const createHarness = ({
       read: () => ({ timeZone: "UTC", locale: "en-US", uses24HourClock: true }),
     },
     timezoneRules: {
-      project: () => ({
-        calendarDate: "2026-01-15",
-        hour: 12,
-        minute: 0,
-        effectiveOffsetMinutes: 0,
-      }),
+      project: (_instant, timeZone) =>
+        project?.(timeZone) ?? {
+          calendarDate: "2026-01-15",
+          hour: 12,
+          minute: 0,
+          effectiveOffsetMinutes: 0,
+        },
     },
     catalog: {
       search: () => [city],
@@ -67,13 +75,16 @@ const createHarness = ({
 };
 
 describe("collection capacity", () => {
-  it.each([0, 1, 23])("keeps Add available with %s selected clocks", async (count) => {
+  it.each(Array.from({ length: 24 }, (_value, index) => index))(
+    "keeps Add available with %s selected clocks",
+    async (count) => {
     const { app } = createHarness({ initial: snapshotWith(count) });
     await app.initialize();
     expect(app.getScreen().addTimezoneUnavailableReason).toBeUndefined();
     app.openSelector();
     expect(app.getScreen().selector).toBeDefined();
-  });
+    },
+  );
 
   it.each([24, 25])("keeps Add visible but unavailable at or above 24 (%s)", async (count) => {
     const { app } = createHarness({ initial: snapshotWith(count) });
@@ -147,7 +158,6 @@ describe("retryable persistence", () => {
         operation: "load",
         message: "Couldn’t load your timezones.",
         retryLabel: "Retry",
-        isRetrying: false,
       },
     });
     expect(writes).toEqual([]);
@@ -156,6 +166,39 @@ describe("retryable persistence", () => {
     expect(app.getScreen().isReady).toBe(true);
     expect(app.getScreen().persistenceError).toBeUndefined();
     expect(app.getScreen().clocks.find(({ id }) => id === "custom-0")).toBeDefined();
+  });
+
+  it("contains an unsupported persisted IANA zone as a retryable load error", async () => {
+    const unsupported: SelectedClockSnapshot = {
+      version: 1,
+      nextAddSequence: 1,
+      selectedClocks: [{
+        kind: "city",
+        selectionId: "bad-zone",
+        addSequence: 0,
+        catalogId: "bad-zone",
+        city: "Bad zone",
+        primaryCountryCode: "XX",
+        countries: [{ code: "XX", name: "Example" }],
+        ianaId: "Not/AZone",
+      }],
+    };
+    const { app, writes } = createHarness({
+      initial: unsupported,
+      project: (timeZone) => {
+        if (timeZone === "Not/AZone") throw new RangeError("unsupported zone");
+        return {
+          calendarDate: "2026-01-15",
+          hour: 12,
+          minute: 0,
+          effectiveOffsetMinutes: 0,
+        };
+      },
+    });
+    await expect(app.initialize()).resolves.toBeUndefined();
+    expect(app.getScreen().isReady).toBe(false);
+    expect(app.getScreen().persistenceError?.operation).toBe("load");
+    expect(writes).toEqual([]);
   });
 
   it.each(["add", "edit", "delete"] as const)(
@@ -289,6 +332,28 @@ describe("retryable persistence", () => {
     app.cancelSelector();
     expect(app.getScreen().persistenceError).toBeUndefined();
     await expect(app.retryPersistence()).resolves.toBe(false);
+    expect(stored()).toEqual(initial);
+  });
+
+  it("changing a failed edit draft invalidates its stale retry candidate", async () => {
+    const initial = snapshotWith(1);
+    const { app, stored } = createHarness({
+      initial,
+      replace: async () => {
+        throw new Error("write failed");
+      },
+    });
+    await app.initialize();
+    app.openCustomEditor("custom-0");
+    app.updateCustomName("Previously valid");
+    await app.saveCustom();
+    expect(app.getScreen().persistenceError?.operation).toBe("write");
+
+    app.updateCustomName("");
+    expect(app.getScreen().persistenceError).toBeUndefined();
+    await expect(app.retryPersistence()).resolves.toBe(false);
+    await expect(app.saveCustom()).resolves.toBe(false);
+    expect(app.getScreen().customForm?.nameError).toBe("Enter a name.");
     expect(stored()).toEqual(initial);
   });
 });
