@@ -46,6 +46,7 @@ const actions = () => ({
   onOpenDelete: jest.fn(),
   onCancelDelete: jest.fn(),
   onConfirmDelete: jest.fn(),
+  onRetryPersistence: jest.fn(),
 });
 
 const runAnimationFramesImmediately = () =>
@@ -353,6 +354,70 @@ describe("clock collection screen", () => {
     );
     expect(backHandler?.({ type: "hardwareBackPress", timeStamp: 0 })).toBe(true);
     expect(callbacks.onCancelCustomForm).toHaveBeenCalledTimes(1);
+  });
+
+  it("keeps Add visible and disabled with the exact capacity explanation", async () => {
+    await render(
+      <ClockScreen
+        model={{
+          ...emptyModel,
+          addTimezoneUnavailableReason: "Maximum of 24 timezones reached",
+        }}
+        {...actions()}
+      />,
+    );
+
+    expect(screen.getByRole("button", { name: "Add timezone" })).toBeDisabled();
+    expect(screen.getByText("Maximum of 24 timezones reached")).toBeOnTheScreen();
+  });
+
+  it("renders load and write failures as accessible retry actions", async () => {
+    const callbacks = actions();
+    const view = await render(
+      <ClockScreen
+        model={{
+          ...emptyModel,
+          isReady: false,
+          persistenceError: {
+            operation: "load",
+            message: "Couldn’t load your timezones.",
+            retryLabel: "Retry",
+            isRetrying: false,
+          },
+        }}
+        {...callbacks}
+      />,
+    );
+    expect(
+      screen.getByRole("alert", { name: "Couldn’t load your timezones." }),
+    ).toHaveProp("accessibilityLiveRegion", "polite");
+    await fireEvent.press(screen.getByRole("button", { name: "Retry" }));
+    expect(callbacks.onRetryPersistence).toHaveBeenCalledTimes(1);
+
+    await view.rerender(
+      <ClockScreen
+        model={{
+          ...emptyModel,
+          customForm: {
+            mode: "edit",
+            name: "Office",
+            offsetMinutes: 0,
+            offsetOptions: [0],
+            isSaving: false,
+          },
+          persistenceError: {
+            operation: "write",
+            message: "Couldn’t save changes.",
+            retryLabel: "Retry",
+            isRetrying: false,
+          },
+        }}
+        {...callbacks}
+      />,
+    );
+    expect(
+      screen.getByRole("alert", { name: "Couldn’t save changes." }),
+    ).toBeOnTheScreen();
   });
 
   it("shows a named irreversible modal whose Cancel and Android Back dismiss without deleting", async () => {

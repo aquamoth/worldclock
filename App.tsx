@@ -66,6 +66,9 @@ export default function App() {
         onConfirmDelete={() => {
           void application.confirmDelete();
         }}
+        onRetryPersistence={() => {
+          void application.retryPersistence();
+        }}
       />
       <StatusBar style="auto" />
     </SafeAreaProvider>

@@ -55,4 +55,15 @@ describe("AsyncStorage selected-clock adapter", () => {
 
     await expect(storage.load()).resolves.toBeNull();
   });
+
+  it.each([
+    ["malformed", "{"],
+    ["unknown newer", JSON.stringify({ version: 2, nextAddSequence: 0, selectedClocks: [] })],
+  ])("rejects %s stored data without rewriting it", async (_case, raw) => {
+    const storage = createAsyncSelectedClockStorage();
+    (AsyncStorage.getItem as jest.Mock).mockResolvedValue(raw);
+
+    await expect(storage.load()).rejects.toThrow("Invalid selected-clock snapshot");
+    expect(AsyncStorage.setItem).not.toHaveBeenCalled();
+  });
 });

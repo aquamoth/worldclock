@@ -97,6 +97,7 @@ export interface LiveClockScreenModel {
   readonly sampledInstantMs: number;
   readonly clocks: readonly ClockCollectionProjection[];
   readonly emptyGuidance?: "Add a timezone to compare times around the world.";
+  readonly addTimezoneUnavailableReason?: "Maximum of 24 timezones reached";
   readonly selector?: ClockSelectorModel;
   readonly customForm?: CustomTimezoneFormModel;
   readonly deleteConfirmation?: DeleteConfirmationModel;
@@ -104,6 +105,14 @@ export interface LiveClockScreenModel {
   readonly announcement?: {
     readonly sequence: number;
     readonly message: string;
+  };
+  readonly persistenceError?: {
+    readonly operation: "load" | "write";
+    readonly message:
+      | "Couldn’t load your timezones."
+      | "Couldn’t save changes.";
+    readonly retryLabel: "Retry";
+    readonly isRetrying: boolean;
   };
 }
 
@@ -127,6 +136,7 @@ export interface LiveClockApplication {
   openDelete(selectionId: string): boolean;
   cancelDelete(): boolean;
   confirmDelete(): Promise<boolean>;
+  retryPersistence(): Promise<boolean>;
 }
 
 export interface LiveClockDependencies {
@@ -138,6 +148,7 @@ export interface LiveClockDependencies {
 }
 
 const EMPTY_GUIDANCE = "Add a timezone to compare times around the world.";
+const MAX_SELECTED_CLOCKS = 24;
 
 export function createLiveClockApplication(
   dependencies: LiveClockDependencies,
@@ -168,6 +179,9 @@ export function createLiveClockApplication(
   let announcementSequence = 0;
   let cancelScheduledTick: (() => void) | undefined;
   let initialization: Promise<void> | undefined;
+  let mutationPending = false;
+  let retryMutation: (() => Promise<boolean>) | undefined;
+  let persistenceError: LiveClockScreenModel["persistenceError"];
 
   const selectorResults = (): readonly SelectorResultModel[] => {
     if (selectorQuery === undefined) return [];
@@ -218,6 +232,12 @@ export function createLiveClockApplication(
       ...(snapshot.selectedClocks.length === 0
         ? { emptyGuidance: EMPTY_GUIDANCE }
         : {}),
+      ...(snapshot.selectedClocks.length >= MAX_SELECTED_CLOCKS
+        ? {
+            addTimezoneUnavailableReason:
+              "Maximum of 24 timezones reached" as const,
+          }
+        : {}),
       ...(selectorQuery === undefined
         ? {}
         : {
@@ -250,6 +270,7 @@ export function createLiveClockApplication(
       ...(deleteConfirmation === undefined ? {} : { deleteConfirmation }),
       ...(clockRequest === undefined ? {} : { clockRequest }),
       ...(announcement === undefined ? {} : { announcement }),
+      ...(persistenceError === undefined ? {} : { persistenceError }),
     };
   };
 
@@ -274,42 +295,71 @@ export function createLiveClockApplication(
   };
 
   const initialize = (): Promise<void> => {
-    initialization ??= dependencies.selectedClockStorage.load().then((loaded) => {
-      snapshot = loaded ?? emptySelectedClockSnapshot();
-      isReady = true;
-      resample();
-    });
+    if (isReady) return Promise.resolve();
+    initialization ??= dependencies.selectedClockStorage
+      .load()
+      .then((loaded) => {
+        snapshot = loaded ?? emptySelectedClockSnapshot();
+        isReady = true;
+        persistenceError = undefined;
+        resample();
+      })
+      .catch(() => {
+        isReady = false;
+        persistenceError = {
+          operation: "load",
+          message: "Couldn’t load your timezones.",
+          retryLabel: "Retry",
+          isRetrying: false,
+        };
+        resample();
+      })
+      .finally(() => {
+        initialization = undefined;
+      });
     return initialization;
   };
 
   const commitSnapshot = async (
     candidate: SelectedClockSnapshot,
-    selectionId: string,
     setPending: (pending: boolean) => void,
-  ): Promise<void> => {
+    complete: () => void,
+  ): Promise<boolean> => {
+    if (mutationPending) return false;
+    mutationPending = true;
     setPending(true);
+    persistenceError = undefined;
     resample();
     try {
       await dependencies.selectedClockStorage.replace(candidate);
-    } catch (error) {
+    } catch {
+      mutationPending = false;
       setPending(false);
+      persistenceError = {
+        operation: "write",
+        message: "Couldn’t save changes.",
+        retryLabel: "Retry",
+        isRetrying: false,
+      };
+      retryMutation = () => commitSnapshot(candidate, setPending, complete);
       resample();
-      throw error;
+      return false;
     }
 
+    mutationPending = false;
     snapshot = candidate;
     setPending(false);
-    selectorQuery = undefined;
-    customForm = undefined;
-    heldClockOrder = undefined;
-    clockRequestSequence += 1;
-    clockRequest = {
-      clockId: selectionId,
-      sequence: clockRequestSequence,
-      scrollIntoView: true,
-      focus: true,
-    };
+    retryMutation = undefined;
+    persistenceError = undefined;
+    complete();
     resample();
+    return true;
+  };
+
+  const discardWriteRetry = (): void => {
+    if (persistenceError?.operation !== "write") return;
+    retryMutation = undefined;
+    persistenceError = undefined;
   };
 
   return {
@@ -329,7 +379,13 @@ export function createLiveClockApplication(
       cancelScheduledTick = undefined;
     },
     openSelector: () => {
-      if (deleteConfirmation !== undefined) return;
+      if (
+        deleteConfirmation !== undefined ||
+        !isReady ||
+        snapshot.selectedClocks.length >= MAX_SELECTED_CLOCKS
+      ) {
+        return;
+      }
       selectorQuery = "";
       heldClockOrder = screen.clocks.map(({ id }) => id);
       resample();
@@ -341,12 +397,20 @@ export function createLiveClockApplication(
     },
     cancelSelector: () => {
       if (selectorQuery === undefined || isAdding) return;
+      discardWriteRetry();
       selectorQuery = undefined;
       heldClockOrder = undefined;
       resample();
     },
     addCity: async (catalogId) => {
-      if (selectorQuery === undefined || isAdding) return false;
+      if (
+        selectorQuery === undefined ||
+        isAdding ||
+        mutationPending ||
+        snapshot.selectedClocks.length >= MAX_SELECTED_CLOCKS
+      ) {
+        return false;
+      }
       if (
         snapshot.selectedClocks.some(
           (selected) =>
@@ -379,13 +443,31 @@ export function createLiveClockApplication(
         ],
       };
 
-      await commitSnapshot(candidate, selectionId, (pending) => {
-        isAdding = pending;
-      });
-      return true;
+      return commitSnapshot(
+        candidate,
+        (pending) => {
+          isAdding = pending;
+        },
+        () => {
+          selectorQuery = undefined;
+          heldClockOrder = undefined;
+          clockRequestSequence += 1;
+          clockRequest = {
+            clockId: selectionId,
+            sequence: clockRequestSequence,
+            scrollIntoView: true,
+            focus: true,
+          };
+        },
+      );
     },
     openCustomCreator: () => {
-      if (selectorQuery === undefined || isAdding || customForm !== undefined) {
+      if (
+        selectorQuery === undefined ||
+        isAdding ||
+        customForm !== undefined ||
+        snapshot.selectedClocks.length >= MAX_SELECTED_CLOCKS
+      ) {
         return false;
       }
       const returnSelectorQuery = selectorQuery;
@@ -447,6 +529,7 @@ export function createLiveClockApplication(
     },
     cancelCustomForm: () => {
       if (customForm === undefined || customForm.isSaving) return;
+      discardWriteRetry();
       const returnSelectorQuery = customForm.returnSelectorQuery;
       customForm = undefined;
       selectorQuery = returnSelectorQuery;
@@ -523,12 +606,32 @@ export function createLiveClockApplication(
         selectedClocks,
       };
 
-      await commitSnapshot(candidate, selectionId, (pending) => {
-        if (customForm !== undefined) {
-          customForm = { ...customForm, isSaving: pending };
-        }
-      });
-      return true;
+      if (
+        customForm.mode === "create" &&
+        snapshot.selectedClocks.length >= MAX_SELECTED_CLOCKS
+      ) {
+        return false;
+      }
+      return commitSnapshot(
+        candidate,
+        (pending) => {
+          if (customForm !== undefined) {
+            customForm = { ...customForm, isSaving: pending };
+          }
+        },
+        () => {
+          customForm = undefined;
+          selectorQuery = undefined;
+          heldClockOrder = undefined;
+          clockRequestSequence += 1;
+          clockRequest = {
+            clockId: selectionId,
+            sequence: clockRequestSequence,
+            scrollIntoView: true,
+            focus: true,
+          };
+        },
+      );
     },
     openDelete: (selectionId) => {
       if (
@@ -557,6 +660,7 @@ export function createLiveClockApplication(
       if (deleteConfirmation === undefined || deleteConfirmation.isDeleting) {
         return false;
       }
+      discardWriteRetry();
       deleteConfirmation = undefined;
       heldClockOrder = undefined;
       resample();
@@ -583,44 +687,54 @@ export function createLiveClockApplication(
         ),
       };
 
-      deleteConfirmation = { ...confirmation, isDeleting: true };
+      return commitSnapshot(
+        candidate,
+        (pending) => {
+          deleteConfirmation = { ...confirmation, isDeleting: pending };
+        },
+        () => {
+          deleteConfirmation = undefined;
+          heldClockOrder = undefined;
+          const nextClockId =
+            remainingOrder[deletedPosition] ??
+            remainingOrder[
+              Math.min(deletedPosition - 1, remainingOrder.length - 1)
+            ];
+          clockRequestSequence += 1;
+          clockRequest =
+            nextClockId === undefined
+              ? {
+                  addTimezone: true,
+                  sequence: clockRequestSequence,
+                  scrollIntoView: false,
+                  focus: true,
+                }
+              : {
+                  clockId: nextClockId,
+                  sequence: clockRequestSequence,
+                  scrollIntoView: false,
+                  focus: true,
+                };
+          announcementSequence += 1;
+          announcement = {
+            sequence: announcementSequence,
+            message: `${confirmation.name} removed.`,
+          };
+        },
+      );
+    },
+    retryPersistence: async () => {
+      const error = persistenceError;
+      if (error === undefined || error.isRetrying) return false;
+      persistenceError = { ...error, isRetrying: true };
       resample();
-      try {
-        await dependencies.selectedClockStorage.replace(candidate);
-      } catch (error) {
-        deleteConfirmation = { ...confirmation, isDeleting: false };
-        resample();
-        throw error;
+      if (error.operation === "load") {
+        await initialize();
+        return isReady;
       }
-
-      snapshot = candidate;
-      deleteConfirmation = undefined;
-      heldClockOrder = undefined;
-      const nextClockId =
-        remainingOrder[deletedPosition] ??
-        remainingOrder[Math.min(deletedPosition - 1, remainingOrder.length - 1)];
-      clockRequestSequence += 1;
-      clockRequest =
-        nextClockId === undefined
-          ? {
-              addTimezone: true,
-              sequence: clockRequestSequence,
-              scrollIntoView: false,
-              focus: true,
-            }
-          : {
-              clockId: nextClockId,
-              sequence: clockRequestSequence,
-              scrollIntoView: false,
-              focus: true,
-            };
-      announcementSequence += 1;
-      announcement = {
-        sequence: announcementSequence,
-        message: `${confirmation.name} removed.`,
-      };
-      resample();
-      return true;
+      const retry = retryMutation;
+      if (retry === undefined) return false;
+      return retry();
     },
   };
 }

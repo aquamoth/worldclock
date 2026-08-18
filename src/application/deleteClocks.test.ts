@@ -196,7 +196,7 @@ describe("selected-clock deletion", () => {
     await app.initialize();
     app.openDelete("new-york");
 
-    await expect(app.confirmDelete()).rejects.toThrow("storage unavailable");
+    await expect(app.confirmDelete()).resolves.toBe(false);
 
     expect(writes).toHaveLength(1);
     expect(stored()).toEqual(initialSnapshot);
@@ -207,5 +207,9 @@ describe("selected-clock deletion", () => {
       isDeleting: false,
     });
     expect(app.getScreen().announcement).toBeUndefined();
+    expect(app.getScreen().persistenceError).toMatchObject({
+      operation: "write",
+      retryLabel: "Retry",
+    });
   });
 });

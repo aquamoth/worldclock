@@ -3,7 +3,11 @@ import type {
   CustomClockDefinition,
   SelectedClockDefinition,
 } from "../domain/clockCollection";
-import { validateCustomTimezoneDraft } from "../domain/customTimezone";
+import {
+  cityDuplicateKey,
+  customDuplicateKey,
+  validateCustomTimezoneDraft,
+} from "../domain/customTimezone";
 
 export interface SelectedClockSnapshot {
   readonly version: 1;
@@ -102,6 +106,47 @@ const parseSelected = (value: unknown, index: number): SelectedClockDefinition =
   return invalid(`selectedClocks[${index}].kind must be city or custom`);
 };
 
+type SnapshotMigration = (
+  value: Record<string, unknown>,
+) => Record<string, unknown>;
+
+const migrateVersionZero: SnapshotMigration = (value) => {
+  if (!Array.isArray(value.selectedClocks)) {
+    return invalid("legacy selectedClocks must be an array");
+  }
+  return {
+    version: 1,
+    nextAddSequence: value.selectedClocks.length,
+    selectedClocks: value.selectedClocks.map((clock, addSequence) => {
+      if (!isRecord(clock)) {
+        return invalid(`legacy selectedClocks[${addSequence}] must be an object`);
+      }
+      return { ...clock, addSequence };
+    }),
+  };
+};
+
+const SNAPSHOT_MIGRATIONS: ReadonlyMap<number, SnapshotMigration> = new Map([
+  [0, migrateVersionZero],
+]);
+
+const migrateToCurrent = (
+  value: Record<string, unknown>,
+): Record<string, unknown> => {
+  let migrated = value;
+  while (migrated.version !== 1) {
+    if (!Number.isInteger(migrated.version)) {
+      return invalid("version must be an integer");
+    }
+    const version = Number(migrated.version);
+    if (version > 1) return invalid(`version ${version} is newer than supported version 1`);
+    const migration = SNAPSHOT_MIGRATIONS.get(version);
+    if (migration === undefined) return invalid(`version ${version} is unsupported`);
+    migrated = migration(migrated);
+  }
+  return migrated;
+};
+
 export function decodeSelectedClockSnapshot(raw: string): SelectedClockSnapshot {
   let value: unknown;
   try {
@@ -109,20 +154,46 @@ export function decodeSelectedClockSnapshot(raw: string): SelectedClockSnapshot 
   } catch {
     return invalid("expected JSON");
   }
-  if (!isRecord(value) || value.version !== 1) {
-    return invalid("version must be 1");
-  }
-  if (!Array.isArray(value.selectedClocks)) {
+  if (!isRecord(value)) return invalid("snapshot must be an object");
+  const current = migrateToCurrent(value);
+  if (!Array.isArray(current.selectedClocks)) {
     return invalid("selectedClocks must be an array");
+  }
+
+  const nextAddSequence = requiredNonnegativeInteger(
+    current.nextAddSequence,
+    "nextAddSequence",
+  );
+  const selectedClocks = current.selectedClocks.map(parseSelected);
+  const selectionIds = new Set<string>();
+  const addSequences = new Set<number>();
+  const duplicateIdentities = new Set<string>();
+  for (const clock of selectedClocks) {
+    if (selectionIds.has(clock.selectionId)) {
+      return invalid(`selectionId ${clock.selectionId} must be unique`);
+    }
+    if (addSequences.has(clock.addSequence)) {
+      return invalid(`addSequence ${clock.addSequence} must be unique`);
+    }
+    if (clock.addSequence >= nextAddSequence) {
+      return invalid("nextAddSequence must exceed every selected addSequence");
+    }
+    const duplicateIdentity =
+      clock.kind === "city"
+        ? cityDuplicateKey(clock.catalogId)
+        : customDuplicateKey(clock.name, clock.offsetMinutes);
+    if (duplicateIdentities.has(duplicateIdentity)) {
+      return invalid("selected clock duplicate identities must be unique");
+    }
+    selectionIds.add(clock.selectionId);
+    addSequences.add(clock.addSequence);
+    duplicateIdentities.add(duplicateIdentity);
   }
 
   return {
     version: 1,
-    nextAddSequence: requiredNonnegativeInteger(
-      value.nextAddSequence,
-      "nextAddSequence",
-    ),
-    selectedClocks: value.selectedClocks.map(parseSelected),
+    nextAddSequence,
+    selectedClocks,
   };
 }
 

@@ -10,7 +10,9 @@ Index: [World Clock v1 implementation tickets](../index.md)
 
 **Blocked by:** 04 — [Create and edit custom timezones](04-create-and-edit-custom-timezones.md); 05 — [Delete selected clocks safely](05-delete-selected-clocks-safely.md).
 
-**Status:** ready-for-agent
+**Status:** claimed
+
+**Assignee:** Codex
 
 **Delivery workflow:** Work directly on `master`; do not create a branch or pull request. Finish green and demoable.
 

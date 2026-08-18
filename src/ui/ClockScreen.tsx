@@ -39,6 +39,7 @@ interface ClockScreenProps {
   readonly onOpenDelete: (selectionId: string) => void;
   readonly onCancelDelete: () => void;
   readonly onConfirmDelete: () => void;
+  readonly onRetryPersistence: () => void;
 }
 
 const palette = {
@@ -201,6 +202,40 @@ function SelectorResult({
   );
 }
 
+function PersistenceError({
+  error,
+  colors,
+  onRetry,
+}: {
+  readonly error: NonNullable<LiveClockScreenModel["persistenceError"]>;
+  readonly colors: Palette;
+  readonly onRetry: () => void;
+}) {
+  return (
+    <View style={[styles.errorBanner, { borderColor: colors.border }]}>
+      <Text
+        accessible
+        accessibilityRole="alert"
+        accessibilityLabel={error.message}
+        accessibilityLiveRegion="polite"
+        style={[styles.errorMessage, { color: colors.primary }]}
+      >
+        {error.message}
+      </Text>
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel={error.retryLabel}
+        accessibilityState={{ disabled: error.isRetrying }}
+        disabled={error.isRetrying}
+        onPress={onRetry}
+        style={styles.retryAction}
+      >
+        <Text style={[styles.headerActionText, { color: colors.accent }]}>Retry</Text>
+      </Pressable>
+    </View>
+  );
+}
+
 export function ClockScreen({
   model,
   onOpenSelector,
@@ -216,6 +251,7 @@ export function ClockScreen({
   onOpenDelete,
   onCancelDelete,
   onConfirmDelete,
+  onRetryPersistence,
 }: ClockScreenProps) {
   const colorScheme = useColorScheme() === "dark" ? "dark" : "light";
   const viewport = useWindowDimensions();
@@ -289,6 +325,13 @@ export function ClockScreen({
             <Text style={[styles.headerActionText, { color: colors.accent }]}>Cancel</Text>
           </Pressable>
         </View>
+        {model.persistenceError === undefined ? null : (
+          <PersistenceError
+            error={model.persistenceError}
+            colors={colors}
+            onRetry={onRetryPersistence}
+          />
+        )}
         <View style={styles.form}>
           <Text style={[styles.fieldLabel, { color: colors.primary }]}>Name</Text>
           <TextInput
@@ -362,6 +405,13 @@ export function ClockScreen({
             <Text style={[styles.headerActionText, { color: colors.accent }]}>Cancel</Text>
           </Pressable>
         </View>
+        {model.persistenceError === undefined ? null : (
+          <PersistenceError
+            error={model.persistenceError}
+            colors={colors}
+            onRetry={onRetryPersistence}
+          />
+        )}
         <TextInput
           accessibilityLabel="Search timezones"
           value={model.selector.query}
@@ -425,6 +475,15 @@ export function ClockScreen({
         >
           <Text style={[styles.title, { color: colors.primary }]}>World Clock</Text>
 
+          {model.persistenceError === undefined ||
+          model.deleteConfirmation !== undefined ? null : (
+            <PersistenceError
+              error={model.persistenceError}
+              colors={colors}
+              onRetry={onRetryPersistence}
+            />
+          )}
+
           <View style={styles.clockCollection}>
             {model.clocks.map((clock) => (
               <ClockRow
@@ -457,19 +516,33 @@ export function ClockScreen({
             }}
             accessibilityRole="button"
             accessibilityLabel="Add timezone"
-            disabled={!model.isReady}
+            accessibilityHint={model.addTimezoneUnavailableReason}
+            disabled={
+              !model.isReady || model.addTimezoneUnavailableReason !== undefined
+            }
             onPress={onOpenSelector}
             style={({ pressed }) => [
               styles.addButton,
               {
                 borderColor: colors.border,
                 backgroundColor: colors.surface,
-                opacity: pressed ? 0.72 : model.isReady ? 1 : 0.58,
+                opacity:
+                  pressed
+                    ? 0.72
+                    : model.isReady &&
+                        model.addTimezoneUnavailableReason === undefined
+                      ? 1
+                      : 0.58,
               },
             ]}
           >
             <Text style={[styles.addButtonText, { color: colors.accent }]}>+ Add timezone</Text>
           </Pressable>
+          {model.addTimezoneUnavailableReason === undefined ? null : (
+            <Text style={[styles.capacityMessage, { color: colors.secondary }]}>
+              {model.addTimezoneUnavailableReason}
+            </Text>
+          )}
         </View>
       </ScrollView>
       {model.deleteConfirmation === undefined ? null : (
@@ -493,6 +566,13 @@ export function ClockScreen({
               <Text style={[styles.modalBody, { color: colors.secondary }]}>
                 {`${model.deleteConfirmation.name} will be removed. This cannot be undone.`}
               </Text>
+              {model.persistenceError === undefined ? null : (
+                <PersistenceError
+                  error={model.persistenceError}
+                  colors={colors}
+                  onRetry={onRetryPersistence}
+                />
+              )}
               <View style={styles.modalActions}>
                 <Pressable
                   accessibilityRole="button"
@@ -562,6 +642,7 @@ const styles = StyleSheet.create({
   rowActionText: { fontSize: 15, fontWeight: "700" },
   deleteGlyph: { fontSize: 28, fontWeight: "400", lineHeight: 32 },
   guidance: { fontSize: 16, lineHeight: 23, marginTop: 20 },
+  capacityMessage: { fontSize: 14, lineHeight: 20, marginTop: 8, textAlign: "center" },
   addButton: {
     minHeight: 48,
     marginTop: 20,
@@ -596,6 +677,9 @@ const styles = StyleSheet.create({
   fieldLabel: { fontSize: 16, fontWeight: "700", marginBottom: 8, marginTop: 12 },
   formInput: { marginHorizontal: 0, marginBottom: 0 },
   error: { fontSize: 14, lineHeight: 20, marginTop: 6 },
+  errorBanner: { marginHorizontal: 20, marginBottom: 12, borderWidth: 1, borderRadius: 14, paddingHorizontal: 14, paddingVertical: 10, flexDirection: "row", alignItems: "center", gap: 8 },
+  errorMessage: { flex: 1, fontSize: 15, lineHeight: 21 },
+  retryAction: { minWidth: 48, minHeight: 48, alignItems: "center", justifyContent: "center" },
   offsetPicker: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 8 },
   offsetAction: { minWidth: 80, minHeight: 48, alignItems: "center", justifyContent: "center" },
   offsetActionText: { fontSize: 15, fontWeight: "700" },
