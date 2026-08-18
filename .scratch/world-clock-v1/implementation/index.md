@@ -30,4 +30,4 @@ All tickets are single-session tracer-bullet slices. Work directly on `master`; 
 
 ## Current frontier
 
-[04 — Create and edit custom timezones](issues/04-create-and-edit-custom-timezones.md), [05 — Delete selected clocks safely](issues/05-delete-selected-clocks-safely.md), and [07 — Compare time through the status-surface offset grid](issues/07-compare-time-through-the-status-surface-offset-grid.md) are now the independent frontier after completion of [03 — Add, project, and restore offline city clocks](issues/03-add-project-and-restore-offline-city-clocks.md). Follow the dependency table for later joins.
+[05 — Delete selected clocks safely](issues/05-delete-selected-clocks-safely.md) and [07 — Compare time through the status-surface offset grid](issues/07-compare-time-through-the-status-surface-offset-grid.md) remain the independent frontier after completion of [04 — Create and edit custom timezones](issues/04-create-and-edit-custom-timezones.md). Ticket 06 remains blocked on 05; follow the dependency table for later joins.
