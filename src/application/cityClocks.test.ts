@@ -301,6 +301,15 @@ describe("offline city clocks", () => {
       "local",
     ]);
 
+    app.openCustomCreator();
+    app.cancelCustomForm();
+    expect(app.getScreen().selector).toBeDefined();
+    expect(app.getScreen().clocks.map(({ id }) => id)).toEqual([
+      "new-york",
+      "panama",
+      "local",
+    ]);
+
     app.cancelSelector();
     expect(app.getScreen().clocks.map(({ id }) => id)).toEqual([
       "panama",

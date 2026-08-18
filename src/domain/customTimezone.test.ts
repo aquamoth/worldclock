@@ -77,6 +77,9 @@ describe("custom timezone duplicate identity", () => {
     expect(customDuplicateKey("  ＧＲＡＮＤＭＡ　Straße  ", 390)).toBe(
       customDuplicateKey("grandma strasse", 390),
     );
+    expect(customDuplicateKey("grandma\u2003\u00a0  time", 390)).toBe(
+      customDuplicateKey("grandma time", 390),
+    );
   });
 
   it("keeps punctuation, diacritics, and offsets significant", () => {

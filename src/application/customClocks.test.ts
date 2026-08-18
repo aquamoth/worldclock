@@ -140,6 +140,37 @@ describe("custom timezone create and edit", () => {
     expect(app.getScreen().clockRequest?.clockId).toBe("stable-custom");
   });
 
+  it("keeps invalid and duplicate edits in place without changing visible or stored clocks", async () => {
+    const initial: SelectedClockSnapshot = {
+      version: 1,
+      nextAddSequence: 9,
+      selectedClocks: [
+        ...savedCustom("Office", 60).selectedClocks,
+        {
+          kind: "custom",
+          selectionId: "second-custom",
+          addSequence: 8,
+          name: "Straße",
+          offsetMinutes: 120,
+        },
+      ],
+    };
+    const { app, writes, stored } = createHarness(initial);
+    await app.initialize();
+    app.openCustomEditor("stable-custom");
+    app.updateCustomName("Office\n");
+    await expect(app.saveCustom()).resolves.toBe(false);
+    expect(app.getScreen().customForm?.nameError).toMatch(/one line/u);
+
+    app.updateCustomName("  STRASSE\u2003");
+    app.selectCustomOffset(120);
+    await expect(app.saveCustom()).resolves.toBe(false);
+    expect(app.getScreen().customForm?.duplicateError).toMatch(/already exists/u);
+    expect(app.getScreen().clocks.find(({ id }) => id === "stable-custom")?.name).toBe("Office");
+    expect(writes).toEqual([]);
+    expect(stored()).toEqual(initial);
+  });
+
   it("discards create/edit drafts on cancel and never exposes city editing", async () => {
     const initial = savedCustom();
     const { app, writes } = createHarness(initial);

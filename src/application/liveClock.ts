@@ -10,6 +10,7 @@ import {
 } from "../domain/clockCollection";
 import {
   CUSTOM_OFFSET_OPTIONS,
+  cityDuplicateKey,
   customDuplicateKey,
   validateCustomTimezoneDraft,
 } from "../domain/customTimezone";
@@ -146,7 +147,7 @@ export function createLiveClockApplication(
     if (selectorQuery === undefined) return [];
     const selectedCatalogIds = new Set(
       snapshot.selectedClocks.flatMap((clock) =>
-        clock.kind === "city" ? [clock.catalogId] : [],
+        clock.kind === "city" ? [cityDuplicateKey(clock.catalogId)] : [],
       ),
     );
     return dependencies.catalog.search(selectorQuery).map((entry) => ({
@@ -154,7 +155,7 @@ export function createLiveClockApplication(
       city: entry.city,
       countryName: resolvePrimaryCountryName(entry),
       ianaId: entry.ianaId,
-      available: !selectedCatalogIds.has(entry.id),
+      available: !selectedCatalogIds.has(cityDuplicateKey(entry.id)),
     }));
   };
 
@@ -253,6 +254,36 @@ export function createLiveClockApplication(
     return initialization;
   };
 
+  const commitSnapshot = async (
+    candidate: SelectedClockSnapshot,
+    selectionId: string,
+    setPending: (pending: boolean) => void,
+  ): Promise<void> => {
+    setPending(true);
+    resample();
+    try {
+      await dependencies.selectedClockStorage.replace(candidate);
+    } catch (error) {
+      setPending(false);
+      resample();
+      throw error;
+    }
+
+    snapshot = candidate;
+    setPending(false);
+    selectorQuery = undefined;
+    customForm = undefined;
+    heldClockOrder = undefined;
+    clockRequestSequence += 1;
+    clockRequest = {
+      clockId: selectionId,
+      sequence: clockRequestSequence,
+      scrollIntoView: true,
+      focus: true,
+    };
+    resample();
+  };
+
   return {
     getScreen: () => screen,
     subscribe: (listener) => {
@@ -290,7 +321,8 @@ export function createLiveClockApplication(
       if (
         snapshot.selectedClocks.some(
           (selected) =>
-            selected.kind === "city" && selected.catalogId === catalogId,
+            selected.kind === "city" &&
+            cityDuplicateKey(selected.catalogId) === cityDuplicateKey(catalogId),
         )
       ) {
         return false;
@@ -298,8 +330,6 @@ export function createLiveClockApplication(
       const entry = dependencies.catalog.findById(catalogId);
       if (entry === undefined) return false;
 
-      isAdding = true;
-      resample();
       const addSequence = snapshot.nextAddSequence;
       const selectionId = `selection-${addSequence}-${entry.id}`;
       const candidate: SelectedClockSnapshot = {
@@ -320,26 +350,9 @@ export function createLiveClockApplication(
         ],
       };
 
-      try {
-        await dependencies.selectedClockStorage.replace(candidate);
-      } catch (error) {
-        isAdding = false;
-        resample();
-        throw error;
-      }
-
-      snapshot = candidate;
-      isAdding = false;
-      selectorQuery = undefined;
-      heldClockOrder = undefined;
-      clockRequestSequence += 1;
-      clockRequest = {
-        clockId: selectionId,
-        sequence: clockRequestSequence,
-        scrollIntoView: true,
-        focus: true,
-      };
-      resample();
+      await commitSnapshot(candidate, selectionId, (pending) => {
+        isAdding = pending;
+      });
       return true;
     },
     openCustomCreator: () => {
@@ -407,7 +420,7 @@ export function createLiveClockApplication(
       const returnSelectorQuery = customForm.returnSelectorQuery;
       customForm = undefined;
       selectorQuery = returnSelectorQuery;
-      heldClockOrder = undefined;
+      if (returnSelectorQuery === undefined) heldClockOrder = undefined;
       resample();
     },
     saveCustom: async () => {
@@ -480,27 +493,11 @@ export function createLiveClockApplication(
         selectedClocks,
       };
 
-      customForm = { ...customForm, isSaving: true };
-      resample();
-      try {
-        await dependencies.selectedClockStorage.replace(candidate);
-      } catch (error) {
-        customForm = { ...customForm, isSaving: false };
-        resample();
-        throw error;
-      }
-      snapshot = candidate;
-      customForm = undefined;
-      selectorQuery = undefined;
-      heldClockOrder = undefined;
-      clockRequestSequence += 1;
-      clockRequest = {
-        clockId: selectionId,
-        sequence: clockRequestSequence,
-        scrollIntoView: true,
-        focus: true,
-      };
-      resample();
+      await commitSnapshot(candidate, selectionId, (pending) => {
+        if (customForm !== undefined) {
+          customForm = { ...customForm, isSaving: pending };
+        }
+      });
       return true;
     },
   };
