@@ -76,9 +76,9 @@ interface ClockScreenProps {
 const semanticTime = (clock: ClockCollectionProjection): string =>
   clock.period ? `${clock.time} ${clock.period}` : clock.time;
 
-const semanticClockLabel = (clock: ClockCollectionProjection): string => {
+const semanticClockDetails = (clock: ClockCollectionProjection): string => {
   const parts = [clock.name];
-  parts.push(semanticTime(clock), clock.effectiveOffset);
+  parts.push(clock.effectiveOffset);
   if (clock.kind !== "local" && clock.dayDifference !== undefined) {
     const magnitude = Number.parseInt(clock.dayDifference.replace("−", "-"), 10);
     parts.push(`${clock.dayDifference} ${Math.abs(magnitude) === 1 ? "day" : "days"}`);
@@ -132,6 +132,7 @@ const useChevronPulse = (): Animated.Value => {
 function ScrubSurface({
   testId,
   accessibilityLabel,
+  accessibilityHint,
   accessibilityValue,
   targetRef,
   style,
@@ -146,6 +147,7 @@ function ScrubSurface({
 }: {
   readonly testId: string;
   readonly accessibilityLabel: string;
+  readonly accessibilityHint?: string;
   readonly accessibilityValue: string;
   readonly targetRef?: Ref<View>;
   readonly style: ComponentProps<typeof View>["style"];
@@ -216,6 +218,7 @@ function ScrubSurface({
         focusable
         accessibilityRole="adjustable"
         accessibilityLabel={accessibilityLabel}
+        accessibilityHint={accessibilityHint}
         accessibilityValue={{ text: accessibilityValue }}
         accessibilityActions={[
           { name: "decrement", label: "Earlier" },
@@ -299,10 +302,14 @@ function ClockRow({
       >
         <ScrubSurface
           testId={`row-scrub-${clock.id}`}
-          accessibilityLabel={`Adjust ${clock.name} time`}
+          accessibilityLabel={semanticTime(clock)}
+          accessibilityHint={`Adjust ${clock.name} time`}
           accessibilityValue={scrubValue}
           targetRef={rowRef}
-          style={styles.rowTimeAdjustable}
+          style={[
+            styles.rowTimeAdjustable,
+            stackDenseContent && styles.rowTimeAdjustableDense,
+          ]}
           scrollGesture={scrollGesture}
           onHorizontalLockChange={onHorizontalLockChange}
           onBegin={handleBeginScrub}
@@ -311,28 +318,43 @@ function ClockRow({
           onCancel={onCancelScrub}
           onAdjust={handleAdjust}
         >
-          <View style={styles.timeLine} accessibilityElementsHidden>
+          <View
+            testID={`clock-time-line-${clock.id}`}
+            style={[styles.timeLine, stackDenseContent && styles.timeLineDense]}
+            accessibilityElementsHidden
+          >
             <Animated.Text
               importantForAccessibility="no-hide-descendants"
               style={[
                 styles.rowChevron,
+                stackDenseContent && styles.rowChevronDenseLeft,
                 { color: colors.accent, opacity: chevronPulse },
               ]}
             >
               ‹
             </Animated.Text>
-            <Text style={[styles.time, { color: colors.primary }]}>
-              {clock.time}
-            </Text>
-            {clock.period ? (
-              <Text style={[styles.period, { color: colors.secondary }]}>
-                {clock.period}
+            <View style={[styles.timeValue, stackDenseContent && styles.timeValueDense]}>
+              <Text
+                testID={`clock-time-${clock.id}`}
+                style={[
+                  styles.time,
+                  stackDenseContent && styles.timeDense,
+                  { color: colors.primary },
+                ]}
+              >
+                {clock.time}
               </Text>
-            ) : null}
+              {clock.period ? (
+                <Text style={[styles.period, { color: colors.secondary }]}>
+                  {clock.period}
+                </Text>
+              ) : null}
+            </View>
             <Animated.Text
               importantForAccessibility="no-hide-descendants"
               style={[
                 styles.rowChevron,
+                stackDenseContent && styles.rowChevronDenseRight,
                 { color: colors.accent, opacity: chevronPulse },
               ]}
             >
@@ -343,7 +365,7 @@ function ClockRow({
         <View
           accessible
           accessibilityRole="summary"
-          accessibilityLabel={semanticClockLabel(clock)}
+          accessibilityLabel={semanticClockDetails(clock)}
           style={styles.clockDetails}
         >
           <View accessibilityElementsHidden>
@@ -417,7 +439,7 @@ function SelectorResult({
         {
           backgroundColor: colors.surface,
           borderColor: colors.border,
-          opacity: pressed ? 0.72 : disabled ? 0.58 : 1,
+          opacity: pressed ? 0.72 : 1,
         },
       ]}
     >
@@ -806,7 +828,7 @@ export function ClockScreen({
             onPress={onCancelSelector}
             style={({ pressed }) => [
               styles.headerAction,
-              { opacity: pressed ? 0.7 : model.selector?.isAdding ? 0.58 : 1 },
+              { opacity: pressed ? 0.7 : 1 },
             ]}
           >
             <Text style={[styles.headerActionText, { color: colors.accent }]}>Cancel</Text>
@@ -996,7 +1018,7 @@ export function ClockScreen({
                     : model.isReady &&
                         model.addTimezoneUnavailableReason === undefined
                       ? 1
-                      : 0.58,
+                      : 1,
               },
             ]}
           >
@@ -1130,14 +1152,27 @@ const styles = StyleSheet.create({
   clockSummary: { flex: 1, minWidth: 0, flexDirection: "row", alignItems: "center", gap: 20 },
   clockSummaryStacked: { flexDirection: "column", alignItems: "stretch", gap: 8 },
   rowTimeAdjustable: { minHeight: 48, justifyContent: "center", flexShrink: 0 },
+  rowTimeAdjustableDense: { width: "100%", flexShrink: 1 },
   timeLine: { flexDirection: "row", alignItems: "baseline", flexShrink: 0 },
+  timeLineDense: {
+    minHeight: 48,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 20,
+    position: "relative",
+  },
+  timeValue: { flexDirection: "row", alignItems: "baseline" },
+  timeValueDense: { flexDirection: "column", alignItems: "center" },
   rowChevron: { fontSize: 21, fontWeight: "700", marginHorizontal: 4 },
+  rowChevronDenseLeft: { position: "absolute", left: 0, top: 0, marginHorizontal: 0 },
+  rowChevronDenseRight: { position: "absolute", right: 0, top: 0, marginHorizontal: 0 },
   time: {
     fontSize: 42,
     fontVariant: ["tabular-nums"],
     fontWeight: "500",
     includeFontPadding: false,
   },
+  timeDense: { fontSize: 30 },
   period: { fontSize: 16, fontWeight: "600", marginLeft: 5 },
   clockDetails: { flex: 1, minWidth: 0 },
   clockName: { fontSize: 19, fontWeight: "600" },

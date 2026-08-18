@@ -75,6 +75,22 @@ const runAnimationFramesImmediately = () =>
     return 1;
   });
 
+const accessibilityLabelsInOrder = (node: unknown): string[] => {
+  if (node === null || typeof node !== "object") return [];
+  const element = node as {
+    readonly props?: { readonly accessibilityLabel?: unknown };
+    readonly children?: readonly unknown[];
+  };
+  const ownLabel =
+    typeof element.props?.accessibilityLabel === "string"
+      ? [element.props.accessibilityLabel]
+      : [];
+  return [
+    ...ownLabel,
+    ...(element.children ?? []).flatMap(accessibilityLabelsInOrder),
+  ];
+};
+
 describe("clock collection screen", () => {
   beforeEach(() => {
     revealClockMock.mockClear();
@@ -93,8 +109,9 @@ describe("clock collection screen", () => {
     await render(<ClockScreen model={emptyModel} {...callbacks} />);
 
     const localTime = screen.getByRole("adjustable", {
-      name: "Adjust Local time",
+      name: "13:05",
     });
+    expect(localTime).toHaveProp("accessibilityHint", "Adjust Local time");
     expect(localTime).toHaveAccessibilityValue({ text: "Live time" });
     expect(
       screen.getByText("Add a timezone to compare times around the world."),
@@ -309,7 +326,7 @@ describe("clock collection screen", () => {
     );
 
     const rowTime = screen.getByRole("adjustable", {
-      name: "Adjust Local time",
+      name: "13:18",
     });
     expect(rowTime).toHaveAccessibilityValue({
       text: "13 minutes later, 13:18",
@@ -423,6 +440,14 @@ describe("clock collection screen", () => {
         disabled: true,
       }),
     ).toBeDisabled();
+    expect(
+      StyleSheet.flatten(
+        screen.getByRole("button", {
+          name: "Detroit, United States, already added",
+          disabled: true,
+        }).props.style,
+      ),
+    ).toMatchObject({ opacity: 1 });
 
     await fireEvent.press(screen.getByRole("button", { name: "Cancel" }));
     expect(callbacks.onCancelSelector).toHaveBeenCalledTimes(1);
@@ -546,7 +571,7 @@ describe("clock collection screen", () => {
 
     expect(
       screen.getByRole("summary", {
-        name: "Kiritimati, 00:30, UTC+14:00, +1 day",
+        name: "Kiritimati, UTC+14:00, +1 day",
       }),
     ).toBeOnTheScreen();
     expect(screen.queryByText("Kiribati")).not.toBeOnTheScreen();
@@ -671,6 +696,7 @@ describe("clock collection screen", () => {
     );
 
     expect(screen.getByRole("button", { name: "Add timezone" })).toBeDisabled();
+    expect(StyleSheet.flatten(screen.getByRole("button", { name: "Add timezone" }).props.style)).toMatchObject({ opacity: 1 });
     expect(screen.getByText("Maximum of 24 timezones reached")).toBeOnTheScreen();
   });
 
@@ -919,6 +945,28 @@ describe("clock collection screen", () => {
           expect(StyleSheet.flatten(screen.getByTestId("clock-summary-custom-responsive").props.style)).toMatchObject({
             flexDirection: shouldStack ? "column" : "row",
           });
+          expect(StyleSheet.flatten(screen.getByTestId("clock-time-line-custom-responsive", { includeHiddenElements: true }).props.style)).toMatchObject(
+            shouldStack
+              ? { position: "relative", paddingHorizontal: 20, flexShrink: 0 }
+              : { flexDirection: "row", flexShrink: 0 },
+          );
+          if (shouldStack) {
+            expect(StyleSheet.flatten(screen.getByTestId("clock-time-custom-responsive", { includeHiddenElements: true }).props.style)).toMatchObject({
+              fontSize: 30,
+            });
+          }
+          const readingOrder = accessibilityLabelsInOrder(view.toJSON());
+          const rowOrder = [
+            "23:45",
+            "A very long custom timezone name, UTC+05:45, +1 day",
+            "Edit A very long custom timezone name",
+            "Delete A very long custom timezone name",
+          ];
+          for (let index = 1; index < rowOrder.length; index += 1) {
+            expect(readingOrder.indexOf(rowOrder[index - 1]!)).toBeLessThan(
+              readingOrder.indexOf(rowOrder[index]!),
+            );
+          }
           expect(screen.getByTestId("clock-screen")).toHaveProp(
             "accessibilityLabel",
             mode === "virtual" ? "Virtual time screen" : "Live time screen",
@@ -935,13 +983,26 @@ describe("clock collection screen", () => {
     },
   );
 
-  it("makes compact large-text form and confirmation surfaces vertically scrollable", async () => {
-    Dimensions.set({
-      window: { width: 320, height: 568, scale: 2.625, fontScale: 2 },
-      screen: { width: 320, height: 568, scale: 2.625, fontScale: 2 },
-    });
-    const callbacks = actions();
-    const view = await render(
+  it.each([
+    [320, 568, 1],
+    [320, 568, 1.35],
+    [320, 568, 2],
+    [411, 914, 1],
+    [411, 914, 1.35],
+    [411, 914, 2],
+  ])("keeps every overlay surface responsive at %d×%d and font scale %s", async (width, height, fontScale) => {
+    const colorScheme = jest.spyOn(ReactNative, "useColorScheme");
+    jest.spyOn(AccessibilityInfo, "isReduceMotionEnabled").mockResolvedValue(true);
+    const shouldStack = width <= 360 || fontScale >= 1.6;
+
+    for (const scheme of ["light", "dark"] as const) {
+      colorScheme.mockReturnValue(scheme);
+      Dimensions.set({
+        window: { width, height, scale: 2.625, fontScale },
+        screen: { width, height, scale: 2.625, fontScale },
+      });
+      const callbacks = actions();
+      const view = await render(
       <ClockScreen
         model={{
           ...emptyModel,
@@ -965,13 +1026,13 @@ describe("clock collection screen", () => {
     expect(screen.getByTestId("custom-form-scroll")).toHaveProp("horizontal", false);
     expect(StyleSheet.flatten(screen.getByTestId("custom-form-scroll").props.style)).toMatchObject({ flex: 1 });
     expect(StyleSheet.flatten(screen.getByTestId("custom-form-header").props.style)).toMatchObject({
-      flexDirection: "column",
+      flexDirection: shouldStack ? "column" : "row",
     });
     expect(StyleSheet.flatten(screen.getByTestId("offset-picker").props.style)).toMatchObject({
-      flexDirection: "column",
+      flexDirection: shouldStack ? "column" : "row",
     });
     expect(StyleSheet.flatten(screen.getByTestId("persistence-error").props.style)).toMatchObject({
-      flexDirection: "column",
+      flexDirection: shouldStack ? "column" : "row",
     });
 
     await view.rerender(
@@ -998,7 +1059,7 @@ describe("clock collection screen", () => {
     expect(screen.getByTestId("selector-results")).toHaveProp("horizontal", false);
     expect(StyleSheet.flatten(screen.getByTestId("selector-results").props.style)).toMatchObject({ flex: 1 });
     expect(StyleSheet.flatten(screen.getByTestId("selector-header").props.style)).toMatchObject({
-      flexDirection: "column",
+      flexDirection: shouldStack ? "column" : "row",
     });
     expect(screen.getByRole("button", { name: "Add A city with a long readable name, A country with a long readable name" })).toHaveStyle({
       minHeight: 64,
@@ -1021,7 +1082,7 @@ describe("clock collection screen", () => {
     expect(screen.getByText("Add a timezone to compare times around the world.")).toBeOnTheScreen();
     expect(screen.getByText("Maximum of 24 timezones reached")).toBeOnTheScreen();
     expect(StyleSheet.flatten(screen.getByTestId("persistence-error").props.style)).toMatchObject({
-      flexDirection: "column",
+      flexDirection: shouldStack ? "column" : "row",
     });
 
     await view.rerender(
@@ -1039,15 +1100,17 @@ describe("clock collection screen", () => {
     );
     expect(screen.getByTestId("delete-dialog-scroll")).toHaveProp("horizontal", false);
     expect(StyleSheet.flatten(screen.getByTestId("delete-dialog-scroll").props.style)).toMatchObject({
-      maxHeight: 520,
+      maxHeight: height - 48,
     });
     expect(StyleSheet.flatten(screen.getByTestId("delete-dialog-actions").props.style)).toMatchObject({
-      flexDirection: "column",
+      flexDirection: shouldStack ? "column" : "row",
     });
     for (const name of ["Cancel deletion", "Delete A very long custom timezone name"]) {
       expect(StyleSheet.flatten(screen.getByRole("button", { name }).props.style)).toMatchObject({
         minHeight: 48,
       });
+    }
+      await view.unmount();
     }
   });
 
@@ -1064,7 +1127,7 @@ describe("clock collection screen", () => {
     expect(loop).not.toHaveBeenCalled();
     expect(screen.getAllByText("‹", { includeHiddenElements: true }).length).toBeGreaterThan(0);
     expect(screen.getAllByText("›", { includeHiddenElements: true }).length).toBeGreaterThan(0);
-    expect(screen.getByRole("adjustable", { name: "Adjust Local time" })).toBeOnTheScreen();
+    expect(screen.getByRole("adjustable", { name: "13:05" })).toBeOnTheScreen();
     await reduced.unmount();
 
     jest.mocked(AccessibilityInfo.isReduceMotionEnabled).mockResolvedValue(false);
