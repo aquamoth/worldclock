@@ -1,7 +1,7 @@
 # Research Expo and offline timezone feasibility
 
 Type: research
-Status: open
+Status: claimed
 Blocked by:
 
 ## Question
