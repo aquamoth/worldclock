@@ -1,6 +1,8 @@
 import {
   generateClockCatalog,
+  reconcileCatalogIdentityLedger,
   serializeClockCatalog,
+  type CatalogIdentityLedger,
   type CatalogGenerationInput,
 } from "./generator";
 
@@ -105,5 +107,99 @@ describe("clock catalog generator", () => {
     const value = input();
     mutate(value);
     expect(() => generateClockCatalog(value)).toThrow(/catalog/i);
+  });
+
+  it("requires a catalog-version bump whenever generated content changes", () => {
+    const catalog = generateClockCatalog(input());
+    const ledger: CatalogIdentityLedger = {
+      schemaVersion: 1,
+      catalogVersion: 1,
+      catalogSha256: "a".repeat(64),
+      identities: catalog.entries.map(({ id, ianaId }) => ({
+        id,
+        ianaIds: [ianaId],
+        retired: false,
+      })),
+    };
+
+    expect(() =>
+      reconcileCatalogIdentityLedger(catalog, "b".repeat(64), ledger, {}),
+    ).toThrow(/catalog/i);
+  });
+
+  it("preserves IDs across explicitly reviewed IANA link changes", () => {
+    const catalog = generateClockCatalog(input());
+    const nextCatalog = {
+      ...catalog,
+      catalogVersion: 2,
+      entries: catalog.entries.map((entry) =>
+        entry.id === "city-0001"
+          ? { ...entry, ianaId: "America/Fortaleza" }
+          : entry,
+      ),
+    };
+    const ledger: CatalogIdentityLedger = {
+      schemaVersion: 1,
+      catalogVersion: 1,
+      catalogSha256: "a".repeat(64),
+      identities: catalog.entries.map(({ id, ianaId }) => ({
+        id,
+        ianaIds: [ianaId],
+        retired: false,
+      })),
+    };
+
+    expect(
+      reconcileCatalogIdentityLedger(nextCatalog, "b".repeat(64), ledger, {
+        "city-0001": "America/Fortaleza",
+      }).identities.find(({ id }) => id === "city-0001"),
+    ).toEqual({
+      id: "city-0001",
+      ianaIds: ["America/Sao_Paulo", "America/Fortaleza"],
+      retired: false,
+    });
+  });
+
+  it("never permits a retired catalog ID to be reused", () => {
+    const catalog = { ...generateClockCatalog(input()), catalogVersion: 2 };
+    const ledger: CatalogIdentityLedger = {
+      schemaVersion: 1,
+      catalogVersion: 1,
+      catalogSha256: "a".repeat(64),
+      identities: catalog.entries.map(({ id, ianaId }) => ({
+        id,
+        ianaIds: [ianaId],
+        retired: id === "city-0001",
+      })),
+    };
+
+    expect(() =>
+      reconcileCatalogIdentityLedger(catalog, "b".repeat(64), ledger, {}),
+    ).toThrow(/catalog/i);
+  });
+
+  it("does not replace an existing region's immutable catalog ID", () => {
+    const catalog = generateClockCatalog(input());
+    const nextCatalog = {
+      ...catalog,
+      catalogVersion: 2,
+      entries: catalog.entries.map((entry) =>
+        entry.id === "city-0001" ? { ...entry, id: "city-new" } : entry,
+      ),
+    };
+    const ledger: CatalogIdentityLedger = {
+      schemaVersion: 1,
+      catalogVersion: 1,
+      catalogSha256: "a".repeat(64),
+      identities: catalog.entries.map(({ id, ianaId }) => ({
+        id,
+        ianaIds: [ianaId],
+        retired: false,
+      })),
+    };
+
+    expect(() =>
+      reconcileCatalogIdentityLedger(nextCatalog, "b".repeat(64), ledger, {}),
+    ).toThrow(/catalog/i);
   });
 });

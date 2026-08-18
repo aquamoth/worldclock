@@ -25,6 +25,7 @@ const entries = [
 describe("offline clock catalog search", () => {
   it("normalizes case, diacritics, punctuation, and whitespace", () => {
     expect(normalizeCatalogSearchText("  SÃO---Paulo\t")).toBe("sao paulo");
+    expect(normalizeCatalogSearchText("STRAẞE ς")).toBe("strasse σ");
   });
 
   it("returns the complete catalog in stable city/country/ID order for an empty query", () => {
@@ -54,6 +55,22 @@ describe("offline clock catalog search", () => {
     expect(searchClockCatalog(tied, "paris").map(({ id }) => id)).toEqual([
       "city-a",
       "city-b",
+    ]);
+  });
+
+  it("keeps ranking independent of query-term order", () => {
+    const reordered = [
+      entry("beta-alpha", "Beta Alpha", "Example", "AA"),
+      entry("alpha-beta", "Alpha Beta", "Example", "AB"),
+    ];
+
+    expect(searchClockCatalog(reordered, "alpha beta").map(({ id }) => id)).toEqual([
+      "alpha-beta",
+      "beta-alpha",
+    ]);
+    expect(searchClockCatalog(reordered, "beta alpha").map(({ id }) => id)).toEqual([
+      "alpha-beta",
+      "beta-alpha",
     ]);
   });
 

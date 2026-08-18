@@ -5,6 +5,8 @@ export function normalizeCatalogSearchText(value: string): string {
     .normalize("NFKD")
     .replace(/\p{M}+/gu, "")
     .toLowerCase()
+    .replaceAll("ß", "ss")
+    .replaceAll("ς", "σ")
     .replace(/[\p{P}\s]+/gu, " ")
     .trim();
 }
@@ -18,14 +20,17 @@ const indexedFields = (entry: ClockCatalogEntry): string[] => [
   ...entry.aliases,
 ].map(normalizeCatalogSearchText);
 
-const rank = (fields: readonly string[], query: string): number => {
-  if (fields.some((field) => field === query)) return 0;
-  if (fields.some((field) => field.startsWith(query))) return 1;
-  if (fields.some((field) => field.split(" ").some((token) => token.startsWith(query)))) {
+const termRank = (fields: readonly string[], term: string): number => {
+  if (fields.some((field) => field === term)) return 0;
+  if (fields.some((field) => field.startsWith(term))) return 1;
+  if (fields.some((field) => field.split(" ").some((token) => token.startsWith(term)))) {
     return 2;
   }
   return 3;
 };
+
+const rank = (fields: readonly string[], terms: readonly string[]): number =>
+  terms.reduce((weakestRank, term) => Math.max(weakestRank, termRank(fields, term)), 0);
 
 export function searchClockCatalog(
   entries: readonly ClockCatalogEntry[],
@@ -40,7 +45,7 @@ export function searchClockCatalog(
       terms.every((term) => fields.some((field) => field.includes(term))),
     )
     .sort((left, right) => {
-      const rankDifference = rank(left.fields, query) - rank(right.fields, query);
+      const rankDifference = rank(left.fields, terms) - rank(right.fields, terms);
       if (rankDifference !== 0) return rankDifference;
 
       const cityDifference = compareText(

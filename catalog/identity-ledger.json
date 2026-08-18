@@ -1,0 +1,2191 @@
+{
+  "schemaVersion": 1,
+  "catalogVersion": 1,
+  "catalogSha256": "ba0325f467d592a9bdbe556baf8686bc51aa2a8aaef049f90856662e1f3479c7",
+  "identities": [
+    {
+      "id": "city-0086",
+      "ianaIds": [
+        "Africa/Abidjan"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0103",
+      "ianaIds": [
+        "Africa/Algiers"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0130",
+      "ianaIds": [
+        "Africa/Bissau"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0107",
+      "ianaIds": [
+        "Africa/Cairo"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0170",
+      "ianaIds": [
+        "Africa/Casablanca"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0110",
+      "ianaIds": [
+        "Africa/Ceuta"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0108",
+      "ianaIds": [
+        "Africa/El_Aaiun"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0312",
+      "ianaIds": [
+        "Africa/Johannesburg"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0260",
+      "ianaIds": [
+        "Africa/Juba"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0257",
+      "ianaIds": [
+        "Africa/Khartoum"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0198",
+      "ianaIds": [
+        "Africa/Lagos"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0194",
+      "ianaIds": [
+        "Africa/Maputo"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0166",
+      "ianaIds": [
+        "Africa/Monrovia"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0150",
+      "ianaIds": [
+        "Africa/Nairobi"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0265",
+      "ianaIds": [
+        "Africa/Ndjamena"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0261",
+      "ianaIds": [
+        "Africa/Sao_Tome"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0169",
+      "ianaIds": [
+        "Africa/Tripoli"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0271",
+      "ianaIds": [
+        "Africa/Tunis"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0195",
+      "ianaIds": [
+        "Africa/Windhoek"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0303",
+      "ianaIds": [
+        "America/Adak"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0297",
+      "ianaIds": [
+        "America/Anchorage"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0050",
+      "ianaIds": [
+        "America/Araguaina"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0013",
+      "ianaIds": [
+        "America/Argentina/Buenos_Aires"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0018",
+      "ianaIds": [
+        "America/Argentina/Catamarca"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0014",
+      "ianaIds": [
+        "America/Argentina/Cordoba"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0016",
+      "ianaIds": [
+        "America/Argentina/Jujuy"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0019",
+      "ianaIds": [
+        "America/Argentina/La_Rioja"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0021",
+      "ianaIds": [
+        "America/Argentina/Mendoza"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0023",
+      "ianaIds": [
+        "America/Argentina/Rio_Gallegos"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0015",
+      "ianaIds": [
+        "America/Argentina/Salta"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0020",
+      "ianaIds": [
+        "America/Argentina/San_Juan"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0022",
+      "ianaIds": [
+        "America/Argentina/San_Luis"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0017",
+      "ianaIds": [
+        "America/Argentina/Tucuman"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0024",
+      "ianaIds": [
+        "America/Argentina/Ushuaia"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0224",
+      "ianaIds": [
+        "America/Asuncion"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0052",
+      "ianaIds": [
+        "America/Bahia"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0190",
+      "ianaIds": [
+        "America/Bahia_Banderas"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0040",
+      "ianaIds": [
+        "America/Barbados"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0047",
+      "ianaIds": [
+        "America/Belem"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0064",
+      "ianaIds": [
+        "America/Belize"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0058",
+      "ianaIds": [
+        "America/Boa_Vista"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0094",
+      "ianaIds": [
+        "America/Bogota"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0294",
+      "ianaIds": [
+        "America/Boise"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0078",
+      "ianaIds": [
+        "America/Cambridge_Bay"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0054",
+      "ianaIds": [
+        "America/Campo_Grande"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0182",
+      "ianaIds": [
+        "America/Cancun"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0308",
+      "ianaIds": [
+        "America/Caracas"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0120",
+      "ianaIds": [
+        "America/Cayenne"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0286",
+      "ianaIds": [
+        "America/Chicago"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0186",
+      "ianaIds": [
+        "America/Chihuahua"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0187",
+      "ianaIds": [
+        "America/Ciudad_Juarez"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0095",
+      "ianaIds": [
+        "America/Costa_Rica"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0089",
+      "ianaIds": [
+        "America/Coyhaique"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0055",
+      "ianaIds": [
+        "America/Cuiaba"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0123",
+      "ianaIds": [
+        "America/Danmarkshavn"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0084",
+      "ianaIds": [
+        "America/Dawson"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0081",
+      "ianaIds": [
+        "America/Dawson_Creek"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0293",
+      "ianaIds": [
+        "America/Denver"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0277",
+      "ianaIds": [
+        "America/Detroit"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0077",
+      "ianaIds": [
+        "America/Edmonton"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0060",
+      "ianaIds": [
+        "America/Eirunepe"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0262",
+      "ianaIds": [
+        "America/El_Salvador"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0082",
+      "ianaIds": [
+        "America/Fort_Nelson"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0048",
+      "ianaIds": [
+        "America/Fortaleza"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0067",
+      "ianaIds": [
+        "America/Glace_Bay"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0069",
+      "ianaIds": [
+        "America/Goose_Bay"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0264",
+      "ianaIds": [
+        "America/Grand_Turk"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0128",
+      "ianaIds": [
+        "America/Guatemala"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0104",
+      "ianaIds": [
+        "America/Guayaquil"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0131",
+      "ianaIds": [
+        "America/Guyana"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0066",
+      "ianaIds": [
+        "America/Halifax"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0096",
+      "ianaIds": [
+        "America/Havana"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0191",
+      "ianaIds": [
+        "America/Hermosillo"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0280",
+      "ianaIds": [
+        "America/Indiana/Indianapolis"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0288",
+      "ianaIds": [
+        "America/Indiana/Knox"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0283",
+      "ianaIds": [
+        "America/Indiana/Marengo"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0284",
+      "ianaIds": [
+        "America/Indiana/Petersburg"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0287",
+      "ianaIds": [
+        "America/Indiana/Tell_City"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0285",
+      "ianaIds": [
+        "America/Indiana/Vevay"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0281",
+      "ianaIds": [
+        "America/Indiana/Vincennes"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0282",
+      "ianaIds": [
+        "America/Indiana/Winamac"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0079",
+      "ianaIds": [
+        "America/Inuvik"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0071",
+      "ianaIds": [
+        "America/Iqaluit"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0147",
+      "ianaIds": [
+        "America/Jamaica"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0298",
+      "ianaIds": [
+        "America/Juneau"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0278",
+      "ianaIds": [
+        "America/Kentucky/Louisville"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0279",
+      "ianaIds": [
+        "America/Kentucky/Monticello"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0045",
+      "ianaIds": [
+        "America/La_Paz"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0206",
+      "ianaIds": [
+        "America/Lima"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0296",
+      "ianaIds": [
+        "America/Los_Angeles"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0051",
+      "ianaIds": [
+        "America/Maceio"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0199",
+      "ianaIds": [
+        "America/Managua"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0059",
+      "ianaIds": [
+        "America/Manaus"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0177",
+      "ianaIds": [
+        "America/Martinique"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0185",
+      "ianaIds": [
+        "America/Matamoros"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0189",
+      "ianaIds": [
+        "America/Mazatlan"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0289",
+      "ianaIds": [
+        "America/Menominee"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0183",
+      "ianaIds": [
+        "America/Merida"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0300",
+      "ianaIds": [
+        "America/Metlakatla"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0181",
+      "ianaIds": [
+        "America/Mexico_City"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0215",
+      "ianaIds": [
+        "America/Miquelon"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0068",
+      "ianaIds": [
+        "America/Moncton"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0184",
+      "ianaIds": [
+        "America/Monterrey"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0305",
+      "ianaIds": [
+        "America/Montevideo"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0276",
+      "ianaIds": [
+        "America/New_York"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0302",
+      "ianaIds": [
+        "America/Nome"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0046",
+      "ianaIds": [
+        "America/Noronha"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0292",
+      "ianaIds": [
+        "America/North_Dakota/Beulah"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0290",
+      "ianaIds": [
+        "America/North_Dakota/Center"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0291",
+      "ianaIds": [
+        "America/North_Dakota/New_Salem"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0122",
+      "ianaIds": [
+        "America/Nuuk"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0188",
+      "ianaIds": [
+        "America/Ojinaga"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0205",
+      "ianaIds": [
+        "America/Panama"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0259",
+      "ianaIds": [
+        "America/Paramaribo"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0295",
+      "ianaIds": [
+        "America/Phoenix"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0134",
+      "ianaIds": [
+        "America/Port-au-Prince"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0057",
+      "ianaIds": [
+        "America/Porto_Velho"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0217",
+      "ianaIds": [
+        "America/Puerto_Rico"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0090",
+      "ianaIds": [
+        "America/Punta_Arenas"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0074",
+      "ianaIds": [
+        "America/Rankin_Inlet"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0049",
+      "ianaIds": [
+        "America/Recife"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0075",
+      "ianaIds": [
+        "America/Regina"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0073",
+      "ianaIds": [
+        "America/Resolute"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0061",
+      "ianaIds": [
+        "America/Rio_Branco"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0056",
+      "ianaIds": [
+        "America/Santarem"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0088",
+      "ianaIds": [
+        "America/Santiago"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0102",
+      "ianaIds": [
+        "America/Santo_Domingo"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0053",
+      "ianaIds": [
+        "America/Sao_Paulo"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0124",
+      "ianaIds": [
+        "America/Scoresbysund"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0299",
+      "ianaIds": [
+        "America/Sitka"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0065",
+      "ianaIds": [
+        "America/St_Johns"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0076",
+      "ianaIds": [
+        "America/Swift_Current"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0133",
+      "ianaIds": [
+        "America/Tegucigalpa"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0125",
+      "ianaIds": [
+        "America/Thule"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0192",
+      "ianaIds": [
+        "America/Tijuana"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0070",
+      "ianaIds": [
+        "America/Toronto"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0080",
+      "ianaIds": [
+        "America/Vancouver"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0083",
+      "ianaIds": [
+        "America/Whitehorse"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0072",
+      "ianaIds": [
+        "America/Winnipeg"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0301",
+      "ianaIds": [
+        "America/Yakutat"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0006",
+      "ianaIds": [
+        "Antarctica/Casey"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0007",
+      "ianaIds": [
+        "Antarctica/Davis"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0028",
+      "ianaIds": [
+        "Antarctica/Macquarie"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0008",
+      "ianaIds": [
+        "Antarctica/Mawson"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0009",
+      "ianaIds": [
+        "Antarctica/Palmer"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0010",
+      "ianaIds": [
+        "Antarctica/Rothera"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0011",
+      "ianaIds": [
+        "Antarctica/Troll"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0012",
+      "ianaIds": [
+        "Antarctica/Vostok"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0157",
+      "ianaIds": [
+        "Asia/Almaty"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0148",
+      "ianaIds": [
+        "Asia/Amman"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0254",
+      "ianaIds": [
+        "Asia/Anadyr"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0161",
+      "ianaIds": [
+        "Asia/Aqtau"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0160",
+      "ianaIds": [
+        "Asia/Aqtobe"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0270",
+      "ianaIds": [
+        "Asia/Ashgabat"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0162",
+      "ianaIds": [
+        "Asia/Atyrau"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0144",
+      "ianaIds": [
+        "Asia/Baghdad"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0039",
+      "ianaIds": [
+        "Asia/Baku"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0266",
+      "ianaIds": [
+        "Asia/Bangkok"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0240",
+      "ianaIds": [
+        "Asia/Barnaul"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0164",
+      "ianaIds": [
+        "Asia/Beirut"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0151",
+      "ianaIds": [
+        "Asia/Bishkek"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0245",
+      "ianaIds": [
+        "Asia/Chita"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0165",
+      "ianaIds": [
+        "Asia/Colombo"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0263",
+      "ianaIds": [
+        "Asia/Damascus"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0041",
+      "ianaIds": [
+        "Asia/Dhaka"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0269",
+      "ianaIds": [
+        "Asia/Dili"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0002",
+      "ianaIds": [
+        "Asia/Dubai"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0267",
+      "ianaIds": [
+        "Asia/Dushanbe"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0099",
+      "ianaIds": [
+        "Asia/Famagusta"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0218",
+      "ianaIds": [
+        "Asia/Gaza"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0219",
+      "ianaIds": [
+        "Asia/Hebron"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0309",
+      "ianaIds": [
+        "Asia/Ho_Chi_Minh"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0132",
+      "ianaIds": [
+        "Asia/Hong_Kong"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0175",
+      "ianaIds": [
+        "Asia/Hovd"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0244",
+      "ianaIds": [
+        "Asia/Irkutsk"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0136",
+      "ianaIds": [
+        "Asia/Jakarta"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0139",
+      "ianaIds": [
+        "Asia/Jayapura"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0141",
+      "ianaIds": [
+        "Asia/Jerusalem"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0003",
+      "ianaIds": [
+        "Asia/Kabul"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0253",
+      "ianaIds": [
+        "Asia/Kamchatka"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0213",
+      "ianaIds": [
+        "Asia/Karachi"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0200",
+      "ianaIds": [
+        "Asia/Kathmandu"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0247",
+      "ianaIds": [
+        "Asia/Khandyga"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0142",
+      "ianaIds": [
+        "Asia/Kolkata"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0243",
+      "ianaIds": [
+        "Asia/Krasnoyarsk"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0193",
+      "ianaIds": [
+        "Asia/Kuching"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0176",
+      "ianaIds": [
+        "Asia/Macau"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0250",
+      "ianaIds": [
+        "Asia/Magadan"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0138",
+      "ianaIds": [
+        "Asia/Makassar"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0212",
+      "ianaIds": [
+        "Asia/Manila"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0098",
+      "ianaIds": [
+        "Asia/Nicosia"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0242",
+      "ianaIds": [
+        "Asia/Novokuznetsk"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0239",
+      "ianaIds": [
+        "Asia/Novosibirsk"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0238",
+      "ianaIds": [
+        "Asia/Omsk"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0163",
+      "ianaIds": [
+        "Asia/Oral"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0137",
+      "ianaIds": [
+        "Asia/Pontianak"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0155",
+      "ianaIds": [
+        "Asia/Pyongyang"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0225",
+      "ianaIds": [
+        "Asia/Qatar"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0159",
+      "ianaIds": [
+        "Asia/Qostanay"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0158",
+      "ianaIds": [
+        "Asia/Qyzylorda"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0255",
+      "ianaIds": [
+        "Asia/Riyadh"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0251",
+      "ianaIds": [
+        "Asia/Sakhalin"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0306",
+      "ianaIds": [
+        "Asia/Samarkand"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0156",
+      "ianaIds": [
+        "Asia/Seoul"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0092",
+      "ianaIds": [
+        "Asia/Shanghai"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0258",
+      "ianaIds": [
+        "Asia/Singapore"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0252",
+      "ianaIds": [
+        "Asia/Srednekolymsk"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0274",
+      "ianaIds": [
+        "Asia/Taipei"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0307",
+      "ianaIds": [
+        "Asia/Tashkent"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0119",
+      "ianaIds": [
+        "Asia/Tbilisi"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0145",
+      "ianaIds": [
+        "Asia/Tehran"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0062",
+      "ianaIds": [
+        "Asia/Thimphu"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0149",
+      "ianaIds": [
+        "Asia/Tokyo"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0241",
+      "ianaIds": [
+        "Asia/Tomsk"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0174",
+      "ianaIds": [
+        "Asia/Ulaanbaatar"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0093",
+      "ianaIds": [
+        "Asia/Urumqi"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0249",
+      "ianaIds": [
+        "Asia/Ust-Nera"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0248",
+      "ianaIds": [
+        "Asia/Vladivostok"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0246",
+      "ianaIds": [
+        "Asia/Yakutsk"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0173",
+      "ianaIds": [
+        "Asia/Yangon"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0237",
+      "ianaIds": [
+        "Asia/Yekaterinburg"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0005",
+      "ianaIds": [
+        "Asia/Yerevan"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0222",
+      "ianaIds": [
+        "Atlantic/Azores"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0044",
+      "ianaIds": [
+        "Atlantic/Bermuda"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0111",
+      "ianaIds": [
+        "Atlantic/Canary"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0097",
+      "ianaIds": [
+        "Atlantic/Cape_Verde"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0116",
+      "ianaIds": [
+        "Atlantic/Faroe"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0221",
+      "ianaIds": [
+        "Atlantic/Madeira"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0127",
+      "ianaIds": [
+        "Atlantic/South_Georgia"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0114",
+      "ianaIds": [
+        "Atlantic/Stanley"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0035",
+      "ianaIds": [
+        "Australia/Adelaide"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0033",
+      "ianaIds": [
+        "Australia/Brisbane"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0032",
+      "ianaIds": [
+        "Australia/Broken_Hill"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0036",
+      "ianaIds": [
+        "Australia/Darwin"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0038",
+      "ianaIds": [
+        "Australia/Eucla"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0029",
+      "ianaIds": [
+        "Australia/Hobart"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0034",
+      "ianaIds": [
+        "Australia/Lindeman"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0027",
+      "ianaIds": [
+        "Australia/Lord_Howe"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0030",
+      "ianaIds": [
+        "Australia/Melbourne"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0037",
+      "ianaIds": [
+        "Australia/Perth"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0031",
+      "ianaIds": [
+        "Australia/Sydney"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0001",
+      "ianaIds": [
+        "Europe/Andorra"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0233",
+      "ianaIds": [
+        "Europe/Astrakhan"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0126",
+      "ianaIds": [
+        "Europe/Athens"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0227",
+      "ianaIds": [
+        "Europe/Belgrade"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0101",
+      "ianaIds": [
+        "Europe/Berlin"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0042",
+      "ianaIds": [
+        "Europe/Brussels"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0226",
+      "ianaIds": [
+        "Europe/Bucharest"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0135",
+      "ianaIds": [
+        "Europe/Budapest"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0171",
+      "ianaIds": [
+        "Europe/Chisinau"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0140",
+      "ianaIds": [
+        "Europe/Dublin"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0121",
+      "ianaIds": [
+        "Europe/Gibraltar"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0112",
+      "ianaIds": [
+        "Europe/Helsinki"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0273",
+      "ianaIds": [
+        "Europe/Istanbul"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0228",
+      "ianaIds": [
+        "Europe/Kaliningrad"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0231",
+      "ianaIds": [
+        "Europe/Kirov"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0275",
+      "ianaIds": [
+        "Europe/Kyiv"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0220",
+      "ianaIds": [
+        "Europe/Lisbon"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0118",
+      "ianaIds": [
+        "Europe/London"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0109",
+      "ianaIds": [
+        "Europe/Madrid"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0178",
+      "ianaIds": [
+        "Europe/Malta"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0063",
+      "ianaIds": [
+        "Europe/Minsk"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0229",
+      "ianaIds": [
+        "Europe/Moscow"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0117",
+      "ianaIds": [
+        "Europe/Paris"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0100",
+      "ianaIds": [
+        "Europe/Prague"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0168",
+      "ianaIds": [
+        "Europe/Riga"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0146",
+      "ianaIds": [
+        "Europe/Rome"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0236",
+      "ianaIds": [
+        "Europe/Samara"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0234",
+      "ianaIds": [
+        "Europe/Saratov"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0230",
+      "ianaIds": [
+        "Europe/Simferopol"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0043",
+      "ianaIds": [
+        "Europe/Sofia"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0106",
+      "ianaIds": [
+        "Europe/Tallinn"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0004",
+      "ianaIds": [
+        "Europe/Tirane"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0235",
+      "ianaIds": [
+        "Europe/Ulyanovsk"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0026",
+      "ianaIds": [
+        "Europe/Vienna"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0167",
+      "ianaIds": [
+        "Europe/Vilnius"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0232",
+      "ianaIds": [
+        "Europe/Volgograd"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0214",
+      "ianaIds": [
+        "Europe/Warsaw"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0085",
+      "ianaIds": [
+        "Europe/Zurich"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0143",
+      "ianaIds": [
+        "Indian/Chagos"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0180",
+      "ianaIds": [
+        "Indian/Maldives"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0179",
+      "ianaIds": [
+        "Indian/Mauritius"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0311",
+      "ianaIds": [
+        "Pacific/Apia"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0203",
+      "ianaIds": [
+        "Pacific/Auckland"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0211",
+      "ianaIds": [
+        "Pacific/Bougainville"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0204",
+      "ianaIds": [
+        "Pacific/Chatham"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0091",
+      "ianaIds": [
+        "Pacific/Easter"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0310",
+      "ianaIds": [
+        "Pacific/Efate"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0268",
+      "ianaIds": [
+        "Pacific/Fakaofo"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0113",
+      "ianaIds": [
+        "Pacific/Fiji"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0105",
+      "ianaIds": [
+        "Pacific/Galapagos"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0209",
+      "ianaIds": [
+        "Pacific/Gambier"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0256",
+      "ianaIds": [
+        "Pacific/Guadalcanal"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0129",
+      "ianaIds": [
+        "Pacific/Guam"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0304",
+      "ianaIds": [
+        "Pacific/Honolulu"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0153",
+      "ianaIds": [
+        "Pacific/Kanton"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0154",
+      "ianaIds": [
+        "Pacific/Kiritimati"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0115",
+      "ianaIds": [
+        "Pacific/Kosrae"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0172",
+      "ianaIds": [
+        "Pacific/Kwajalein"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0208",
+      "ianaIds": [
+        "Pacific/Marquesas"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0201",
+      "ianaIds": [
+        "Pacific/Nauru"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0202",
+      "ianaIds": [
+        "Pacific/Niue"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0197",
+      "ianaIds": [
+        "Pacific/Norfolk"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0196",
+      "ianaIds": [
+        "Pacific/Noumea"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0025",
+      "ianaIds": [
+        "Pacific/Pago_Pago"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0223",
+      "ianaIds": [
+        "Pacific/Palau"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0216",
+      "ianaIds": [
+        "Pacific/Pitcairn"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0210",
+      "ianaIds": [
+        "Pacific/Port_Moresby"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0087",
+      "ianaIds": [
+        "Pacific/Rarotonga"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0207",
+      "ianaIds": [
+        "Pacific/Tahiti"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0152",
+      "ianaIds": [
+        "Pacific/Tarawa"
+      ],
+      "retired": false
+    },
+    {
+      "id": "city-0272",
+      "ianaIds": [
+        "Pacific/Tongatapu"
+      ],
+      "retired": false
+    }
+  ]
+}

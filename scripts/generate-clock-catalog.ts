@@ -5,13 +5,17 @@ import { resolve } from "node:path";
 import {
   createCatalogGenerationReport,
   generateClockCatalog,
+  reconcileCatalogIdentityLedger,
+  serializeCatalogIdentityLedger,
   serializeClockCatalog,
+  type CatalogIdentityLedger,
   type CatalogReleaseMetadata,
   type CuratedCatalogSource,
 } from "./catalog/generator";
 
 interface ReleaseFile extends CatalogReleaseMetadata {
   readonly files: Readonly<Record<string, string>>;
+  readonly identityTransitions: Readonly<Record<string, string>>;
 }
 
 const projectPath = (...parts: string[]): string => resolve(process.cwd(), ...parts);
@@ -49,10 +53,19 @@ const reportText = `${JSON.stringify(
   null,
   2,
 )}\n`;
+const ledgerText = serializeCatalogIdentityLedger(
+  reconcileCatalogIdentityLedger(
+    catalog,
+    sha256(catalogText),
+    parseJson<CatalogIdentityLedger>(readText("catalog", "identity-ledger.json")),
+    metadata.identityTransitions,
+  ),
+);
 
 const outputs = [
   [projectPath("catalog", "generated", "catalog.json"), catalogText],
   [projectPath("catalog", "generated", "report.json"), reportText],
+  [projectPath("catalog", "identity-ledger.json"), ledgerText],
 ] as const;
 
 if (process.argv.includes("--check")) {

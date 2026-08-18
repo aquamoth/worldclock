@@ -50,6 +50,8 @@ describe("clock catalog parser", () => {
     ["lowercase country code", [{ ...stockholm, primaryCountryCode: "se", countries: [{ code: "se", name: "Sweden" }] }]],
     ["missing primary country", [{ ...stockholm, primaryCountryCode: "NO" }]],
     ["duplicate normalized aliases", [{ ...stockholm, aliases: ["S:t Eriksplan", "s t eriksplan"] }]],
+    ["aliases colliding across entries", [stockholm, { ...stockholm, id: "city-0002", ianaId: "Europe/Oslo", aliases: ["Nordic capital"] }, { ...stockholm, id: "city-0003", ianaId: "Europe/Copenhagen", primaryCountryCode: "DK", countries: [{ code: "DK", name: "Denmark" }], aliases: ["nordic-capital"] }]],
+    ["missing ASCII city alias", [{ ...stockholm, ianaId: "America/Sao_Paulo", city: "São Paulo" }]],
   ])("rejects entries with %s", (_case, entries) => {
     expect(() => parseClockCatalog(catalogWith(entries))).toThrow(/catalog/i);
   });

@@ -98,12 +98,19 @@ const parseEntry = (value: unknown, index: number): ClockCatalogEntry => {
       `entries[${index}].aliases[${aliasIndex}]`,
     );
     const normalized = normalizeCatalogSearchText(parsed);
+    if (normalized.length === 0) {
+      return fail(`entries[${index}] has an empty normalized alias`);
+    }
     if (normalizedAliases.has(normalized)) {
       return fail(`entries[${index}] has duplicate normalized aliases`);
     }
     normalizedAliases.add(normalized);
     return parsed;
   });
+  const asciiCity = city.normalize("NFKD").replace(/\p{M}+/gu, "");
+  if (asciiCity !== city && !aliases.includes(asciiCity)) {
+    return fail(`entries[${index}] is missing its ASCII city alias: ${asciiCity}`);
+  }
 
   return { id, ianaId, city, primaryCountryCode, countries, aliases };
 };
@@ -126,10 +133,16 @@ export function parseClockCatalog(value: unknown): ClockCatalog {
 
   const seenIds = new Set<string>();
   const seenIanaIds = new Set<string>();
+  const seenAliases = new Set<string>();
   const entries = (value.entries as unknown[]).map((entry, index) => {
     const parsed = parseEntry(entry, index);
     if (seenIds.has(parsed.id)) fail(`duplicate catalog ID: ${parsed.id}`);
     if (seenIanaIds.has(parsed.ianaId)) fail(`duplicate IANA ID: ${parsed.ianaId}`);
+    for (const alias of parsed.aliases) {
+      const normalized = normalizeCatalogSearchText(alias);
+      if (seenAliases.has(normalized)) fail(`duplicate normalized alias: ${alias}`);
+      seenAliases.add(normalized);
+    }
     seenIds.add(parsed.id);
     seenIanaIds.add(parsed.ianaId);
     return parsed;
