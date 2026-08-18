@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "catalogVersion": 1,
+  "sourceVersion": "iana-tzdata-2026c",
+  "ianaRelease": "2026c",
+  "sourceRegionCount": 312,
+  "generatedEntryCount": 312,
+  "catalogSha256": "ba0325f467d592a9bdbe556baf8686bc51aa2a8aaef049f90856662e1f3479c7"
+}

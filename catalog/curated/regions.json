@@ -1,0 +1,2224 @@
+{
+  "curationVersion": 1,
+  "ianaRelease": "2026c",
+  "entries": [
+    {
+      "id": "city-0001",
+      "ianaId": "Europe/Andorra",
+      "city": "Andorra",
+      "primaryCountryCode": "AD",
+      "aliases": []
+    },
+    {
+      "id": "city-0002",
+      "ianaId": "Asia/Dubai",
+      "city": "Dubai",
+      "primaryCountryCode": "AE",
+      "aliases": []
+    },
+    {
+      "id": "city-0003",
+      "ianaId": "Asia/Kabul",
+      "city": "Kabul",
+      "primaryCountryCode": "AF",
+      "aliases": []
+    },
+    {
+      "id": "city-0004",
+      "ianaId": "Europe/Tirane",
+      "city": "Tirana",
+      "primaryCountryCode": "AL",
+      "aliases": []
+    },
+    {
+      "id": "city-0005",
+      "ianaId": "Asia/Yerevan",
+      "city": "Yerevan",
+      "primaryCountryCode": "AM",
+      "aliases": []
+    },
+    {
+      "id": "city-0006",
+      "ianaId": "Antarctica/Casey",
+      "city": "Casey",
+      "primaryCountryCode": "AQ",
+      "aliases": []
+    },
+    {
+      "id": "city-0007",
+      "ianaId": "Antarctica/Davis",
+      "city": "Davis",
+      "primaryCountryCode": "AQ",
+      "aliases": []
+    },
+    {
+      "id": "city-0008",
+      "ianaId": "Antarctica/Mawson",
+      "city": "Mawson",
+      "primaryCountryCode": "AQ",
+      "aliases": []
+    },
+    {
+      "id": "city-0009",
+      "ianaId": "Antarctica/Palmer",
+      "city": "Palmer",
+      "primaryCountryCode": "AQ",
+      "aliases": []
+    },
+    {
+      "id": "city-0010",
+      "ianaId": "Antarctica/Rothera",
+      "city": "Rothera",
+      "primaryCountryCode": "AQ",
+      "aliases": []
+    },
+    {
+      "id": "city-0011",
+      "ianaId": "Antarctica/Troll",
+      "city": "Troll",
+      "primaryCountryCode": "AQ",
+      "aliases": []
+    },
+    {
+      "id": "city-0012",
+      "ianaId": "Antarctica/Vostok",
+      "city": "Vostok",
+      "primaryCountryCode": "AQ",
+      "aliases": []
+    },
+    {
+      "id": "city-0013",
+      "ianaId": "America/Argentina/Buenos_Aires",
+      "city": "Buenos Aires",
+      "primaryCountryCode": "AR",
+      "aliases": []
+    },
+    {
+      "id": "city-0014",
+      "ianaId": "America/Argentina/Cordoba",
+      "city": "Córdoba",
+      "primaryCountryCode": "AR",
+      "aliases": [
+        "Cordoba"
+      ]
+    },
+    {
+      "id": "city-0015",
+      "ianaId": "America/Argentina/Salta",
+      "city": "Salta",
+      "primaryCountryCode": "AR",
+      "aliases": []
+    },
+    {
+      "id": "city-0016",
+      "ianaId": "America/Argentina/Jujuy",
+      "city": "Jujuy",
+      "primaryCountryCode": "AR",
+      "aliases": []
+    },
+    {
+      "id": "city-0017",
+      "ianaId": "America/Argentina/Tucuman",
+      "city": "Tucumán",
+      "primaryCountryCode": "AR",
+      "aliases": [
+        "Tucuman"
+      ]
+    },
+    {
+      "id": "city-0018",
+      "ianaId": "America/Argentina/Catamarca",
+      "city": "Catamarca",
+      "primaryCountryCode": "AR",
+      "aliases": []
+    },
+    {
+      "id": "city-0019",
+      "ianaId": "America/Argentina/La_Rioja",
+      "city": "La Rioja",
+      "primaryCountryCode": "AR",
+      "aliases": []
+    },
+    {
+      "id": "city-0020",
+      "ianaId": "America/Argentina/San_Juan",
+      "city": "San Juan",
+      "primaryCountryCode": "AR",
+      "aliases": []
+    },
+    {
+      "id": "city-0021",
+      "ianaId": "America/Argentina/Mendoza",
+      "city": "Mendoza",
+      "primaryCountryCode": "AR",
+      "aliases": []
+    },
+    {
+      "id": "city-0022",
+      "ianaId": "America/Argentina/San_Luis",
+      "city": "San Luis",
+      "primaryCountryCode": "AR",
+      "aliases": []
+    },
+    {
+      "id": "city-0023",
+      "ianaId": "America/Argentina/Rio_Gallegos",
+      "city": "Rio Gallegos",
+      "primaryCountryCode": "AR",
+      "aliases": []
+    },
+    {
+      "id": "city-0024",
+      "ianaId": "America/Argentina/Ushuaia",
+      "city": "Ushuaia",
+      "primaryCountryCode": "AR",
+      "aliases": []
+    },
+    {
+      "id": "city-0025",
+      "ianaId": "Pacific/Pago_Pago",
+      "city": "Pago Pago",
+      "primaryCountryCode": "AS",
+      "aliases": []
+    },
+    {
+      "id": "city-0026",
+      "ianaId": "Europe/Vienna",
+      "city": "Vienna",
+      "primaryCountryCode": "AT",
+      "aliases": []
+    },
+    {
+      "id": "city-0027",
+      "ianaId": "Australia/Lord_Howe",
+      "city": "Lord Howe",
+      "primaryCountryCode": "AU",
+      "aliases": []
+    },
+    {
+      "id": "city-0028",
+      "ianaId": "Antarctica/Macquarie",
+      "city": "Macquarie",
+      "primaryCountryCode": "AU",
+      "aliases": []
+    },
+    {
+      "id": "city-0029",
+      "ianaId": "Australia/Hobart",
+      "city": "Hobart",
+      "primaryCountryCode": "AU",
+      "aliases": []
+    },
+    {
+      "id": "city-0030",
+      "ianaId": "Australia/Melbourne",
+      "city": "Melbourne",
+      "primaryCountryCode": "AU",
+      "aliases": []
+    },
+    {
+      "id": "city-0031",
+      "ianaId": "Australia/Sydney",
+      "city": "Sydney",
+      "primaryCountryCode": "AU",
+      "aliases": []
+    },
+    {
+      "id": "city-0032",
+      "ianaId": "Australia/Broken_Hill",
+      "city": "Broken Hill",
+      "primaryCountryCode": "AU",
+      "aliases": []
+    },
+    {
+      "id": "city-0033",
+      "ianaId": "Australia/Brisbane",
+      "city": "Brisbane",
+      "primaryCountryCode": "AU",
+      "aliases": []
+    },
+    {
+      "id": "city-0034",
+      "ianaId": "Australia/Lindeman",
+      "city": "Lindeman",
+      "primaryCountryCode": "AU",
+      "aliases": []
+    },
+    {
+      "id": "city-0035",
+      "ianaId": "Australia/Adelaide",
+      "city": "Adelaide",
+      "primaryCountryCode": "AU",
+      "aliases": []
+    },
+    {
+      "id": "city-0036",
+      "ianaId": "Australia/Darwin",
+      "city": "Darwin",
+      "primaryCountryCode": "AU",
+      "aliases": []
+    },
+    {
+      "id": "city-0037",
+      "ianaId": "Australia/Perth",
+      "city": "Perth",
+      "primaryCountryCode": "AU",
+      "aliases": []
+    },
+    {
+      "id": "city-0038",
+      "ianaId": "Australia/Eucla",
+      "city": "Eucla",
+      "primaryCountryCode": "AU",
+      "aliases": []
+    },
+    {
+      "id": "city-0039",
+      "ianaId": "Asia/Baku",
+      "city": "Baku",
+      "primaryCountryCode": "AZ",
+      "aliases": []
+    },
+    {
+      "id": "city-0040",
+      "ianaId": "America/Barbados",
+      "city": "Barbados",
+      "primaryCountryCode": "BB",
+      "aliases": []
+    },
+    {
+      "id": "city-0041",
+      "ianaId": "Asia/Dhaka",
+      "city": "Dhaka",
+      "primaryCountryCode": "BD",
+      "aliases": []
+    },
+    {
+      "id": "city-0042",
+      "ianaId": "Europe/Brussels",
+      "city": "Brussels",
+      "primaryCountryCode": "BE",
+      "aliases": []
+    },
+    {
+      "id": "city-0043",
+      "ianaId": "Europe/Sofia",
+      "city": "Sofia",
+      "primaryCountryCode": "BG",
+      "aliases": []
+    },
+    {
+      "id": "city-0044",
+      "ianaId": "Atlantic/Bermuda",
+      "city": "Bermuda",
+      "primaryCountryCode": "BM",
+      "aliases": []
+    },
+    {
+      "id": "city-0045",
+      "ianaId": "America/La_Paz",
+      "city": "La Paz",
+      "primaryCountryCode": "BO",
+      "aliases": []
+    },
+    {
+      "id": "city-0046",
+      "ianaId": "America/Noronha",
+      "city": "Fernando de Noronha",
+      "primaryCountryCode": "BR",
+      "aliases": []
+    },
+    {
+      "id": "city-0047",
+      "ianaId": "America/Belem",
+      "city": "Belem",
+      "primaryCountryCode": "BR",
+      "aliases": []
+    },
+    {
+      "id": "city-0048",
+      "ianaId": "America/Fortaleza",
+      "city": "Fortaleza",
+      "primaryCountryCode": "BR",
+      "aliases": []
+    },
+    {
+      "id": "city-0049",
+      "ianaId": "America/Recife",
+      "city": "Recife",
+      "primaryCountryCode": "BR",
+      "aliases": []
+    },
+    {
+      "id": "city-0050",
+      "ianaId": "America/Araguaina",
+      "city": "Araguaina",
+      "primaryCountryCode": "BR",
+      "aliases": []
+    },
+    {
+      "id": "city-0051",
+      "ianaId": "America/Maceio",
+      "city": "Maceio",
+      "primaryCountryCode": "BR",
+      "aliases": []
+    },
+    {
+      "id": "city-0052",
+      "ianaId": "America/Bahia",
+      "city": "Bahia",
+      "primaryCountryCode": "BR",
+      "aliases": []
+    },
+    {
+      "id": "city-0053",
+      "ianaId": "America/Sao_Paulo",
+      "city": "São Paulo",
+      "primaryCountryCode": "BR",
+      "aliases": [
+        "Sao Paulo"
+      ]
+    },
+    {
+      "id": "city-0054",
+      "ianaId": "America/Campo_Grande",
+      "city": "Campo Grande",
+      "primaryCountryCode": "BR",
+      "aliases": []
+    },
+    {
+      "id": "city-0055",
+      "ianaId": "America/Cuiaba",
+      "city": "Cuiaba",
+      "primaryCountryCode": "BR",
+      "aliases": []
+    },
+    {
+      "id": "city-0056",
+      "ianaId": "America/Santarem",
+      "city": "Santarem",
+      "primaryCountryCode": "BR",
+      "aliases": []
+    },
+    {
+      "id": "city-0057",
+      "ianaId": "America/Porto_Velho",
+      "city": "Porto Velho",
+      "primaryCountryCode": "BR",
+      "aliases": []
+    },
+    {
+      "id": "city-0058",
+      "ianaId": "America/Boa_Vista",
+      "city": "Boa Vista",
+      "primaryCountryCode": "BR",
+      "aliases": []
+    },
+    {
+      "id": "city-0059",
+      "ianaId": "America/Manaus",
+      "city": "Manaus",
+      "primaryCountryCode": "BR",
+      "aliases": []
+    },
+    {
+      "id": "city-0060",
+      "ianaId": "America/Eirunepe",
+      "city": "Eirunepe",
+      "primaryCountryCode": "BR",
+      "aliases": []
+    },
+    {
+      "id": "city-0061",
+      "ianaId": "America/Rio_Branco",
+      "city": "Rio Branco",
+      "primaryCountryCode": "BR",
+      "aliases": []
+    },
+    {
+      "id": "city-0062",
+      "ianaId": "Asia/Thimphu",
+      "city": "Thimphu",
+      "primaryCountryCode": "BT",
+      "aliases": []
+    },
+    {
+      "id": "city-0063",
+      "ianaId": "Europe/Minsk",
+      "city": "Minsk",
+      "primaryCountryCode": "BY",
+      "aliases": []
+    },
+    {
+      "id": "city-0064",
+      "ianaId": "America/Belize",
+      "city": "Belize",
+      "primaryCountryCode": "BZ",
+      "aliases": []
+    },
+    {
+      "id": "city-0065",
+      "ianaId": "America/St_Johns",
+      "city": "St. John's",
+      "primaryCountryCode": "CA",
+      "aliases": []
+    },
+    {
+      "id": "city-0066",
+      "ianaId": "America/Halifax",
+      "city": "Halifax",
+      "primaryCountryCode": "CA",
+      "aliases": []
+    },
+    {
+      "id": "city-0067",
+      "ianaId": "America/Glace_Bay",
+      "city": "Glace Bay",
+      "primaryCountryCode": "CA",
+      "aliases": []
+    },
+    {
+      "id": "city-0068",
+      "ianaId": "America/Moncton",
+      "city": "Moncton",
+      "primaryCountryCode": "CA",
+      "aliases": []
+    },
+    {
+      "id": "city-0069",
+      "ianaId": "America/Goose_Bay",
+      "city": "Goose Bay",
+      "primaryCountryCode": "CA",
+      "aliases": []
+    },
+    {
+      "id": "city-0070",
+      "ianaId": "America/Toronto",
+      "city": "Toronto",
+      "primaryCountryCode": "CA",
+      "aliases": []
+    },
+    {
+      "id": "city-0071",
+      "ianaId": "America/Iqaluit",
+      "city": "Iqaluit",
+      "primaryCountryCode": "CA",
+      "aliases": []
+    },
+    {
+      "id": "city-0072",
+      "ianaId": "America/Winnipeg",
+      "city": "Winnipeg",
+      "primaryCountryCode": "CA",
+      "aliases": []
+    },
+    {
+      "id": "city-0073",
+      "ianaId": "America/Resolute",
+      "city": "Resolute",
+      "primaryCountryCode": "CA",
+      "aliases": []
+    },
+    {
+      "id": "city-0074",
+      "ianaId": "America/Rankin_Inlet",
+      "city": "Rankin Inlet",
+      "primaryCountryCode": "CA",
+      "aliases": []
+    },
+    {
+      "id": "city-0075",
+      "ianaId": "America/Regina",
+      "city": "Regina",
+      "primaryCountryCode": "CA",
+      "aliases": []
+    },
+    {
+      "id": "city-0076",
+      "ianaId": "America/Swift_Current",
+      "city": "Swift Current",
+      "primaryCountryCode": "CA",
+      "aliases": []
+    },
+    {
+      "id": "city-0077",
+      "ianaId": "America/Edmonton",
+      "city": "Edmonton",
+      "primaryCountryCode": "CA",
+      "aliases": []
+    },
+    {
+      "id": "city-0078",
+      "ianaId": "America/Cambridge_Bay",
+      "city": "Cambridge Bay",
+      "primaryCountryCode": "CA",
+      "aliases": []
+    },
+    {
+      "id": "city-0079",
+      "ianaId": "America/Inuvik",
+      "city": "Inuvik",
+      "primaryCountryCode": "CA",
+      "aliases": []
+    },
+    {
+      "id": "city-0080",
+      "ianaId": "America/Vancouver",
+      "city": "Vancouver",
+      "primaryCountryCode": "CA",
+      "aliases": []
+    },
+    {
+      "id": "city-0081",
+      "ianaId": "America/Dawson_Creek",
+      "city": "Dawson Creek",
+      "primaryCountryCode": "CA",
+      "aliases": []
+    },
+    {
+      "id": "city-0082",
+      "ianaId": "America/Fort_Nelson",
+      "city": "Fort Nelson",
+      "primaryCountryCode": "CA",
+      "aliases": []
+    },
+    {
+      "id": "city-0083",
+      "ianaId": "America/Whitehorse",
+      "city": "Whitehorse",
+      "primaryCountryCode": "CA",
+      "aliases": []
+    },
+    {
+      "id": "city-0084",
+      "ianaId": "America/Dawson",
+      "city": "Dawson",
+      "primaryCountryCode": "CA",
+      "aliases": []
+    },
+    {
+      "id": "city-0085",
+      "ianaId": "Europe/Zurich",
+      "city": "Zurich",
+      "primaryCountryCode": "CH",
+      "aliases": []
+    },
+    {
+      "id": "city-0086",
+      "ianaId": "Africa/Abidjan",
+      "city": "Abidjan",
+      "primaryCountryCode": "CI",
+      "aliases": []
+    },
+    {
+      "id": "city-0087",
+      "ianaId": "Pacific/Rarotonga",
+      "city": "Rarotonga",
+      "primaryCountryCode": "CK",
+      "aliases": []
+    },
+    {
+      "id": "city-0088",
+      "ianaId": "America/Santiago",
+      "city": "Santiago",
+      "primaryCountryCode": "CL",
+      "aliases": []
+    },
+    {
+      "id": "city-0089",
+      "ianaId": "America/Coyhaique",
+      "city": "Coyhaique",
+      "primaryCountryCode": "CL",
+      "aliases": []
+    },
+    {
+      "id": "city-0090",
+      "ianaId": "America/Punta_Arenas",
+      "city": "Punta Arenas",
+      "primaryCountryCode": "CL",
+      "aliases": []
+    },
+    {
+      "id": "city-0091",
+      "ianaId": "Pacific/Easter",
+      "city": "Easter Island",
+      "primaryCountryCode": "CL",
+      "aliases": []
+    },
+    {
+      "id": "city-0092",
+      "ianaId": "Asia/Shanghai",
+      "city": "Shanghai",
+      "primaryCountryCode": "CN",
+      "aliases": []
+    },
+    {
+      "id": "city-0093",
+      "ianaId": "Asia/Urumqi",
+      "city": "Urumqi",
+      "primaryCountryCode": "CN",
+      "aliases": []
+    },
+    {
+      "id": "city-0094",
+      "ianaId": "America/Bogota",
+      "city": "Bogotá",
+      "primaryCountryCode": "CO",
+      "aliases": [
+        "Bogota"
+      ]
+    },
+    {
+      "id": "city-0095",
+      "ianaId": "America/Costa_Rica",
+      "city": "Costa Rica",
+      "primaryCountryCode": "CR",
+      "aliases": []
+    },
+    {
+      "id": "city-0096",
+      "ianaId": "America/Havana",
+      "city": "Havana",
+      "primaryCountryCode": "CU",
+      "aliases": []
+    },
+    {
+      "id": "city-0097",
+      "ianaId": "Atlantic/Cape_Verde",
+      "city": "Cape Verde",
+      "primaryCountryCode": "CV",
+      "aliases": []
+    },
+    {
+      "id": "city-0098",
+      "ianaId": "Asia/Nicosia",
+      "city": "Nicosia",
+      "primaryCountryCode": "CY",
+      "aliases": []
+    },
+    {
+      "id": "city-0099",
+      "ianaId": "Asia/Famagusta",
+      "city": "Famagusta",
+      "primaryCountryCode": "CY",
+      "aliases": []
+    },
+    {
+      "id": "city-0100",
+      "ianaId": "Europe/Prague",
+      "city": "Prague",
+      "primaryCountryCode": "CZ",
+      "aliases": []
+    },
+    {
+      "id": "city-0101",
+      "ianaId": "Europe/Berlin",
+      "city": "Berlin",
+      "primaryCountryCode": "DE",
+      "aliases": []
+    },
+    {
+      "id": "city-0102",
+      "ianaId": "America/Santo_Domingo",
+      "city": "Santo Domingo",
+      "primaryCountryCode": "DO",
+      "aliases": []
+    },
+    {
+      "id": "city-0103",
+      "ianaId": "Africa/Algiers",
+      "city": "Algiers",
+      "primaryCountryCode": "DZ",
+      "aliases": []
+    },
+    {
+      "id": "city-0104",
+      "ianaId": "America/Guayaquil",
+      "city": "Guayaquil",
+      "primaryCountryCode": "EC",
+      "aliases": []
+    },
+    {
+      "id": "city-0105",
+      "ianaId": "Pacific/Galapagos",
+      "city": "Galapagos",
+      "primaryCountryCode": "EC",
+      "aliases": []
+    },
+    {
+      "id": "city-0106",
+      "ianaId": "Europe/Tallinn",
+      "city": "Tallinn",
+      "primaryCountryCode": "EE",
+      "aliases": []
+    },
+    {
+      "id": "city-0107",
+      "ianaId": "Africa/Cairo",
+      "city": "Cairo",
+      "primaryCountryCode": "EG",
+      "aliases": []
+    },
+    {
+      "id": "city-0108",
+      "ianaId": "Africa/El_Aaiun",
+      "city": "El Aaiun",
+      "primaryCountryCode": "EH",
+      "aliases": []
+    },
+    {
+      "id": "city-0109",
+      "ianaId": "Europe/Madrid",
+      "city": "Madrid",
+      "primaryCountryCode": "ES",
+      "aliases": []
+    },
+    {
+      "id": "city-0110",
+      "ianaId": "Africa/Ceuta",
+      "city": "Ceuta",
+      "primaryCountryCode": "ES",
+      "aliases": []
+    },
+    {
+      "id": "city-0111",
+      "ianaId": "Atlantic/Canary",
+      "city": "Canary Islands",
+      "primaryCountryCode": "ES",
+      "aliases": []
+    },
+    {
+      "id": "city-0112",
+      "ianaId": "Europe/Helsinki",
+      "city": "Helsinki",
+      "primaryCountryCode": "FI",
+      "aliases": []
+    },
+    {
+      "id": "city-0113",
+      "ianaId": "Pacific/Fiji",
+      "city": "Fiji",
+      "primaryCountryCode": "FJ",
+      "aliases": []
+    },
+    {
+      "id": "city-0114",
+      "ianaId": "Atlantic/Stanley",
+      "city": "Stanley",
+      "primaryCountryCode": "FK",
+      "aliases": []
+    },
+    {
+      "id": "city-0115",
+      "ianaId": "Pacific/Kosrae",
+      "city": "Kosrae",
+      "primaryCountryCode": "FM",
+      "aliases": []
+    },
+    {
+      "id": "city-0116",
+      "ianaId": "Atlantic/Faroe",
+      "city": "Faroe Islands",
+      "primaryCountryCode": "FO",
+      "aliases": []
+    },
+    {
+      "id": "city-0117",
+      "ianaId": "Europe/Paris",
+      "city": "Paris",
+      "primaryCountryCode": "FR",
+      "aliases": []
+    },
+    {
+      "id": "city-0118",
+      "ianaId": "Europe/London",
+      "city": "London",
+      "primaryCountryCode": "GB",
+      "aliases": []
+    },
+    {
+      "id": "city-0119",
+      "ianaId": "Asia/Tbilisi",
+      "city": "Tbilisi",
+      "primaryCountryCode": "GE",
+      "aliases": []
+    },
+    {
+      "id": "city-0120",
+      "ianaId": "America/Cayenne",
+      "city": "Cayenne",
+      "primaryCountryCode": "GF",
+      "aliases": []
+    },
+    {
+      "id": "city-0121",
+      "ianaId": "Europe/Gibraltar",
+      "city": "Gibraltar",
+      "primaryCountryCode": "GI",
+      "aliases": []
+    },
+    {
+      "id": "city-0122",
+      "ianaId": "America/Nuuk",
+      "city": "Nuuk",
+      "primaryCountryCode": "GL",
+      "aliases": []
+    },
+    {
+      "id": "city-0123",
+      "ianaId": "America/Danmarkshavn",
+      "city": "Danmarkshavn",
+      "primaryCountryCode": "GL",
+      "aliases": []
+    },
+    {
+      "id": "city-0124",
+      "ianaId": "America/Scoresbysund",
+      "city": "Scoresbysund",
+      "primaryCountryCode": "GL",
+      "aliases": []
+    },
+    {
+      "id": "city-0125",
+      "ianaId": "America/Thule",
+      "city": "Thule",
+      "primaryCountryCode": "GL",
+      "aliases": []
+    },
+    {
+      "id": "city-0126",
+      "ianaId": "Europe/Athens",
+      "city": "Athens",
+      "primaryCountryCode": "GR",
+      "aliases": []
+    },
+    {
+      "id": "city-0127",
+      "ianaId": "Atlantic/South_Georgia",
+      "city": "South Georgia",
+      "primaryCountryCode": "GS",
+      "aliases": []
+    },
+    {
+      "id": "city-0128",
+      "ianaId": "America/Guatemala",
+      "city": "Guatemala",
+      "primaryCountryCode": "GT",
+      "aliases": []
+    },
+    {
+      "id": "city-0129",
+      "ianaId": "Pacific/Guam",
+      "city": "Guam",
+      "primaryCountryCode": "GU",
+      "aliases": []
+    },
+    {
+      "id": "city-0130",
+      "ianaId": "Africa/Bissau",
+      "city": "Bissau",
+      "primaryCountryCode": "GW",
+      "aliases": []
+    },
+    {
+      "id": "city-0131",
+      "ianaId": "America/Guyana",
+      "city": "Guyana",
+      "primaryCountryCode": "GY",
+      "aliases": []
+    },
+    {
+      "id": "city-0132",
+      "ianaId": "Asia/Hong_Kong",
+      "city": "Hong Kong",
+      "primaryCountryCode": "HK",
+      "aliases": []
+    },
+    {
+      "id": "city-0133",
+      "ianaId": "America/Tegucigalpa",
+      "city": "Tegucigalpa",
+      "primaryCountryCode": "HN",
+      "aliases": []
+    },
+    {
+      "id": "city-0134",
+      "ianaId": "America/Port-au-Prince",
+      "city": "Port-au-Prince",
+      "primaryCountryCode": "HT",
+      "aliases": []
+    },
+    {
+      "id": "city-0135",
+      "ianaId": "Europe/Budapest",
+      "city": "Budapest",
+      "primaryCountryCode": "HU",
+      "aliases": []
+    },
+    {
+      "id": "city-0136",
+      "ianaId": "Asia/Jakarta",
+      "city": "Jakarta",
+      "primaryCountryCode": "ID",
+      "aliases": []
+    },
+    {
+      "id": "city-0137",
+      "ianaId": "Asia/Pontianak",
+      "city": "Pontianak",
+      "primaryCountryCode": "ID",
+      "aliases": []
+    },
+    {
+      "id": "city-0138",
+      "ianaId": "Asia/Makassar",
+      "city": "Makassar",
+      "primaryCountryCode": "ID",
+      "aliases": []
+    },
+    {
+      "id": "city-0139",
+      "ianaId": "Asia/Jayapura",
+      "city": "Jayapura",
+      "primaryCountryCode": "ID",
+      "aliases": []
+    },
+    {
+      "id": "city-0140",
+      "ianaId": "Europe/Dublin",
+      "city": "Dublin",
+      "primaryCountryCode": "IE",
+      "aliases": []
+    },
+    {
+      "id": "city-0141",
+      "ianaId": "Asia/Jerusalem",
+      "city": "Jerusalem",
+      "primaryCountryCode": "IL",
+      "aliases": []
+    },
+    {
+      "id": "city-0142",
+      "ianaId": "Asia/Kolkata",
+      "city": "Kolkata",
+      "primaryCountryCode": "IN",
+      "aliases": [
+        "Calcutta"
+      ]
+    },
+    {
+      "id": "city-0143",
+      "ianaId": "Indian/Chagos",
+      "city": "Chagos",
+      "primaryCountryCode": "IO",
+      "aliases": []
+    },
+    {
+      "id": "city-0144",
+      "ianaId": "Asia/Baghdad",
+      "city": "Baghdad",
+      "primaryCountryCode": "IQ",
+      "aliases": []
+    },
+    {
+      "id": "city-0145",
+      "ianaId": "Asia/Tehran",
+      "city": "Tehran",
+      "primaryCountryCode": "IR",
+      "aliases": []
+    },
+    {
+      "id": "city-0146",
+      "ianaId": "Europe/Rome",
+      "city": "Rome",
+      "primaryCountryCode": "IT",
+      "aliases": []
+    },
+    {
+      "id": "city-0147",
+      "ianaId": "America/Jamaica",
+      "city": "Jamaica",
+      "primaryCountryCode": "JM",
+      "aliases": []
+    },
+    {
+      "id": "city-0148",
+      "ianaId": "Asia/Amman",
+      "city": "Amman",
+      "primaryCountryCode": "JO",
+      "aliases": []
+    },
+    {
+      "id": "city-0149",
+      "ianaId": "Asia/Tokyo",
+      "city": "Tokyo",
+      "primaryCountryCode": "JP",
+      "aliases": []
+    },
+    {
+      "id": "city-0150",
+      "ianaId": "Africa/Nairobi",
+      "city": "Nairobi",
+      "primaryCountryCode": "KE",
+      "aliases": []
+    },
+    {
+      "id": "city-0151",
+      "ianaId": "Asia/Bishkek",
+      "city": "Bishkek",
+      "primaryCountryCode": "KG",
+      "aliases": []
+    },
+    {
+      "id": "city-0152",
+      "ianaId": "Pacific/Tarawa",
+      "city": "Tarawa",
+      "primaryCountryCode": "KI",
+      "aliases": []
+    },
+    {
+      "id": "city-0153",
+      "ianaId": "Pacific/Kanton",
+      "city": "Kanton",
+      "primaryCountryCode": "KI",
+      "aliases": []
+    },
+    {
+      "id": "city-0154",
+      "ianaId": "Pacific/Kiritimati",
+      "city": "Kiritimati",
+      "primaryCountryCode": "KI",
+      "aliases": [
+        "Christmas Island"
+      ]
+    },
+    {
+      "id": "city-0155",
+      "ianaId": "Asia/Pyongyang",
+      "city": "Pyongyang",
+      "primaryCountryCode": "KP",
+      "aliases": []
+    },
+    {
+      "id": "city-0156",
+      "ianaId": "Asia/Seoul",
+      "city": "Seoul",
+      "primaryCountryCode": "KR",
+      "aliases": []
+    },
+    {
+      "id": "city-0157",
+      "ianaId": "Asia/Almaty",
+      "city": "Almaty",
+      "primaryCountryCode": "KZ",
+      "aliases": []
+    },
+    {
+      "id": "city-0158",
+      "ianaId": "Asia/Qyzylorda",
+      "city": "Qyzylorda",
+      "primaryCountryCode": "KZ",
+      "aliases": []
+    },
+    {
+      "id": "city-0159",
+      "ianaId": "Asia/Qostanay",
+      "city": "Qostanay",
+      "primaryCountryCode": "KZ",
+      "aliases": []
+    },
+    {
+      "id": "city-0160",
+      "ianaId": "Asia/Aqtobe",
+      "city": "Aqtobe",
+      "primaryCountryCode": "KZ",
+      "aliases": []
+    },
+    {
+      "id": "city-0161",
+      "ianaId": "Asia/Aqtau",
+      "city": "Aqtau",
+      "primaryCountryCode": "KZ",
+      "aliases": []
+    },
+    {
+      "id": "city-0162",
+      "ianaId": "Asia/Atyrau",
+      "city": "Atyrau",
+      "primaryCountryCode": "KZ",
+      "aliases": []
+    },
+    {
+      "id": "city-0163",
+      "ianaId": "Asia/Oral",
+      "city": "Oral",
+      "primaryCountryCode": "KZ",
+      "aliases": []
+    },
+    {
+      "id": "city-0164",
+      "ianaId": "Asia/Beirut",
+      "city": "Beirut",
+      "primaryCountryCode": "LB",
+      "aliases": []
+    },
+    {
+      "id": "city-0165",
+      "ianaId": "Asia/Colombo",
+      "city": "Colombo",
+      "primaryCountryCode": "LK",
+      "aliases": []
+    },
+    {
+      "id": "city-0166",
+      "ianaId": "Africa/Monrovia",
+      "city": "Monrovia",
+      "primaryCountryCode": "LR",
+      "aliases": []
+    },
+    {
+      "id": "city-0167",
+      "ianaId": "Europe/Vilnius",
+      "city": "Vilnius",
+      "primaryCountryCode": "LT",
+      "aliases": []
+    },
+    {
+      "id": "city-0168",
+      "ianaId": "Europe/Riga",
+      "city": "Riga",
+      "primaryCountryCode": "LV",
+      "aliases": []
+    },
+    {
+      "id": "city-0169",
+      "ianaId": "Africa/Tripoli",
+      "city": "Tripoli",
+      "primaryCountryCode": "LY",
+      "aliases": []
+    },
+    {
+      "id": "city-0170",
+      "ianaId": "Africa/Casablanca",
+      "city": "Casablanca",
+      "primaryCountryCode": "MA",
+      "aliases": []
+    },
+    {
+      "id": "city-0171",
+      "ianaId": "Europe/Chisinau",
+      "city": "Chișinău",
+      "primaryCountryCode": "MD",
+      "aliases": [
+        "Chisinau"
+      ]
+    },
+    {
+      "id": "city-0172",
+      "ianaId": "Pacific/Kwajalein",
+      "city": "Kwajalein",
+      "primaryCountryCode": "MH",
+      "aliases": []
+    },
+    {
+      "id": "city-0173",
+      "ianaId": "Asia/Yangon",
+      "city": "Yangon",
+      "primaryCountryCode": "MM",
+      "aliases": []
+    },
+    {
+      "id": "city-0174",
+      "ianaId": "Asia/Ulaanbaatar",
+      "city": "Ulaanbaatar",
+      "primaryCountryCode": "MN",
+      "aliases": []
+    },
+    {
+      "id": "city-0175",
+      "ianaId": "Asia/Hovd",
+      "city": "Hovd",
+      "primaryCountryCode": "MN",
+      "aliases": []
+    },
+    {
+      "id": "city-0176",
+      "ianaId": "Asia/Macau",
+      "city": "Macau",
+      "primaryCountryCode": "MO",
+      "aliases": []
+    },
+    {
+      "id": "city-0177",
+      "ianaId": "America/Martinique",
+      "city": "Martinique",
+      "primaryCountryCode": "MQ",
+      "aliases": []
+    },
+    {
+      "id": "city-0178",
+      "ianaId": "Europe/Malta",
+      "city": "Malta",
+      "primaryCountryCode": "MT",
+      "aliases": []
+    },
+    {
+      "id": "city-0179",
+      "ianaId": "Indian/Mauritius",
+      "city": "Mauritius",
+      "primaryCountryCode": "MU",
+      "aliases": []
+    },
+    {
+      "id": "city-0180",
+      "ianaId": "Indian/Maldives",
+      "city": "Maldives",
+      "primaryCountryCode": "MV",
+      "aliases": []
+    },
+    {
+      "id": "city-0181",
+      "ianaId": "America/Mexico_City",
+      "city": "Mexico City",
+      "primaryCountryCode": "MX",
+      "aliases": []
+    },
+    {
+      "id": "city-0182",
+      "ianaId": "America/Cancun",
+      "city": "Cancún",
+      "primaryCountryCode": "MX",
+      "aliases": [
+        "Cancun"
+      ]
+    },
+    {
+      "id": "city-0183",
+      "ianaId": "America/Merida",
+      "city": "Mérida",
+      "primaryCountryCode": "MX",
+      "aliases": [
+        "Merida"
+      ]
+    },
+    {
+      "id": "city-0184",
+      "ianaId": "America/Monterrey",
+      "city": "Monterrey",
+      "primaryCountryCode": "MX",
+      "aliases": []
+    },
+    {
+      "id": "city-0185",
+      "ianaId": "America/Matamoros",
+      "city": "Matamoros",
+      "primaryCountryCode": "MX",
+      "aliases": []
+    },
+    {
+      "id": "city-0186",
+      "ianaId": "America/Chihuahua",
+      "city": "Chihuahua",
+      "primaryCountryCode": "MX",
+      "aliases": []
+    },
+    {
+      "id": "city-0187",
+      "ianaId": "America/Ciudad_Juarez",
+      "city": "Ciudad Juarez",
+      "primaryCountryCode": "MX",
+      "aliases": []
+    },
+    {
+      "id": "city-0188",
+      "ianaId": "America/Ojinaga",
+      "city": "Ojinaga",
+      "primaryCountryCode": "MX",
+      "aliases": []
+    },
+    {
+      "id": "city-0189",
+      "ianaId": "America/Mazatlan",
+      "city": "Mazatlán",
+      "primaryCountryCode": "MX",
+      "aliases": [
+        "Mazatlan"
+      ]
+    },
+    {
+      "id": "city-0190",
+      "ianaId": "America/Bahia_Banderas",
+      "city": "Bahia Banderas",
+      "primaryCountryCode": "MX",
+      "aliases": []
+    },
+    {
+      "id": "city-0191",
+      "ianaId": "America/Hermosillo",
+      "city": "Hermosillo",
+      "primaryCountryCode": "MX",
+      "aliases": []
+    },
+    {
+      "id": "city-0192",
+      "ianaId": "America/Tijuana",
+      "city": "Tijuana",
+      "primaryCountryCode": "MX",
+      "aliases": []
+    },
+    {
+      "id": "city-0193",
+      "ianaId": "Asia/Kuching",
+      "city": "Kuching",
+      "primaryCountryCode": "MY",
+      "aliases": []
+    },
+    {
+      "id": "city-0194",
+      "ianaId": "Africa/Maputo",
+      "city": "Maputo",
+      "primaryCountryCode": "MZ",
+      "aliases": []
+    },
+    {
+      "id": "city-0195",
+      "ianaId": "Africa/Windhoek",
+      "city": "Windhoek",
+      "primaryCountryCode": "NA",
+      "aliases": []
+    },
+    {
+      "id": "city-0196",
+      "ianaId": "Pacific/Noumea",
+      "city": "Noumea",
+      "primaryCountryCode": "NC",
+      "aliases": []
+    },
+    {
+      "id": "city-0197",
+      "ianaId": "Pacific/Norfolk",
+      "city": "Norfolk",
+      "primaryCountryCode": "NF",
+      "aliases": []
+    },
+    {
+      "id": "city-0198",
+      "ianaId": "Africa/Lagos",
+      "city": "Lagos",
+      "primaryCountryCode": "NG",
+      "aliases": []
+    },
+    {
+      "id": "city-0199",
+      "ianaId": "America/Managua",
+      "city": "Managua",
+      "primaryCountryCode": "NI",
+      "aliases": []
+    },
+    {
+      "id": "city-0200",
+      "ianaId": "Asia/Kathmandu",
+      "city": "Kathmandu",
+      "primaryCountryCode": "NP",
+      "aliases": []
+    },
+    {
+      "id": "city-0201",
+      "ianaId": "Pacific/Nauru",
+      "city": "Nauru",
+      "primaryCountryCode": "NR",
+      "aliases": []
+    },
+    {
+      "id": "city-0202",
+      "ianaId": "Pacific/Niue",
+      "city": "Niue",
+      "primaryCountryCode": "NU",
+      "aliases": []
+    },
+    {
+      "id": "city-0203",
+      "ianaId": "Pacific/Auckland",
+      "city": "Auckland",
+      "primaryCountryCode": "NZ",
+      "aliases": []
+    },
+    {
+      "id": "city-0204",
+      "ianaId": "Pacific/Chatham",
+      "city": "Chatham",
+      "primaryCountryCode": "NZ",
+      "aliases": []
+    },
+    {
+      "id": "city-0205",
+      "ianaId": "America/Panama",
+      "city": "Panama",
+      "primaryCountryCode": "PA",
+      "aliases": []
+    },
+    {
+      "id": "city-0206",
+      "ianaId": "America/Lima",
+      "city": "Lima",
+      "primaryCountryCode": "PE",
+      "aliases": []
+    },
+    {
+      "id": "city-0207",
+      "ianaId": "Pacific/Tahiti",
+      "city": "Tahiti",
+      "primaryCountryCode": "PF",
+      "aliases": []
+    },
+    {
+      "id": "city-0208",
+      "ianaId": "Pacific/Marquesas",
+      "city": "Marquesas",
+      "primaryCountryCode": "PF",
+      "aliases": []
+    },
+    {
+      "id": "city-0209",
+      "ianaId": "Pacific/Gambier",
+      "city": "Gambier",
+      "primaryCountryCode": "PF",
+      "aliases": []
+    },
+    {
+      "id": "city-0210",
+      "ianaId": "Pacific/Port_Moresby",
+      "city": "Port Moresby",
+      "primaryCountryCode": "PG",
+      "aliases": []
+    },
+    {
+      "id": "city-0211",
+      "ianaId": "Pacific/Bougainville",
+      "city": "Bougainville",
+      "primaryCountryCode": "PG",
+      "aliases": []
+    },
+    {
+      "id": "city-0212",
+      "ianaId": "Asia/Manila",
+      "city": "Manila",
+      "primaryCountryCode": "PH",
+      "aliases": []
+    },
+    {
+      "id": "city-0213",
+      "ianaId": "Asia/Karachi",
+      "city": "Karachi",
+      "primaryCountryCode": "PK",
+      "aliases": []
+    },
+    {
+      "id": "city-0214",
+      "ianaId": "Europe/Warsaw",
+      "city": "Warsaw",
+      "primaryCountryCode": "PL",
+      "aliases": []
+    },
+    {
+      "id": "city-0215",
+      "ianaId": "America/Miquelon",
+      "city": "Miquelon",
+      "primaryCountryCode": "PM",
+      "aliases": []
+    },
+    {
+      "id": "city-0216",
+      "ianaId": "Pacific/Pitcairn",
+      "city": "Pitcairn Islands",
+      "primaryCountryCode": "PN",
+      "aliases": []
+    },
+    {
+      "id": "city-0217",
+      "ianaId": "America/Puerto_Rico",
+      "city": "Puerto Rico",
+      "primaryCountryCode": "PR",
+      "aliases": []
+    },
+    {
+      "id": "city-0218",
+      "ianaId": "Asia/Gaza",
+      "city": "Gaza",
+      "primaryCountryCode": "PS",
+      "aliases": []
+    },
+    {
+      "id": "city-0219",
+      "ianaId": "Asia/Hebron",
+      "city": "Hebron",
+      "primaryCountryCode": "PS",
+      "aliases": []
+    },
+    {
+      "id": "city-0220",
+      "ianaId": "Europe/Lisbon",
+      "city": "Lisbon",
+      "primaryCountryCode": "PT",
+      "aliases": []
+    },
+    {
+      "id": "city-0221",
+      "ianaId": "Atlantic/Madeira",
+      "city": "Madeira",
+      "primaryCountryCode": "PT",
+      "aliases": []
+    },
+    {
+      "id": "city-0222",
+      "ianaId": "Atlantic/Azores",
+      "city": "Azores",
+      "primaryCountryCode": "PT",
+      "aliases": []
+    },
+    {
+      "id": "city-0223",
+      "ianaId": "Pacific/Palau",
+      "city": "Palau",
+      "primaryCountryCode": "PW",
+      "aliases": []
+    },
+    {
+      "id": "city-0224",
+      "ianaId": "America/Asuncion",
+      "city": "Asunción",
+      "primaryCountryCode": "PY",
+      "aliases": [
+        "Asuncion"
+      ]
+    },
+    {
+      "id": "city-0225",
+      "ianaId": "Asia/Qatar",
+      "city": "Qatar",
+      "primaryCountryCode": "QA",
+      "aliases": []
+    },
+    {
+      "id": "city-0226",
+      "ianaId": "Europe/Bucharest",
+      "city": "Bucharest",
+      "primaryCountryCode": "RO",
+      "aliases": []
+    },
+    {
+      "id": "city-0227",
+      "ianaId": "Europe/Belgrade",
+      "city": "Belgrade",
+      "primaryCountryCode": "RS",
+      "aliases": []
+    },
+    {
+      "id": "city-0228",
+      "ianaId": "Europe/Kaliningrad",
+      "city": "Kaliningrad",
+      "primaryCountryCode": "RU",
+      "aliases": []
+    },
+    {
+      "id": "city-0229",
+      "ianaId": "Europe/Moscow",
+      "city": "Moscow",
+      "primaryCountryCode": "RU",
+      "aliases": []
+    },
+    {
+      "id": "city-0230",
+      "ianaId": "Europe/Simferopol",
+      "city": "Simferopol",
+      "primaryCountryCode": "RU",
+      "aliases": []
+    },
+    {
+      "id": "city-0231",
+      "ianaId": "Europe/Kirov",
+      "city": "Kirov",
+      "primaryCountryCode": "RU",
+      "aliases": []
+    },
+    {
+      "id": "city-0232",
+      "ianaId": "Europe/Volgograd",
+      "city": "Volgograd",
+      "primaryCountryCode": "RU",
+      "aliases": []
+    },
+    {
+      "id": "city-0233",
+      "ianaId": "Europe/Astrakhan",
+      "city": "Astrakhan",
+      "primaryCountryCode": "RU",
+      "aliases": []
+    },
+    {
+      "id": "city-0234",
+      "ianaId": "Europe/Saratov",
+      "city": "Saratov",
+      "primaryCountryCode": "RU",
+      "aliases": []
+    },
+    {
+      "id": "city-0235",
+      "ianaId": "Europe/Ulyanovsk",
+      "city": "Ulyanovsk",
+      "primaryCountryCode": "RU",
+      "aliases": []
+    },
+    {
+      "id": "city-0236",
+      "ianaId": "Europe/Samara",
+      "city": "Samara",
+      "primaryCountryCode": "RU",
+      "aliases": []
+    },
+    {
+      "id": "city-0237",
+      "ianaId": "Asia/Yekaterinburg",
+      "city": "Yekaterinburg",
+      "primaryCountryCode": "RU",
+      "aliases": []
+    },
+    {
+      "id": "city-0238",
+      "ianaId": "Asia/Omsk",
+      "city": "Omsk",
+      "primaryCountryCode": "RU",
+      "aliases": []
+    },
+    {
+      "id": "city-0239",
+      "ianaId": "Asia/Novosibirsk",
+      "city": "Novosibirsk",
+      "primaryCountryCode": "RU",
+      "aliases": []
+    },
+    {
+      "id": "city-0240",
+      "ianaId": "Asia/Barnaul",
+      "city": "Barnaul",
+      "primaryCountryCode": "RU",
+      "aliases": []
+    },
+    {
+      "id": "city-0241",
+      "ianaId": "Asia/Tomsk",
+      "city": "Tomsk",
+      "primaryCountryCode": "RU",
+      "aliases": []
+    },
+    {
+      "id": "city-0242",
+      "ianaId": "Asia/Novokuznetsk",
+      "city": "Novokuznetsk",
+      "primaryCountryCode": "RU",
+      "aliases": []
+    },
+    {
+      "id": "city-0243",
+      "ianaId": "Asia/Krasnoyarsk",
+      "city": "Krasnoyarsk",
+      "primaryCountryCode": "RU",
+      "aliases": []
+    },
+    {
+      "id": "city-0244",
+      "ianaId": "Asia/Irkutsk",
+      "city": "Irkutsk",
+      "primaryCountryCode": "RU",
+      "aliases": []
+    },
+    {
+      "id": "city-0245",
+      "ianaId": "Asia/Chita",
+      "city": "Chita",
+      "primaryCountryCode": "RU",
+      "aliases": []
+    },
+    {
+      "id": "city-0246",
+      "ianaId": "Asia/Yakutsk",
+      "city": "Yakutsk",
+      "primaryCountryCode": "RU",
+      "aliases": []
+    },
+    {
+      "id": "city-0247",
+      "ianaId": "Asia/Khandyga",
+      "city": "Khandyga",
+      "primaryCountryCode": "RU",
+      "aliases": []
+    },
+    {
+      "id": "city-0248",
+      "ianaId": "Asia/Vladivostok",
+      "city": "Vladivostok",
+      "primaryCountryCode": "RU",
+      "aliases": []
+    },
+    {
+      "id": "city-0249",
+      "ianaId": "Asia/Ust-Nera",
+      "city": "Ust-Nera",
+      "primaryCountryCode": "RU",
+      "aliases": []
+    },
+    {
+      "id": "city-0250",
+      "ianaId": "Asia/Magadan",
+      "city": "Magadan",
+      "primaryCountryCode": "RU",
+      "aliases": []
+    },
+    {
+      "id": "city-0251",
+      "ianaId": "Asia/Sakhalin",
+      "city": "Sakhalin",
+      "primaryCountryCode": "RU",
+      "aliases": []
+    },
+    {
+      "id": "city-0252",
+      "ianaId": "Asia/Srednekolymsk",
+      "city": "Srednekolymsk",
+      "primaryCountryCode": "RU",
+      "aliases": []
+    },
+    {
+      "id": "city-0253",
+      "ianaId": "Asia/Kamchatka",
+      "city": "Kamchatka",
+      "primaryCountryCode": "RU",
+      "aliases": []
+    },
+    {
+      "id": "city-0254",
+      "ianaId": "Asia/Anadyr",
+      "city": "Anadyr",
+      "primaryCountryCode": "RU",
+      "aliases": []
+    },
+    {
+      "id": "city-0255",
+      "ianaId": "Asia/Riyadh",
+      "city": "Riyadh",
+      "primaryCountryCode": "SA",
+      "aliases": []
+    },
+    {
+      "id": "city-0256",
+      "ianaId": "Pacific/Guadalcanal",
+      "city": "Guadalcanal",
+      "primaryCountryCode": "SB",
+      "aliases": []
+    },
+    {
+      "id": "city-0257",
+      "ianaId": "Africa/Khartoum",
+      "city": "Khartoum",
+      "primaryCountryCode": "SD",
+      "aliases": []
+    },
+    {
+      "id": "city-0258",
+      "ianaId": "Asia/Singapore",
+      "city": "Singapore",
+      "primaryCountryCode": "SG",
+      "aliases": []
+    },
+    {
+      "id": "city-0259",
+      "ianaId": "America/Paramaribo",
+      "city": "Paramaribo",
+      "primaryCountryCode": "SR",
+      "aliases": []
+    },
+    {
+      "id": "city-0260",
+      "ianaId": "Africa/Juba",
+      "city": "Juba",
+      "primaryCountryCode": "SS",
+      "aliases": []
+    },
+    {
+      "id": "city-0261",
+      "ianaId": "Africa/Sao_Tome",
+      "city": "São Tomé",
+      "primaryCountryCode": "ST",
+      "aliases": [
+        "Sao Tome"
+      ]
+    },
+    {
+      "id": "city-0262",
+      "ianaId": "America/El_Salvador",
+      "city": "El Salvador",
+      "primaryCountryCode": "SV",
+      "aliases": []
+    },
+    {
+      "id": "city-0263",
+      "ianaId": "Asia/Damascus",
+      "city": "Damascus",
+      "primaryCountryCode": "SY",
+      "aliases": []
+    },
+    {
+      "id": "city-0264",
+      "ianaId": "America/Grand_Turk",
+      "city": "Grand Turk",
+      "primaryCountryCode": "TC",
+      "aliases": []
+    },
+    {
+      "id": "city-0265",
+      "ianaId": "Africa/Ndjamena",
+      "city": "N'Djamena",
+      "primaryCountryCode": "TD",
+      "aliases": []
+    },
+    {
+      "id": "city-0266",
+      "ianaId": "Asia/Bangkok",
+      "city": "Bangkok",
+      "primaryCountryCode": "TH",
+      "aliases": []
+    },
+    {
+      "id": "city-0267",
+      "ianaId": "Asia/Dushanbe",
+      "city": "Dushanbe",
+      "primaryCountryCode": "TJ",
+      "aliases": []
+    },
+    {
+      "id": "city-0268",
+      "ianaId": "Pacific/Fakaofo",
+      "city": "Fakaofo",
+      "primaryCountryCode": "TK",
+      "aliases": []
+    },
+    {
+      "id": "city-0269",
+      "ianaId": "Asia/Dili",
+      "city": "Dili",
+      "primaryCountryCode": "TL",
+      "aliases": []
+    },
+    {
+      "id": "city-0270",
+      "ianaId": "Asia/Ashgabat",
+      "city": "Ashgabat",
+      "primaryCountryCode": "TM",
+      "aliases": []
+    },
+    {
+      "id": "city-0271",
+      "ianaId": "Africa/Tunis",
+      "city": "Tunis",
+      "primaryCountryCode": "TN",
+      "aliases": []
+    },
+    {
+      "id": "city-0272",
+      "ianaId": "Pacific/Tongatapu",
+      "city": "Tongatapu",
+      "primaryCountryCode": "TO",
+      "aliases": []
+    },
+    {
+      "id": "city-0273",
+      "ianaId": "Europe/Istanbul",
+      "city": "Istanbul",
+      "primaryCountryCode": "TR",
+      "aliases": []
+    },
+    {
+      "id": "city-0274",
+      "ianaId": "Asia/Taipei",
+      "city": "Taipei",
+      "primaryCountryCode": "TW",
+      "aliases": []
+    },
+    {
+      "id": "city-0275",
+      "ianaId": "Europe/Kyiv",
+      "city": "Kyiv",
+      "primaryCountryCode": "UA",
+      "aliases": [
+        "Kiev"
+      ]
+    },
+    {
+      "id": "city-0276",
+      "ianaId": "America/New_York",
+      "city": "New York",
+      "primaryCountryCode": "US",
+      "aliases": [
+        "New York City",
+        "NYC"
+      ]
+    },
+    {
+      "id": "city-0277",
+      "ianaId": "America/Detroit",
+      "city": "Detroit",
+      "primaryCountryCode": "US",
+      "aliases": []
+    },
+    {
+      "id": "city-0278",
+      "ianaId": "America/Kentucky/Louisville",
+      "city": "Louisville",
+      "primaryCountryCode": "US",
+      "aliases": []
+    },
+    {
+      "id": "city-0279",
+      "ianaId": "America/Kentucky/Monticello",
+      "city": "Monticello",
+      "primaryCountryCode": "US",
+      "aliases": []
+    },
+    {
+      "id": "city-0280",
+      "ianaId": "America/Indiana/Indianapolis",
+      "city": "Indianapolis",
+      "primaryCountryCode": "US",
+      "aliases": []
+    },
+    {
+      "id": "city-0281",
+      "ianaId": "America/Indiana/Vincennes",
+      "city": "Vincennes",
+      "primaryCountryCode": "US",
+      "aliases": []
+    },
+    {
+      "id": "city-0282",
+      "ianaId": "America/Indiana/Winamac",
+      "city": "Winamac",
+      "primaryCountryCode": "US",
+      "aliases": []
+    },
+    {
+      "id": "city-0283",
+      "ianaId": "America/Indiana/Marengo",
+      "city": "Marengo",
+      "primaryCountryCode": "US",
+      "aliases": []
+    },
+    {
+      "id": "city-0284",
+      "ianaId": "America/Indiana/Petersburg",
+      "city": "Petersburg",
+      "primaryCountryCode": "US",
+      "aliases": []
+    },
+    {
+      "id": "city-0285",
+      "ianaId": "America/Indiana/Vevay",
+      "city": "Vevay",
+      "primaryCountryCode": "US",
+      "aliases": []
+    },
+    {
+      "id": "city-0286",
+      "ianaId": "America/Chicago",
+      "city": "Chicago",
+      "primaryCountryCode": "US",
+      "aliases": []
+    },
+    {
+      "id": "city-0287",
+      "ianaId": "America/Indiana/Tell_City",
+      "city": "Tell City",
+      "primaryCountryCode": "US",
+      "aliases": []
+    },
+    {
+      "id": "city-0288",
+      "ianaId": "America/Indiana/Knox",
+      "city": "Knox",
+      "primaryCountryCode": "US",
+      "aliases": []
+    },
+    {
+      "id": "city-0289",
+      "ianaId": "America/Menominee",
+      "city": "Menominee",
+      "primaryCountryCode": "US",
+      "aliases": []
+    },
+    {
+      "id": "city-0290",
+      "ianaId": "America/North_Dakota/Center",
+      "city": "Center",
+      "primaryCountryCode": "US",
+      "aliases": []
+    },
+    {
+      "id": "city-0291",
+      "ianaId": "America/North_Dakota/New_Salem",
+      "city": "New Salem",
+      "primaryCountryCode": "US",
+      "aliases": []
+    },
+    {
+      "id": "city-0292",
+      "ianaId": "America/North_Dakota/Beulah",
+      "city": "Beulah",
+      "primaryCountryCode": "US",
+      "aliases": []
+    },
+    {
+      "id": "city-0293",
+      "ianaId": "America/Denver",
+      "city": "Denver",
+      "primaryCountryCode": "US",
+      "aliases": []
+    },
+    {
+      "id": "city-0294",
+      "ianaId": "America/Boise",
+      "city": "Boise",
+      "primaryCountryCode": "US",
+      "aliases": []
+    },
+    {
+      "id": "city-0295",
+      "ianaId": "America/Phoenix",
+      "city": "Phoenix",
+      "primaryCountryCode": "US",
+      "aliases": []
+    },
+    {
+      "id": "city-0296",
+      "ianaId": "America/Los_Angeles",
+      "city": "Los Angeles",
+      "primaryCountryCode": "US",
+      "aliases": [
+        "LA"
+      ]
+    },
+    {
+      "id": "city-0297",
+      "ianaId": "America/Anchorage",
+      "city": "Anchorage",
+      "primaryCountryCode": "US",
+      "aliases": []
+    },
+    {
+      "id": "city-0298",
+      "ianaId": "America/Juneau",
+      "city": "Juneau",
+      "primaryCountryCode": "US",
+      "aliases": []
+    },
+    {
+      "id": "city-0299",
+      "ianaId": "America/Sitka",
+      "city": "Sitka",
+      "primaryCountryCode": "US",
+      "aliases": []
+    },
+    {
+      "id": "city-0300",
+      "ianaId": "America/Metlakatla",
+      "city": "Metlakatla",
+      "primaryCountryCode": "US",
+      "aliases": []
+    },
+    {
+      "id": "city-0301",
+      "ianaId": "America/Yakutat",
+      "city": "Yakutat",
+      "primaryCountryCode": "US",
+      "aliases": []
+    },
+    {
+      "id": "city-0302",
+      "ianaId": "America/Nome",
+      "city": "Nome",
+      "primaryCountryCode": "US",
+      "aliases": []
+    },
+    {
+      "id": "city-0303",
+      "ianaId": "America/Adak",
+      "city": "Adak",
+      "primaryCountryCode": "US",
+      "aliases": []
+    },
+    {
+      "id": "city-0304",
+      "ianaId": "Pacific/Honolulu",
+      "city": "Honolulu",
+      "primaryCountryCode": "US",
+      "aliases": []
+    },
+    {
+      "id": "city-0305",
+      "ianaId": "America/Montevideo",
+      "city": "Montevideo",
+      "primaryCountryCode": "UY",
+      "aliases": []
+    },
+    {
+      "id": "city-0306",
+      "ianaId": "Asia/Samarkand",
+      "city": "Samarkand",
+      "primaryCountryCode": "UZ",
+      "aliases": []
+    },
+    {
+      "id": "city-0307",
+      "ianaId": "Asia/Tashkent",
+      "city": "Tashkent",
+      "primaryCountryCode": "UZ",
+      "aliases": []
+    },
+    {
+      "id": "city-0308",
+      "ianaId": "America/Caracas",
+      "city": "Caracas",
+      "primaryCountryCode": "VE",
+      "aliases": []
+    },
+    {
+      "id": "city-0309",
+      "ianaId": "Asia/Ho_Chi_Minh",
+      "city": "Ho Chi Minh",
+      "primaryCountryCode": "VN",
+      "aliases": [
+        "Ho Chi Minh City",
+        "Saigon"
+      ]
+    },
+    {
+      "id": "city-0310",
+      "ianaId": "Pacific/Efate",
+      "city": "Efate",
+      "primaryCountryCode": "VU",
+      "aliases": []
+    },
+    {
+      "id": "city-0311",
+      "ianaId": "Pacific/Apia",
+      "city": "Apia",
+      "primaryCountryCode": "WS",
+      "aliases": []
+    },
+    {
+      "id": "city-0312",
+      "ianaId": "Africa/Johannesburg",
+      "city": "Johannesburg",
+      "primaryCountryCode": "ZA",
+      "aliases": []
+    }
+  ]
+}

@@ -1,0 +1,4542 @@
+{
+  "schemaVersion": 1,
+  "catalogVersion": 1,
+  "sourceVersion": "iana-tzdata-2026c",
+  "ianaRelease": "2026c",
+  "entries": [
+    {
+      "id": "city-0086",
+      "ianaId": "Africa/Abidjan",
+      "city": "Abidjan",
+      "primaryCountryCode": "CI",
+      "countries": [
+        {
+          "code": "CI",
+          "name": "Côte d’Ivoire"
+        },
+        {
+          "code": "BF",
+          "name": "Burkina Faso"
+        },
+        {
+          "code": "GH",
+          "name": "Ghana"
+        },
+        {
+          "code": "GM",
+          "name": "Gambia"
+        },
+        {
+          "code": "GN",
+          "name": "Guinea"
+        },
+        {
+          "code": "IS",
+          "name": "Iceland"
+        },
+        {
+          "code": "ML",
+          "name": "Mali"
+        },
+        {
+          "code": "MR",
+          "name": "Mauritania"
+        },
+        {
+          "code": "SH",
+          "name": "St Helena"
+        },
+        {
+          "code": "SL",
+          "name": "Sierra Leone"
+        },
+        {
+          "code": "SN",
+          "name": "Senegal"
+        },
+        {
+          "code": "TG",
+          "name": "Togo"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0103",
+      "ianaId": "Africa/Algiers",
+      "city": "Algiers",
+      "primaryCountryCode": "DZ",
+      "countries": [
+        {
+          "code": "DZ",
+          "name": "Algeria"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0130",
+      "ianaId": "Africa/Bissau",
+      "city": "Bissau",
+      "primaryCountryCode": "GW",
+      "countries": [
+        {
+          "code": "GW",
+          "name": "Guinea-Bissau"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0107",
+      "ianaId": "Africa/Cairo",
+      "city": "Cairo",
+      "primaryCountryCode": "EG",
+      "countries": [
+        {
+          "code": "EG",
+          "name": "Egypt"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0170",
+      "ianaId": "Africa/Casablanca",
+      "city": "Casablanca",
+      "primaryCountryCode": "MA",
+      "countries": [
+        {
+          "code": "MA",
+          "name": "Morocco"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0110",
+      "ianaId": "Africa/Ceuta",
+      "city": "Ceuta",
+      "primaryCountryCode": "ES",
+      "countries": [
+        {
+          "code": "ES",
+          "name": "Spain"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0108",
+      "ianaId": "Africa/El_Aaiun",
+      "city": "El Aaiun",
+      "primaryCountryCode": "EH",
+      "countries": [
+        {
+          "code": "EH",
+          "name": "Western Sahara"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0312",
+      "ianaId": "Africa/Johannesburg",
+      "city": "Johannesburg",
+      "primaryCountryCode": "ZA",
+      "countries": [
+        {
+          "code": "ZA",
+          "name": "South Africa"
+        },
+        {
+          "code": "LS",
+          "name": "Lesotho"
+        },
+        {
+          "code": "SZ",
+          "name": "Eswatini (Swaziland)"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0260",
+      "ianaId": "Africa/Juba",
+      "city": "Juba",
+      "primaryCountryCode": "SS",
+      "countries": [
+        {
+          "code": "SS",
+          "name": "South Sudan"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0257",
+      "ianaId": "Africa/Khartoum",
+      "city": "Khartoum",
+      "primaryCountryCode": "SD",
+      "countries": [
+        {
+          "code": "SD",
+          "name": "Sudan"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0198",
+      "ianaId": "Africa/Lagos",
+      "city": "Lagos",
+      "primaryCountryCode": "NG",
+      "countries": [
+        {
+          "code": "NG",
+          "name": "Nigeria"
+        },
+        {
+          "code": "AO",
+          "name": "Angola"
+        },
+        {
+          "code": "BJ",
+          "name": "Benin"
+        },
+        {
+          "code": "CD",
+          "name": "Congo (Dem. Rep.)"
+        },
+        {
+          "code": "CF",
+          "name": "Central African Rep."
+        },
+        {
+          "code": "CG",
+          "name": "Congo (Rep.)"
+        },
+        {
+          "code": "CM",
+          "name": "Cameroon"
+        },
+        {
+          "code": "GA",
+          "name": "Gabon"
+        },
+        {
+          "code": "GQ",
+          "name": "Equatorial Guinea"
+        },
+        {
+          "code": "NE",
+          "name": "Niger"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0194",
+      "ianaId": "Africa/Maputo",
+      "city": "Maputo",
+      "primaryCountryCode": "MZ",
+      "countries": [
+        {
+          "code": "MZ",
+          "name": "Mozambique"
+        },
+        {
+          "code": "BI",
+          "name": "Burundi"
+        },
+        {
+          "code": "BW",
+          "name": "Botswana"
+        },
+        {
+          "code": "CD",
+          "name": "Congo (Dem. Rep.)"
+        },
+        {
+          "code": "MW",
+          "name": "Malawi"
+        },
+        {
+          "code": "RW",
+          "name": "Rwanda"
+        },
+        {
+          "code": "ZM",
+          "name": "Zambia"
+        },
+        {
+          "code": "ZW",
+          "name": "Zimbabwe"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0166",
+      "ianaId": "Africa/Monrovia",
+      "city": "Monrovia",
+      "primaryCountryCode": "LR",
+      "countries": [
+        {
+          "code": "LR",
+          "name": "Liberia"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0150",
+      "ianaId": "Africa/Nairobi",
+      "city": "Nairobi",
+      "primaryCountryCode": "KE",
+      "countries": [
+        {
+          "code": "KE",
+          "name": "Kenya"
+        },
+        {
+          "code": "DJ",
+          "name": "Djibouti"
+        },
+        {
+          "code": "ER",
+          "name": "Eritrea"
+        },
+        {
+          "code": "ET",
+          "name": "Ethiopia"
+        },
+        {
+          "code": "KM",
+          "name": "Comoros"
+        },
+        {
+          "code": "MG",
+          "name": "Madagascar"
+        },
+        {
+          "code": "SO",
+          "name": "Somalia"
+        },
+        {
+          "code": "TZ",
+          "name": "Tanzania"
+        },
+        {
+          "code": "UG",
+          "name": "Uganda"
+        },
+        {
+          "code": "YT",
+          "name": "Mayotte"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0265",
+      "ianaId": "Africa/Ndjamena",
+      "city": "N'Djamena",
+      "primaryCountryCode": "TD",
+      "countries": [
+        {
+          "code": "TD",
+          "name": "Chad"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0261",
+      "ianaId": "Africa/Sao_Tome",
+      "city": "São Tomé",
+      "primaryCountryCode": "ST",
+      "countries": [
+        {
+          "code": "ST",
+          "name": "Sao Tome & Principe"
+        }
+      ],
+      "aliases": [
+        "Sao Tome"
+      ]
+    },
+    {
+      "id": "city-0169",
+      "ianaId": "Africa/Tripoli",
+      "city": "Tripoli",
+      "primaryCountryCode": "LY",
+      "countries": [
+        {
+          "code": "LY",
+          "name": "Libya"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0271",
+      "ianaId": "Africa/Tunis",
+      "city": "Tunis",
+      "primaryCountryCode": "TN",
+      "countries": [
+        {
+          "code": "TN",
+          "name": "Tunisia"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0195",
+      "ianaId": "Africa/Windhoek",
+      "city": "Windhoek",
+      "primaryCountryCode": "NA",
+      "countries": [
+        {
+          "code": "NA",
+          "name": "Namibia"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0303",
+      "ianaId": "America/Adak",
+      "city": "Adak",
+      "primaryCountryCode": "US",
+      "countries": [
+        {
+          "code": "US",
+          "name": "United States"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0297",
+      "ianaId": "America/Anchorage",
+      "city": "Anchorage",
+      "primaryCountryCode": "US",
+      "countries": [
+        {
+          "code": "US",
+          "name": "United States"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0050",
+      "ianaId": "America/Araguaina",
+      "city": "Araguaina",
+      "primaryCountryCode": "BR",
+      "countries": [
+        {
+          "code": "BR",
+          "name": "Brazil"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0013",
+      "ianaId": "America/Argentina/Buenos_Aires",
+      "city": "Buenos Aires",
+      "primaryCountryCode": "AR",
+      "countries": [
+        {
+          "code": "AR",
+          "name": "Argentina"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0018",
+      "ianaId": "America/Argentina/Catamarca",
+      "city": "Catamarca",
+      "primaryCountryCode": "AR",
+      "countries": [
+        {
+          "code": "AR",
+          "name": "Argentina"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0014",
+      "ianaId": "America/Argentina/Cordoba",
+      "city": "Córdoba",
+      "primaryCountryCode": "AR",
+      "countries": [
+        {
+          "code": "AR",
+          "name": "Argentina"
+        }
+      ],
+      "aliases": [
+        "Cordoba"
+      ]
+    },
+    {
+      "id": "city-0016",
+      "ianaId": "America/Argentina/Jujuy",
+      "city": "Jujuy",
+      "primaryCountryCode": "AR",
+      "countries": [
+        {
+          "code": "AR",
+          "name": "Argentina"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0019",
+      "ianaId": "America/Argentina/La_Rioja",
+      "city": "La Rioja",
+      "primaryCountryCode": "AR",
+      "countries": [
+        {
+          "code": "AR",
+          "name": "Argentina"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0021",
+      "ianaId": "America/Argentina/Mendoza",
+      "city": "Mendoza",
+      "primaryCountryCode": "AR",
+      "countries": [
+        {
+          "code": "AR",
+          "name": "Argentina"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0023",
+      "ianaId": "America/Argentina/Rio_Gallegos",
+      "city": "Rio Gallegos",
+      "primaryCountryCode": "AR",
+      "countries": [
+        {
+          "code": "AR",
+          "name": "Argentina"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0015",
+      "ianaId": "America/Argentina/Salta",
+      "city": "Salta",
+      "primaryCountryCode": "AR",
+      "countries": [
+        {
+          "code": "AR",
+          "name": "Argentina"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0020",
+      "ianaId": "America/Argentina/San_Juan",
+      "city": "San Juan",
+      "primaryCountryCode": "AR",
+      "countries": [
+        {
+          "code": "AR",
+          "name": "Argentina"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0022",
+      "ianaId": "America/Argentina/San_Luis",
+      "city": "San Luis",
+      "primaryCountryCode": "AR",
+      "countries": [
+        {
+          "code": "AR",
+          "name": "Argentina"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0017",
+      "ianaId": "America/Argentina/Tucuman",
+      "city": "Tucumán",
+      "primaryCountryCode": "AR",
+      "countries": [
+        {
+          "code": "AR",
+          "name": "Argentina"
+        }
+      ],
+      "aliases": [
+        "Tucuman"
+      ]
+    },
+    {
+      "id": "city-0024",
+      "ianaId": "America/Argentina/Ushuaia",
+      "city": "Ushuaia",
+      "primaryCountryCode": "AR",
+      "countries": [
+        {
+          "code": "AR",
+          "name": "Argentina"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0224",
+      "ianaId": "America/Asuncion",
+      "city": "Asunción",
+      "primaryCountryCode": "PY",
+      "countries": [
+        {
+          "code": "PY",
+          "name": "Paraguay"
+        }
+      ],
+      "aliases": [
+        "Asuncion"
+      ]
+    },
+    {
+      "id": "city-0052",
+      "ianaId": "America/Bahia",
+      "city": "Bahia",
+      "primaryCountryCode": "BR",
+      "countries": [
+        {
+          "code": "BR",
+          "name": "Brazil"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0190",
+      "ianaId": "America/Bahia_Banderas",
+      "city": "Bahia Banderas",
+      "primaryCountryCode": "MX",
+      "countries": [
+        {
+          "code": "MX",
+          "name": "Mexico"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0040",
+      "ianaId": "America/Barbados",
+      "city": "Barbados",
+      "primaryCountryCode": "BB",
+      "countries": [
+        {
+          "code": "BB",
+          "name": "Barbados"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0047",
+      "ianaId": "America/Belem",
+      "city": "Belem",
+      "primaryCountryCode": "BR",
+      "countries": [
+        {
+          "code": "BR",
+          "name": "Brazil"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0064",
+      "ianaId": "America/Belize",
+      "city": "Belize",
+      "primaryCountryCode": "BZ",
+      "countries": [
+        {
+          "code": "BZ",
+          "name": "Belize"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0058",
+      "ianaId": "America/Boa_Vista",
+      "city": "Boa Vista",
+      "primaryCountryCode": "BR",
+      "countries": [
+        {
+          "code": "BR",
+          "name": "Brazil"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0094",
+      "ianaId": "America/Bogota",
+      "city": "Bogotá",
+      "primaryCountryCode": "CO",
+      "countries": [
+        {
+          "code": "CO",
+          "name": "Colombia"
+        }
+      ],
+      "aliases": [
+        "Bogota"
+      ]
+    },
+    {
+      "id": "city-0294",
+      "ianaId": "America/Boise",
+      "city": "Boise",
+      "primaryCountryCode": "US",
+      "countries": [
+        {
+          "code": "US",
+          "name": "United States"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0078",
+      "ianaId": "America/Cambridge_Bay",
+      "city": "Cambridge Bay",
+      "primaryCountryCode": "CA",
+      "countries": [
+        {
+          "code": "CA",
+          "name": "Canada"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0054",
+      "ianaId": "America/Campo_Grande",
+      "city": "Campo Grande",
+      "primaryCountryCode": "BR",
+      "countries": [
+        {
+          "code": "BR",
+          "name": "Brazil"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0182",
+      "ianaId": "America/Cancun",
+      "city": "Cancún",
+      "primaryCountryCode": "MX",
+      "countries": [
+        {
+          "code": "MX",
+          "name": "Mexico"
+        }
+      ],
+      "aliases": [
+        "Cancun"
+      ]
+    },
+    {
+      "id": "city-0308",
+      "ianaId": "America/Caracas",
+      "city": "Caracas",
+      "primaryCountryCode": "VE",
+      "countries": [
+        {
+          "code": "VE",
+          "name": "Venezuela"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0120",
+      "ianaId": "America/Cayenne",
+      "city": "Cayenne",
+      "primaryCountryCode": "GF",
+      "countries": [
+        {
+          "code": "GF",
+          "name": "French Guiana"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0286",
+      "ianaId": "America/Chicago",
+      "city": "Chicago",
+      "primaryCountryCode": "US",
+      "countries": [
+        {
+          "code": "US",
+          "name": "United States"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0186",
+      "ianaId": "America/Chihuahua",
+      "city": "Chihuahua",
+      "primaryCountryCode": "MX",
+      "countries": [
+        {
+          "code": "MX",
+          "name": "Mexico"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0187",
+      "ianaId": "America/Ciudad_Juarez",
+      "city": "Ciudad Juarez",
+      "primaryCountryCode": "MX",
+      "countries": [
+        {
+          "code": "MX",
+          "name": "Mexico"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0095",
+      "ianaId": "America/Costa_Rica",
+      "city": "Costa Rica",
+      "primaryCountryCode": "CR",
+      "countries": [
+        {
+          "code": "CR",
+          "name": "Costa Rica"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0089",
+      "ianaId": "America/Coyhaique",
+      "city": "Coyhaique",
+      "primaryCountryCode": "CL",
+      "countries": [
+        {
+          "code": "CL",
+          "name": "Chile"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0055",
+      "ianaId": "America/Cuiaba",
+      "city": "Cuiaba",
+      "primaryCountryCode": "BR",
+      "countries": [
+        {
+          "code": "BR",
+          "name": "Brazil"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0123",
+      "ianaId": "America/Danmarkshavn",
+      "city": "Danmarkshavn",
+      "primaryCountryCode": "GL",
+      "countries": [
+        {
+          "code": "GL",
+          "name": "Greenland"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0084",
+      "ianaId": "America/Dawson",
+      "city": "Dawson",
+      "primaryCountryCode": "CA",
+      "countries": [
+        {
+          "code": "CA",
+          "name": "Canada"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0081",
+      "ianaId": "America/Dawson_Creek",
+      "city": "Dawson Creek",
+      "primaryCountryCode": "CA",
+      "countries": [
+        {
+          "code": "CA",
+          "name": "Canada"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0293",
+      "ianaId": "America/Denver",
+      "city": "Denver",
+      "primaryCountryCode": "US",
+      "countries": [
+        {
+          "code": "US",
+          "name": "United States"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0277",
+      "ianaId": "America/Detroit",
+      "city": "Detroit",
+      "primaryCountryCode": "US",
+      "countries": [
+        {
+          "code": "US",
+          "name": "United States"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0077",
+      "ianaId": "America/Edmonton",
+      "city": "Edmonton",
+      "primaryCountryCode": "CA",
+      "countries": [
+        {
+          "code": "CA",
+          "name": "Canada"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0060",
+      "ianaId": "America/Eirunepe",
+      "city": "Eirunepe",
+      "primaryCountryCode": "BR",
+      "countries": [
+        {
+          "code": "BR",
+          "name": "Brazil"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0262",
+      "ianaId": "America/El_Salvador",
+      "city": "El Salvador",
+      "primaryCountryCode": "SV",
+      "countries": [
+        {
+          "code": "SV",
+          "name": "El Salvador"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0082",
+      "ianaId": "America/Fort_Nelson",
+      "city": "Fort Nelson",
+      "primaryCountryCode": "CA",
+      "countries": [
+        {
+          "code": "CA",
+          "name": "Canada"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0048",
+      "ianaId": "America/Fortaleza",
+      "city": "Fortaleza",
+      "primaryCountryCode": "BR",
+      "countries": [
+        {
+          "code": "BR",
+          "name": "Brazil"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0067",
+      "ianaId": "America/Glace_Bay",
+      "city": "Glace Bay",
+      "primaryCountryCode": "CA",
+      "countries": [
+        {
+          "code": "CA",
+          "name": "Canada"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0069",
+      "ianaId": "America/Goose_Bay",
+      "city": "Goose Bay",
+      "primaryCountryCode": "CA",
+      "countries": [
+        {
+          "code": "CA",
+          "name": "Canada"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0264",
+      "ianaId": "America/Grand_Turk",
+      "city": "Grand Turk",
+      "primaryCountryCode": "TC",
+      "countries": [
+        {
+          "code": "TC",
+          "name": "Turks & Caicos Is"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0128",
+      "ianaId": "America/Guatemala",
+      "city": "Guatemala",
+      "primaryCountryCode": "GT",
+      "countries": [
+        {
+          "code": "GT",
+          "name": "Guatemala"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0104",
+      "ianaId": "America/Guayaquil",
+      "city": "Guayaquil",
+      "primaryCountryCode": "EC",
+      "countries": [
+        {
+          "code": "EC",
+          "name": "Ecuador"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0131",
+      "ianaId": "America/Guyana",
+      "city": "Guyana",
+      "primaryCountryCode": "GY",
+      "countries": [
+        {
+          "code": "GY",
+          "name": "Guyana"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0066",
+      "ianaId": "America/Halifax",
+      "city": "Halifax",
+      "primaryCountryCode": "CA",
+      "countries": [
+        {
+          "code": "CA",
+          "name": "Canada"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0096",
+      "ianaId": "America/Havana",
+      "city": "Havana",
+      "primaryCountryCode": "CU",
+      "countries": [
+        {
+          "code": "CU",
+          "name": "Cuba"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0191",
+      "ianaId": "America/Hermosillo",
+      "city": "Hermosillo",
+      "primaryCountryCode": "MX",
+      "countries": [
+        {
+          "code": "MX",
+          "name": "Mexico"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0280",
+      "ianaId": "America/Indiana/Indianapolis",
+      "city": "Indianapolis",
+      "primaryCountryCode": "US",
+      "countries": [
+        {
+          "code": "US",
+          "name": "United States"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0288",
+      "ianaId": "America/Indiana/Knox",
+      "city": "Knox",
+      "primaryCountryCode": "US",
+      "countries": [
+        {
+          "code": "US",
+          "name": "United States"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0283",
+      "ianaId": "America/Indiana/Marengo",
+      "city": "Marengo",
+      "primaryCountryCode": "US",
+      "countries": [
+        {
+          "code": "US",
+          "name": "United States"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0284",
+      "ianaId": "America/Indiana/Petersburg",
+      "city": "Petersburg",
+      "primaryCountryCode": "US",
+      "countries": [
+        {
+          "code": "US",
+          "name": "United States"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0287",
+      "ianaId": "America/Indiana/Tell_City",
+      "city": "Tell City",
+      "primaryCountryCode": "US",
+      "countries": [
+        {
+          "code": "US",
+          "name": "United States"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0285",
+      "ianaId": "America/Indiana/Vevay",
+      "city": "Vevay",
+      "primaryCountryCode": "US",
+      "countries": [
+        {
+          "code": "US",
+          "name": "United States"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0281",
+      "ianaId": "America/Indiana/Vincennes",
+      "city": "Vincennes",
+      "primaryCountryCode": "US",
+      "countries": [
+        {
+          "code": "US",
+          "name": "United States"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0282",
+      "ianaId": "America/Indiana/Winamac",
+      "city": "Winamac",
+      "primaryCountryCode": "US",
+      "countries": [
+        {
+          "code": "US",
+          "name": "United States"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0079",
+      "ianaId": "America/Inuvik",
+      "city": "Inuvik",
+      "primaryCountryCode": "CA",
+      "countries": [
+        {
+          "code": "CA",
+          "name": "Canada"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0071",
+      "ianaId": "America/Iqaluit",
+      "city": "Iqaluit",
+      "primaryCountryCode": "CA",
+      "countries": [
+        {
+          "code": "CA",
+          "name": "Canada"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0147",
+      "ianaId": "America/Jamaica",
+      "city": "Jamaica",
+      "primaryCountryCode": "JM",
+      "countries": [
+        {
+          "code": "JM",
+          "name": "Jamaica"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0298",
+      "ianaId": "America/Juneau",
+      "city": "Juneau",
+      "primaryCountryCode": "US",
+      "countries": [
+        {
+          "code": "US",
+          "name": "United States"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0278",
+      "ianaId": "America/Kentucky/Louisville",
+      "city": "Louisville",
+      "primaryCountryCode": "US",
+      "countries": [
+        {
+          "code": "US",
+          "name": "United States"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0279",
+      "ianaId": "America/Kentucky/Monticello",
+      "city": "Monticello",
+      "primaryCountryCode": "US",
+      "countries": [
+        {
+          "code": "US",
+          "name": "United States"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0045",
+      "ianaId": "America/La_Paz",
+      "city": "La Paz",
+      "primaryCountryCode": "BO",
+      "countries": [
+        {
+          "code": "BO",
+          "name": "Bolivia"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0206",
+      "ianaId": "America/Lima",
+      "city": "Lima",
+      "primaryCountryCode": "PE",
+      "countries": [
+        {
+          "code": "PE",
+          "name": "Peru"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0296",
+      "ianaId": "America/Los_Angeles",
+      "city": "Los Angeles",
+      "primaryCountryCode": "US",
+      "countries": [
+        {
+          "code": "US",
+          "name": "United States"
+        }
+      ],
+      "aliases": [
+        "LA"
+      ]
+    },
+    {
+      "id": "city-0051",
+      "ianaId": "America/Maceio",
+      "city": "Maceio",
+      "primaryCountryCode": "BR",
+      "countries": [
+        {
+          "code": "BR",
+          "name": "Brazil"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0199",
+      "ianaId": "America/Managua",
+      "city": "Managua",
+      "primaryCountryCode": "NI",
+      "countries": [
+        {
+          "code": "NI",
+          "name": "Nicaragua"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0059",
+      "ianaId": "America/Manaus",
+      "city": "Manaus",
+      "primaryCountryCode": "BR",
+      "countries": [
+        {
+          "code": "BR",
+          "name": "Brazil"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0177",
+      "ianaId": "America/Martinique",
+      "city": "Martinique",
+      "primaryCountryCode": "MQ",
+      "countries": [
+        {
+          "code": "MQ",
+          "name": "Martinique"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0185",
+      "ianaId": "America/Matamoros",
+      "city": "Matamoros",
+      "primaryCountryCode": "MX",
+      "countries": [
+        {
+          "code": "MX",
+          "name": "Mexico"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0189",
+      "ianaId": "America/Mazatlan",
+      "city": "Mazatlán",
+      "primaryCountryCode": "MX",
+      "countries": [
+        {
+          "code": "MX",
+          "name": "Mexico"
+        }
+      ],
+      "aliases": [
+        "Mazatlan"
+      ]
+    },
+    {
+      "id": "city-0289",
+      "ianaId": "America/Menominee",
+      "city": "Menominee",
+      "primaryCountryCode": "US",
+      "countries": [
+        {
+          "code": "US",
+          "name": "United States"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0183",
+      "ianaId": "America/Merida",
+      "city": "Mérida",
+      "primaryCountryCode": "MX",
+      "countries": [
+        {
+          "code": "MX",
+          "name": "Mexico"
+        }
+      ],
+      "aliases": [
+        "Merida"
+      ]
+    },
+    {
+      "id": "city-0300",
+      "ianaId": "America/Metlakatla",
+      "city": "Metlakatla",
+      "primaryCountryCode": "US",
+      "countries": [
+        {
+          "code": "US",
+          "name": "United States"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0181",
+      "ianaId": "America/Mexico_City",
+      "city": "Mexico City",
+      "primaryCountryCode": "MX",
+      "countries": [
+        {
+          "code": "MX",
+          "name": "Mexico"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0215",
+      "ianaId": "America/Miquelon",
+      "city": "Miquelon",
+      "primaryCountryCode": "PM",
+      "countries": [
+        {
+          "code": "PM",
+          "name": "St Pierre & Miquelon"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0068",
+      "ianaId": "America/Moncton",
+      "city": "Moncton",
+      "primaryCountryCode": "CA",
+      "countries": [
+        {
+          "code": "CA",
+          "name": "Canada"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0184",
+      "ianaId": "America/Monterrey",
+      "city": "Monterrey",
+      "primaryCountryCode": "MX",
+      "countries": [
+        {
+          "code": "MX",
+          "name": "Mexico"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0305",
+      "ianaId": "America/Montevideo",
+      "city": "Montevideo",
+      "primaryCountryCode": "UY",
+      "countries": [
+        {
+          "code": "UY",
+          "name": "Uruguay"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0276",
+      "ianaId": "America/New_York",
+      "city": "New York",
+      "primaryCountryCode": "US",
+      "countries": [
+        {
+          "code": "US",
+          "name": "United States"
+        }
+      ],
+      "aliases": [
+        "New York City",
+        "NYC"
+      ]
+    },
+    {
+      "id": "city-0302",
+      "ianaId": "America/Nome",
+      "city": "Nome",
+      "primaryCountryCode": "US",
+      "countries": [
+        {
+          "code": "US",
+          "name": "United States"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0046",
+      "ianaId": "America/Noronha",
+      "city": "Fernando de Noronha",
+      "primaryCountryCode": "BR",
+      "countries": [
+        {
+          "code": "BR",
+          "name": "Brazil"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0292",
+      "ianaId": "America/North_Dakota/Beulah",
+      "city": "Beulah",
+      "primaryCountryCode": "US",
+      "countries": [
+        {
+          "code": "US",
+          "name": "United States"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0290",
+      "ianaId": "America/North_Dakota/Center",
+      "city": "Center",
+      "primaryCountryCode": "US",
+      "countries": [
+        {
+          "code": "US",
+          "name": "United States"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0291",
+      "ianaId": "America/North_Dakota/New_Salem",
+      "city": "New Salem",
+      "primaryCountryCode": "US",
+      "countries": [
+        {
+          "code": "US",
+          "name": "United States"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0122",
+      "ianaId": "America/Nuuk",
+      "city": "Nuuk",
+      "primaryCountryCode": "GL",
+      "countries": [
+        {
+          "code": "GL",
+          "name": "Greenland"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0188",
+      "ianaId": "America/Ojinaga",
+      "city": "Ojinaga",
+      "primaryCountryCode": "MX",
+      "countries": [
+        {
+          "code": "MX",
+          "name": "Mexico"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0205",
+      "ianaId": "America/Panama",
+      "city": "Panama",
+      "primaryCountryCode": "PA",
+      "countries": [
+        {
+          "code": "PA",
+          "name": "Panama"
+        },
+        {
+          "code": "CA",
+          "name": "Canada"
+        },
+        {
+          "code": "KY",
+          "name": "Cayman Islands"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0259",
+      "ianaId": "America/Paramaribo",
+      "city": "Paramaribo",
+      "primaryCountryCode": "SR",
+      "countries": [
+        {
+          "code": "SR",
+          "name": "Suriname"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0295",
+      "ianaId": "America/Phoenix",
+      "city": "Phoenix",
+      "primaryCountryCode": "US",
+      "countries": [
+        {
+          "code": "US",
+          "name": "United States"
+        },
+        {
+          "code": "CA",
+          "name": "Canada"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0134",
+      "ianaId": "America/Port-au-Prince",
+      "city": "Port-au-Prince",
+      "primaryCountryCode": "HT",
+      "countries": [
+        {
+          "code": "HT",
+          "name": "Haiti"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0057",
+      "ianaId": "America/Porto_Velho",
+      "city": "Porto Velho",
+      "primaryCountryCode": "BR",
+      "countries": [
+        {
+          "code": "BR",
+          "name": "Brazil"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0217",
+      "ianaId": "America/Puerto_Rico",
+      "city": "Puerto Rico",
+      "primaryCountryCode": "PR",
+      "countries": [
+        {
+          "code": "PR",
+          "name": "Puerto Rico"
+        },
+        {
+          "code": "AG",
+          "name": "Antigua & Barbuda"
+        },
+        {
+          "code": "CA",
+          "name": "Canada"
+        },
+        {
+          "code": "AI",
+          "name": "Anguilla"
+        },
+        {
+          "code": "AW",
+          "name": "Aruba"
+        },
+        {
+          "code": "BL",
+          "name": "St Barthelemy"
+        },
+        {
+          "code": "BQ",
+          "name": "Caribbean NL"
+        },
+        {
+          "code": "CW",
+          "name": "Curaçao"
+        },
+        {
+          "code": "DM",
+          "name": "Dominica"
+        },
+        {
+          "code": "GD",
+          "name": "Grenada"
+        },
+        {
+          "code": "GP",
+          "name": "Guadeloupe"
+        },
+        {
+          "code": "KN",
+          "name": "St Kitts & Nevis"
+        },
+        {
+          "code": "LC",
+          "name": "St Lucia"
+        },
+        {
+          "code": "MF",
+          "name": "St Martin (French)"
+        },
+        {
+          "code": "MS",
+          "name": "Montserrat"
+        },
+        {
+          "code": "SX",
+          "name": "St Maarten (Dutch)"
+        },
+        {
+          "code": "TT",
+          "name": "Trinidad & Tobago"
+        },
+        {
+          "code": "VC",
+          "name": "St Vincent"
+        },
+        {
+          "code": "VG",
+          "name": "Virgin Islands (UK)"
+        },
+        {
+          "code": "VI",
+          "name": "Virgin Islands (US)"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0090",
+      "ianaId": "America/Punta_Arenas",
+      "city": "Punta Arenas",
+      "primaryCountryCode": "CL",
+      "countries": [
+        {
+          "code": "CL",
+          "name": "Chile"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0074",
+      "ianaId": "America/Rankin_Inlet",
+      "city": "Rankin Inlet",
+      "primaryCountryCode": "CA",
+      "countries": [
+        {
+          "code": "CA",
+          "name": "Canada"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0049",
+      "ianaId": "America/Recife",
+      "city": "Recife",
+      "primaryCountryCode": "BR",
+      "countries": [
+        {
+          "code": "BR",
+          "name": "Brazil"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0075",
+      "ianaId": "America/Regina",
+      "city": "Regina",
+      "primaryCountryCode": "CA",
+      "countries": [
+        {
+          "code": "CA",
+          "name": "Canada"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0073",
+      "ianaId": "America/Resolute",
+      "city": "Resolute",
+      "primaryCountryCode": "CA",
+      "countries": [
+        {
+          "code": "CA",
+          "name": "Canada"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0061",
+      "ianaId": "America/Rio_Branco",
+      "city": "Rio Branco",
+      "primaryCountryCode": "BR",
+      "countries": [
+        {
+          "code": "BR",
+          "name": "Brazil"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0056",
+      "ianaId": "America/Santarem",
+      "city": "Santarem",
+      "primaryCountryCode": "BR",
+      "countries": [
+        {
+          "code": "BR",
+          "name": "Brazil"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0088",
+      "ianaId": "America/Santiago",
+      "city": "Santiago",
+      "primaryCountryCode": "CL",
+      "countries": [
+        {
+          "code": "CL",
+          "name": "Chile"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0102",
+      "ianaId": "America/Santo_Domingo",
+      "city": "Santo Domingo",
+      "primaryCountryCode": "DO",
+      "countries": [
+        {
+          "code": "DO",
+          "name": "Dominican Republic"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0053",
+      "ianaId": "America/Sao_Paulo",
+      "city": "São Paulo",
+      "primaryCountryCode": "BR",
+      "countries": [
+        {
+          "code": "BR",
+          "name": "Brazil"
+        }
+      ],
+      "aliases": [
+        "Sao Paulo"
+      ]
+    },
+    {
+      "id": "city-0124",
+      "ianaId": "America/Scoresbysund",
+      "city": "Scoresbysund",
+      "primaryCountryCode": "GL",
+      "countries": [
+        {
+          "code": "GL",
+          "name": "Greenland"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0299",
+      "ianaId": "America/Sitka",
+      "city": "Sitka",
+      "primaryCountryCode": "US",
+      "countries": [
+        {
+          "code": "US",
+          "name": "United States"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0065",
+      "ianaId": "America/St_Johns",
+      "city": "St. John's",
+      "primaryCountryCode": "CA",
+      "countries": [
+        {
+          "code": "CA",
+          "name": "Canada"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0076",
+      "ianaId": "America/Swift_Current",
+      "city": "Swift Current",
+      "primaryCountryCode": "CA",
+      "countries": [
+        {
+          "code": "CA",
+          "name": "Canada"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0133",
+      "ianaId": "America/Tegucigalpa",
+      "city": "Tegucigalpa",
+      "primaryCountryCode": "HN",
+      "countries": [
+        {
+          "code": "HN",
+          "name": "Honduras"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0125",
+      "ianaId": "America/Thule",
+      "city": "Thule",
+      "primaryCountryCode": "GL",
+      "countries": [
+        {
+          "code": "GL",
+          "name": "Greenland"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0192",
+      "ianaId": "America/Tijuana",
+      "city": "Tijuana",
+      "primaryCountryCode": "MX",
+      "countries": [
+        {
+          "code": "MX",
+          "name": "Mexico"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0070",
+      "ianaId": "America/Toronto",
+      "city": "Toronto",
+      "primaryCountryCode": "CA",
+      "countries": [
+        {
+          "code": "CA",
+          "name": "Canada"
+        },
+        {
+          "code": "BS",
+          "name": "Bahamas"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0080",
+      "ianaId": "America/Vancouver",
+      "city": "Vancouver",
+      "primaryCountryCode": "CA",
+      "countries": [
+        {
+          "code": "CA",
+          "name": "Canada"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0083",
+      "ianaId": "America/Whitehorse",
+      "city": "Whitehorse",
+      "primaryCountryCode": "CA",
+      "countries": [
+        {
+          "code": "CA",
+          "name": "Canada"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0072",
+      "ianaId": "America/Winnipeg",
+      "city": "Winnipeg",
+      "primaryCountryCode": "CA",
+      "countries": [
+        {
+          "code": "CA",
+          "name": "Canada"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0301",
+      "ianaId": "America/Yakutat",
+      "city": "Yakutat",
+      "primaryCountryCode": "US",
+      "countries": [
+        {
+          "code": "US",
+          "name": "United States"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0006",
+      "ianaId": "Antarctica/Casey",
+      "city": "Casey",
+      "primaryCountryCode": "AQ",
+      "countries": [
+        {
+          "code": "AQ",
+          "name": "Antarctica"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0007",
+      "ianaId": "Antarctica/Davis",
+      "city": "Davis",
+      "primaryCountryCode": "AQ",
+      "countries": [
+        {
+          "code": "AQ",
+          "name": "Antarctica"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0028",
+      "ianaId": "Antarctica/Macquarie",
+      "city": "Macquarie",
+      "primaryCountryCode": "AU",
+      "countries": [
+        {
+          "code": "AU",
+          "name": "Australia"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0008",
+      "ianaId": "Antarctica/Mawson",
+      "city": "Mawson",
+      "primaryCountryCode": "AQ",
+      "countries": [
+        {
+          "code": "AQ",
+          "name": "Antarctica"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0009",
+      "ianaId": "Antarctica/Palmer",
+      "city": "Palmer",
+      "primaryCountryCode": "AQ",
+      "countries": [
+        {
+          "code": "AQ",
+          "name": "Antarctica"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0010",
+      "ianaId": "Antarctica/Rothera",
+      "city": "Rothera",
+      "primaryCountryCode": "AQ",
+      "countries": [
+        {
+          "code": "AQ",
+          "name": "Antarctica"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0011",
+      "ianaId": "Antarctica/Troll",
+      "city": "Troll",
+      "primaryCountryCode": "AQ",
+      "countries": [
+        {
+          "code": "AQ",
+          "name": "Antarctica"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0012",
+      "ianaId": "Antarctica/Vostok",
+      "city": "Vostok",
+      "primaryCountryCode": "AQ",
+      "countries": [
+        {
+          "code": "AQ",
+          "name": "Antarctica"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0157",
+      "ianaId": "Asia/Almaty",
+      "city": "Almaty",
+      "primaryCountryCode": "KZ",
+      "countries": [
+        {
+          "code": "KZ",
+          "name": "Kazakhstan"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0148",
+      "ianaId": "Asia/Amman",
+      "city": "Amman",
+      "primaryCountryCode": "JO",
+      "countries": [
+        {
+          "code": "JO",
+          "name": "Jordan"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0254",
+      "ianaId": "Asia/Anadyr",
+      "city": "Anadyr",
+      "primaryCountryCode": "RU",
+      "countries": [
+        {
+          "code": "RU",
+          "name": "Russia"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0161",
+      "ianaId": "Asia/Aqtau",
+      "city": "Aqtau",
+      "primaryCountryCode": "KZ",
+      "countries": [
+        {
+          "code": "KZ",
+          "name": "Kazakhstan"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0160",
+      "ianaId": "Asia/Aqtobe",
+      "city": "Aqtobe",
+      "primaryCountryCode": "KZ",
+      "countries": [
+        {
+          "code": "KZ",
+          "name": "Kazakhstan"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0270",
+      "ianaId": "Asia/Ashgabat",
+      "city": "Ashgabat",
+      "primaryCountryCode": "TM",
+      "countries": [
+        {
+          "code": "TM",
+          "name": "Turkmenistan"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0162",
+      "ianaId": "Asia/Atyrau",
+      "city": "Atyrau",
+      "primaryCountryCode": "KZ",
+      "countries": [
+        {
+          "code": "KZ",
+          "name": "Kazakhstan"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0144",
+      "ianaId": "Asia/Baghdad",
+      "city": "Baghdad",
+      "primaryCountryCode": "IQ",
+      "countries": [
+        {
+          "code": "IQ",
+          "name": "Iraq"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0039",
+      "ianaId": "Asia/Baku",
+      "city": "Baku",
+      "primaryCountryCode": "AZ",
+      "countries": [
+        {
+          "code": "AZ",
+          "name": "Azerbaijan"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0266",
+      "ianaId": "Asia/Bangkok",
+      "city": "Bangkok",
+      "primaryCountryCode": "TH",
+      "countries": [
+        {
+          "code": "TH",
+          "name": "Thailand"
+        },
+        {
+          "code": "CX",
+          "name": "Christmas Island"
+        },
+        {
+          "code": "KH",
+          "name": "Cambodia"
+        },
+        {
+          "code": "LA",
+          "name": "Laos"
+        },
+        {
+          "code": "VN",
+          "name": "Vietnam"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0240",
+      "ianaId": "Asia/Barnaul",
+      "city": "Barnaul",
+      "primaryCountryCode": "RU",
+      "countries": [
+        {
+          "code": "RU",
+          "name": "Russia"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0164",
+      "ianaId": "Asia/Beirut",
+      "city": "Beirut",
+      "primaryCountryCode": "LB",
+      "countries": [
+        {
+          "code": "LB",
+          "name": "Lebanon"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0151",
+      "ianaId": "Asia/Bishkek",
+      "city": "Bishkek",
+      "primaryCountryCode": "KG",
+      "countries": [
+        {
+          "code": "KG",
+          "name": "Kyrgyzstan"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0245",
+      "ianaId": "Asia/Chita",
+      "city": "Chita",
+      "primaryCountryCode": "RU",
+      "countries": [
+        {
+          "code": "RU",
+          "name": "Russia"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0165",
+      "ianaId": "Asia/Colombo",
+      "city": "Colombo",
+      "primaryCountryCode": "LK",
+      "countries": [
+        {
+          "code": "LK",
+          "name": "Sri Lanka"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0263",
+      "ianaId": "Asia/Damascus",
+      "city": "Damascus",
+      "primaryCountryCode": "SY",
+      "countries": [
+        {
+          "code": "SY",
+          "name": "Syria"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0041",
+      "ianaId": "Asia/Dhaka",
+      "city": "Dhaka",
+      "primaryCountryCode": "BD",
+      "countries": [
+        {
+          "code": "BD",
+          "name": "Bangladesh"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0269",
+      "ianaId": "Asia/Dili",
+      "city": "Dili",
+      "primaryCountryCode": "TL",
+      "countries": [
+        {
+          "code": "TL",
+          "name": "East Timor"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0002",
+      "ianaId": "Asia/Dubai",
+      "city": "Dubai",
+      "primaryCountryCode": "AE",
+      "countries": [
+        {
+          "code": "AE",
+          "name": "United Arab Emirates"
+        },
+        {
+          "code": "OM",
+          "name": "Oman"
+        },
+        {
+          "code": "RE",
+          "name": "Réunion"
+        },
+        {
+          "code": "SC",
+          "name": "Seychelles"
+        },
+        {
+          "code": "TF",
+          "name": "French S. Terr."
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0267",
+      "ianaId": "Asia/Dushanbe",
+      "city": "Dushanbe",
+      "primaryCountryCode": "TJ",
+      "countries": [
+        {
+          "code": "TJ",
+          "name": "Tajikistan"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0099",
+      "ianaId": "Asia/Famagusta",
+      "city": "Famagusta",
+      "primaryCountryCode": "CY",
+      "countries": [
+        {
+          "code": "CY",
+          "name": "Cyprus"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0218",
+      "ianaId": "Asia/Gaza",
+      "city": "Gaza",
+      "primaryCountryCode": "PS",
+      "countries": [
+        {
+          "code": "PS",
+          "name": "Palestine"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0219",
+      "ianaId": "Asia/Hebron",
+      "city": "Hebron",
+      "primaryCountryCode": "PS",
+      "countries": [
+        {
+          "code": "PS",
+          "name": "Palestine"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0309",
+      "ianaId": "Asia/Ho_Chi_Minh",
+      "city": "Ho Chi Minh",
+      "primaryCountryCode": "VN",
+      "countries": [
+        {
+          "code": "VN",
+          "name": "Vietnam"
+        }
+      ],
+      "aliases": [
+        "Ho Chi Minh City",
+        "Saigon"
+      ]
+    },
+    {
+      "id": "city-0132",
+      "ianaId": "Asia/Hong_Kong",
+      "city": "Hong Kong",
+      "primaryCountryCode": "HK",
+      "countries": [
+        {
+          "code": "HK",
+          "name": "Hong Kong"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0175",
+      "ianaId": "Asia/Hovd",
+      "city": "Hovd",
+      "primaryCountryCode": "MN",
+      "countries": [
+        {
+          "code": "MN",
+          "name": "Mongolia"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0244",
+      "ianaId": "Asia/Irkutsk",
+      "city": "Irkutsk",
+      "primaryCountryCode": "RU",
+      "countries": [
+        {
+          "code": "RU",
+          "name": "Russia"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0136",
+      "ianaId": "Asia/Jakarta",
+      "city": "Jakarta",
+      "primaryCountryCode": "ID",
+      "countries": [
+        {
+          "code": "ID",
+          "name": "Indonesia"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0139",
+      "ianaId": "Asia/Jayapura",
+      "city": "Jayapura",
+      "primaryCountryCode": "ID",
+      "countries": [
+        {
+          "code": "ID",
+          "name": "Indonesia"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0141",
+      "ianaId": "Asia/Jerusalem",
+      "city": "Jerusalem",
+      "primaryCountryCode": "IL",
+      "countries": [
+        {
+          "code": "IL",
+          "name": "Israel"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0003",
+      "ianaId": "Asia/Kabul",
+      "city": "Kabul",
+      "primaryCountryCode": "AF",
+      "countries": [
+        {
+          "code": "AF",
+          "name": "Afghanistan"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0253",
+      "ianaId": "Asia/Kamchatka",
+      "city": "Kamchatka",
+      "primaryCountryCode": "RU",
+      "countries": [
+        {
+          "code": "RU",
+          "name": "Russia"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0213",
+      "ianaId": "Asia/Karachi",
+      "city": "Karachi",
+      "primaryCountryCode": "PK",
+      "countries": [
+        {
+          "code": "PK",
+          "name": "Pakistan"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0200",
+      "ianaId": "Asia/Kathmandu",
+      "city": "Kathmandu",
+      "primaryCountryCode": "NP",
+      "countries": [
+        {
+          "code": "NP",
+          "name": "Nepal"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0247",
+      "ianaId": "Asia/Khandyga",
+      "city": "Khandyga",
+      "primaryCountryCode": "RU",
+      "countries": [
+        {
+          "code": "RU",
+          "name": "Russia"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0142",
+      "ianaId": "Asia/Kolkata",
+      "city": "Kolkata",
+      "primaryCountryCode": "IN",
+      "countries": [
+        {
+          "code": "IN",
+          "name": "India"
+        }
+      ],
+      "aliases": [
+        "Calcutta"
+      ]
+    },
+    {
+      "id": "city-0243",
+      "ianaId": "Asia/Krasnoyarsk",
+      "city": "Krasnoyarsk",
+      "primaryCountryCode": "RU",
+      "countries": [
+        {
+          "code": "RU",
+          "name": "Russia"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0193",
+      "ianaId": "Asia/Kuching",
+      "city": "Kuching",
+      "primaryCountryCode": "MY",
+      "countries": [
+        {
+          "code": "MY",
+          "name": "Malaysia"
+        },
+        {
+          "code": "BN",
+          "name": "Brunei"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0176",
+      "ianaId": "Asia/Macau",
+      "city": "Macau",
+      "primaryCountryCode": "MO",
+      "countries": [
+        {
+          "code": "MO",
+          "name": "Macau"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0250",
+      "ianaId": "Asia/Magadan",
+      "city": "Magadan",
+      "primaryCountryCode": "RU",
+      "countries": [
+        {
+          "code": "RU",
+          "name": "Russia"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0138",
+      "ianaId": "Asia/Makassar",
+      "city": "Makassar",
+      "primaryCountryCode": "ID",
+      "countries": [
+        {
+          "code": "ID",
+          "name": "Indonesia"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0212",
+      "ianaId": "Asia/Manila",
+      "city": "Manila",
+      "primaryCountryCode": "PH",
+      "countries": [
+        {
+          "code": "PH",
+          "name": "Philippines"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0098",
+      "ianaId": "Asia/Nicosia",
+      "city": "Nicosia",
+      "primaryCountryCode": "CY",
+      "countries": [
+        {
+          "code": "CY",
+          "name": "Cyprus"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0242",
+      "ianaId": "Asia/Novokuznetsk",
+      "city": "Novokuznetsk",
+      "primaryCountryCode": "RU",
+      "countries": [
+        {
+          "code": "RU",
+          "name": "Russia"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0239",
+      "ianaId": "Asia/Novosibirsk",
+      "city": "Novosibirsk",
+      "primaryCountryCode": "RU",
+      "countries": [
+        {
+          "code": "RU",
+          "name": "Russia"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0238",
+      "ianaId": "Asia/Omsk",
+      "city": "Omsk",
+      "primaryCountryCode": "RU",
+      "countries": [
+        {
+          "code": "RU",
+          "name": "Russia"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0163",
+      "ianaId": "Asia/Oral",
+      "city": "Oral",
+      "primaryCountryCode": "KZ",
+      "countries": [
+        {
+          "code": "KZ",
+          "name": "Kazakhstan"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0137",
+      "ianaId": "Asia/Pontianak",
+      "city": "Pontianak",
+      "primaryCountryCode": "ID",
+      "countries": [
+        {
+          "code": "ID",
+          "name": "Indonesia"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0155",
+      "ianaId": "Asia/Pyongyang",
+      "city": "Pyongyang",
+      "primaryCountryCode": "KP",
+      "countries": [
+        {
+          "code": "KP",
+          "name": "Korea (North)"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0225",
+      "ianaId": "Asia/Qatar",
+      "city": "Qatar",
+      "primaryCountryCode": "QA",
+      "countries": [
+        {
+          "code": "QA",
+          "name": "Qatar"
+        },
+        {
+          "code": "BH",
+          "name": "Bahrain"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0159",
+      "ianaId": "Asia/Qostanay",
+      "city": "Qostanay",
+      "primaryCountryCode": "KZ",
+      "countries": [
+        {
+          "code": "KZ",
+          "name": "Kazakhstan"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0158",
+      "ianaId": "Asia/Qyzylorda",
+      "city": "Qyzylorda",
+      "primaryCountryCode": "KZ",
+      "countries": [
+        {
+          "code": "KZ",
+          "name": "Kazakhstan"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0255",
+      "ianaId": "Asia/Riyadh",
+      "city": "Riyadh",
+      "primaryCountryCode": "SA",
+      "countries": [
+        {
+          "code": "SA",
+          "name": "Saudi Arabia"
+        },
+        {
+          "code": "AQ",
+          "name": "Antarctica"
+        },
+        {
+          "code": "KW",
+          "name": "Kuwait"
+        },
+        {
+          "code": "YE",
+          "name": "Yemen"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0251",
+      "ianaId": "Asia/Sakhalin",
+      "city": "Sakhalin",
+      "primaryCountryCode": "RU",
+      "countries": [
+        {
+          "code": "RU",
+          "name": "Russia"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0306",
+      "ianaId": "Asia/Samarkand",
+      "city": "Samarkand",
+      "primaryCountryCode": "UZ",
+      "countries": [
+        {
+          "code": "UZ",
+          "name": "Uzbekistan"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0156",
+      "ianaId": "Asia/Seoul",
+      "city": "Seoul",
+      "primaryCountryCode": "KR",
+      "countries": [
+        {
+          "code": "KR",
+          "name": "Korea (South)"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0092",
+      "ianaId": "Asia/Shanghai",
+      "city": "Shanghai",
+      "primaryCountryCode": "CN",
+      "countries": [
+        {
+          "code": "CN",
+          "name": "China"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0258",
+      "ianaId": "Asia/Singapore",
+      "city": "Singapore",
+      "primaryCountryCode": "SG",
+      "countries": [
+        {
+          "code": "SG",
+          "name": "Singapore"
+        },
+        {
+          "code": "AQ",
+          "name": "Antarctica"
+        },
+        {
+          "code": "MY",
+          "name": "Malaysia"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0252",
+      "ianaId": "Asia/Srednekolymsk",
+      "city": "Srednekolymsk",
+      "primaryCountryCode": "RU",
+      "countries": [
+        {
+          "code": "RU",
+          "name": "Russia"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0274",
+      "ianaId": "Asia/Taipei",
+      "city": "Taipei",
+      "primaryCountryCode": "TW",
+      "countries": [
+        {
+          "code": "TW",
+          "name": "Taiwan"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0307",
+      "ianaId": "Asia/Tashkent",
+      "city": "Tashkent",
+      "primaryCountryCode": "UZ",
+      "countries": [
+        {
+          "code": "UZ",
+          "name": "Uzbekistan"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0119",
+      "ianaId": "Asia/Tbilisi",
+      "city": "Tbilisi",
+      "primaryCountryCode": "GE",
+      "countries": [
+        {
+          "code": "GE",
+          "name": "Georgia"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0145",
+      "ianaId": "Asia/Tehran",
+      "city": "Tehran",
+      "primaryCountryCode": "IR",
+      "countries": [
+        {
+          "code": "IR",
+          "name": "Iran"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0062",
+      "ianaId": "Asia/Thimphu",
+      "city": "Thimphu",
+      "primaryCountryCode": "BT",
+      "countries": [
+        {
+          "code": "BT",
+          "name": "Bhutan"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0149",
+      "ianaId": "Asia/Tokyo",
+      "city": "Tokyo",
+      "primaryCountryCode": "JP",
+      "countries": [
+        {
+          "code": "JP",
+          "name": "Japan"
+        },
+        {
+          "code": "AU",
+          "name": "Australia"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0241",
+      "ianaId": "Asia/Tomsk",
+      "city": "Tomsk",
+      "primaryCountryCode": "RU",
+      "countries": [
+        {
+          "code": "RU",
+          "name": "Russia"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0174",
+      "ianaId": "Asia/Ulaanbaatar",
+      "city": "Ulaanbaatar",
+      "primaryCountryCode": "MN",
+      "countries": [
+        {
+          "code": "MN",
+          "name": "Mongolia"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0093",
+      "ianaId": "Asia/Urumqi",
+      "city": "Urumqi",
+      "primaryCountryCode": "CN",
+      "countries": [
+        {
+          "code": "CN",
+          "name": "China"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0249",
+      "ianaId": "Asia/Ust-Nera",
+      "city": "Ust-Nera",
+      "primaryCountryCode": "RU",
+      "countries": [
+        {
+          "code": "RU",
+          "name": "Russia"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0248",
+      "ianaId": "Asia/Vladivostok",
+      "city": "Vladivostok",
+      "primaryCountryCode": "RU",
+      "countries": [
+        {
+          "code": "RU",
+          "name": "Russia"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0246",
+      "ianaId": "Asia/Yakutsk",
+      "city": "Yakutsk",
+      "primaryCountryCode": "RU",
+      "countries": [
+        {
+          "code": "RU",
+          "name": "Russia"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0173",
+      "ianaId": "Asia/Yangon",
+      "city": "Yangon",
+      "primaryCountryCode": "MM",
+      "countries": [
+        {
+          "code": "MM",
+          "name": "Myanmar (Burma)"
+        },
+        {
+          "code": "CC",
+          "name": "Cocos (Keeling) Islands"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0237",
+      "ianaId": "Asia/Yekaterinburg",
+      "city": "Yekaterinburg",
+      "primaryCountryCode": "RU",
+      "countries": [
+        {
+          "code": "RU",
+          "name": "Russia"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0005",
+      "ianaId": "Asia/Yerevan",
+      "city": "Yerevan",
+      "primaryCountryCode": "AM",
+      "countries": [
+        {
+          "code": "AM",
+          "name": "Armenia"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0222",
+      "ianaId": "Atlantic/Azores",
+      "city": "Azores",
+      "primaryCountryCode": "PT",
+      "countries": [
+        {
+          "code": "PT",
+          "name": "Portugal"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0044",
+      "ianaId": "Atlantic/Bermuda",
+      "city": "Bermuda",
+      "primaryCountryCode": "BM",
+      "countries": [
+        {
+          "code": "BM",
+          "name": "Bermuda"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0111",
+      "ianaId": "Atlantic/Canary",
+      "city": "Canary Islands",
+      "primaryCountryCode": "ES",
+      "countries": [
+        {
+          "code": "ES",
+          "name": "Spain"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0097",
+      "ianaId": "Atlantic/Cape_Verde",
+      "city": "Cape Verde",
+      "primaryCountryCode": "CV",
+      "countries": [
+        {
+          "code": "CV",
+          "name": "Cape Verde"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0116",
+      "ianaId": "Atlantic/Faroe",
+      "city": "Faroe Islands",
+      "primaryCountryCode": "FO",
+      "countries": [
+        {
+          "code": "FO",
+          "name": "Faroe Islands"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0221",
+      "ianaId": "Atlantic/Madeira",
+      "city": "Madeira",
+      "primaryCountryCode": "PT",
+      "countries": [
+        {
+          "code": "PT",
+          "name": "Portugal"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0127",
+      "ianaId": "Atlantic/South_Georgia",
+      "city": "South Georgia",
+      "primaryCountryCode": "GS",
+      "countries": [
+        {
+          "code": "GS",
+          "name": "South Georgia & the South Sandwich Islands"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0114",
+      "ianaId": "Atlantic/Stanley",
+      "city": "Stanley",
+      "primaryCountryCode": "FK",
+      "countries": [
+        {
+          "code": "FK",
+          "name": "Falkland Islands"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0035",
+      "ianaId": "Australia/Adelaide",
+      "city": "Adelaide",
+      "primaryCountryCode": "AU",
+      "countries": [
+        {
+          "code": "AU",
+          "name": "Australia"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0033",
+      "ianaId": "Australia/Brisbane",
+      "city": "Brisbane",
+      "primaryCountryCode": "AU",
+      "countries": [
+        {
+          "code": "AU",
+          "name": "Australia"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0032",
+      "ianaId": "Australia/Broken_Hill",
+      "city": "Broken Hill",
+      "primaryCountryCode": "AU",
+      "countries": [
+        {
+          "code": "AU",
+          "name": "Australia"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0036",
+      "ianaId": "Australia/Darwin",
+      "city": "Darwin",
+      "primaryCountryCode": "AU",
+      "countries": [
+        {
+          "code": "AU",
+          "name": "Australia"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0038",
+      "ianaId": "Australia/Eucla",
+      "city": "Eucla",
+      "primaryCountryCode": "AU",
+      "countries": [
+        {
+          "code": "AU",
+          "name": "Australia"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0029",
+      "ianaId": "Australia/Hobart",
+      "city": "Hobart",
+      "primaryCountryCode": "AU",
+      "countries": [
+        {
+          "code": "AU",
+          "name": "Australia"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0034",
+      "ianaId": "Australia/Lindeman",
+      "city": "Lindeman",
+      "primaryCountryCode": "AU",
+      "countries": [
+        {
+          "code": "AU",
+          "name": "Australia"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0027",
+      "ianaId": "Australia/Lord_Howe",
+      "city": "Lord Howe",
+      "primaryCountryCode": "AU",
+      "countries": [
+        {
+          "code": "AU",
+          "name": "Australia"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0030",
+      "ianaId": "Australia/Melbourne",
+      "city": "Melbourne",
+      "primaryCountryCode": "AU",
+      "countries": [
+        {
+          "code": "AU",
+          "name": "Australia"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0037",
+      "ianaId": "Australia/Perth",
+      "city": "Perth",
+      "primaryCountryCode": "AU",
+      "countries": [
+        {
+          "code": "AU",
+          "name": "Australia"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0031",
+      "ianaId": "Australia/Sydney",
+      "city": "Sydney",
+      "primaryCountryCode": "AU",
+      "countries": [
+        {
+          "code": "AU",
+          "name": "Australia"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0001",
+      "ianaId": "Europe/Andorra",
+      "city": "Andorra",
+      "primaryCountryCode": "AD",
+      "countries": [
+        {
+          "code": "AD",
+          "name": "Andorra"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0233",
+      "ianaId": "Europe/Astrakhan",
+      "city": "Astrakhan",
+      "primaryCountryCode": "RU",
+      "countries": [
+        {
+          "code": "RU",
+          "name": "Russia"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0126",
+      "ianaId": "Europe/Athens",
+      "city": "Athens",
+      "primaryCountryCode": "GR",
+      "countries": [
+        {
+          "code": "GR",
+          "name": "Greece"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0227",
+      "ianaId": "Europe/Belgrade",
+      "city": "Belgrade",
+      "primaryCountryCode": "RS",
+      "countries": [
+        {
+          "code": "RS",
+          "name": "Serbia"
+        },
+        {
+          "code": "BA",
+          "name": "Bosnia & Herzegovina"
+        },
+        {
+          "code": "HR",
+          "name": "Croatia"
+        },
+        {
+          "code": "ME",
+          "name": "Montenegro"
+        },
+        {
+          "code": "MK",
+          "name": "North Macedonia"
+        },
+        {
+          "code": "SI",
+          "name": "Slovenia"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0101",
+      "ianaId": "Europe/Berlin",
+      "city": "Berlin",
+      "primaryCountryCode": "DE",
+      "countries": [
+        {
+          "code": "DE",
+          "name": "Germany"
+        },
+        {
+          "code": "DK",
+          "name": "Denmark"
+        },
+        {
+          "code": "NO",
+          "name": "Norway"
+        },
+        {
+          "code": "SE",
+          "name": "Sweden"
+        },
+        {
+          "code": "SJ",
+          "name": "Svalbard & Jan Mayen"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0042",
+      "ianaId": "Europe/Brussels",
+      "city": "Brussels",
+      "primaryCountryCode": "BE",
+      "countries": [
+        {
+          "code": "BE",
+          "name": "Belgium"
+        },
+        {
+          "code": "LU",
+          "name": "Luxembourg"
+        },
+        {
+          "code": "NL",
+          "name": "Netherlands"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0226",
+      "ianaId": "Europe/Bucharest",
+      "city": "Bucharest",
+      "primaryCountryCode": "RO",
+      "countries": [
+        {
+          "code": "RO",
+          "name": "Romania"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0135",
+      "ianaId": "Europe/Budapest",
+      "city": "Budapest",
+      "primaryCountryCode": "HU",
+      "countries": [
+        {
+          "code": "HU",
+          "name": "Hungary"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0171",
+      "ianaId": "Europe/Chisinau",
+      "city": "Chișinău",
+      "primaryCountryCode": "MD",
+      "countries": [
+        {
+          "code": "MD",
+          "name": "Moldova"
+        }
+      ],
+      "aliases": [
+        "Chisinau"
+      ]
+    },
+    {
+      "id": "city-0140",
+      "ianaId": "Europe/Dublin",
+      "city": "Dublin",
+      "primaryCountryCode": "IE",
+      "countries": [
+        {
+          "code": "IE",
+          "name": "Ireland"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0121",
+      "ianaId": "Europe/Gibraltar",
+      "city": "Gibraltar",
+      "primaryCountryCode": "GI",
+      "countries": [
+        {
+          "code": "GI",
+          "name": "Gibraltar"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0112",
+      "ianaId": "Europe/Helsinki",
+      "city": "Helsinki",
+      "primaryCountryCode": "FI",
+      "countries": [
+        {
+          "code": "FI",
+          "name": "Finland"
+        },
+        {
+          "code": "AX",
+          "name": "Åland Islands"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0273",
+      "ianaId": "Europe/Istanbul",
+      "city": "Istanbul",
+      "primaryCountryCode": "TR",
+      "countries": [
+        {
+          "code": "TR",
+          "name": "Turkey"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0228",
+      "ianaId": "Europe/Kaliningrad",
+      "city": "Kaliningrad",
+      "primaryCountryCode": "RU",
+      "countries": [
+        {
+          "code": "RU",
+          "name": "Russia"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0231",
+      "ianaId": "Europe/Kirov",
+      "city": "Kirov",
+      "primaryCountryCode": "RU",
+      "countries": [
+        {
+          "code": "RU",
+          "name": "Russia"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0275",
+      "ianaId": "Europe/Kyiv",
+      "city": "Kyiv",
+      "primaryCountryCode": "UA",
+      "countries": [
+        {
+          "code": "UA",
+          "name": "Ukraine"
+        }
+      ],
+      "aliases": [
+        "Kiev"
+      ]
+    },
+    {
+      "id": "city-0220",
+      "ianaId": "Europe/Lisbon",
+      "city": "Lisbon",
+      "primaryCountryCode": "PT",
+      "countries": [
+        {
+          "code": "PT",
+          "name": "Portugal"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0118",
+      "ianaId": "Europe/London",
+      "city": "London",
+      "primaryCountryCode": "GB",
+      "countries": [
+        {
+          "code": "GB",
+          "name": "Britain (UK)"
+        },
+        {
+          "code": "GG",
+          "name": "Guernsey"
+        },
+        {
+          "code": "IM",
+          "name": "Isle of Man"
+        },
+        {
+          "code": "JE",
+          "name": "Jersey"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0109",
+      "ianaId": "Europe/Madrid",
+      "city": "Madrid",
+      "primaryCountryCode": "ES",
+      "countries": [
+        {
+          "code": "ES",
+          "name": "Spain"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0178",
+      "ianaId": "Europe/Malta",
+      "city": "Malta",
+      "primaryCountryCode": "MT",
+      "countries": [
+        {
+          "code": "MT",
+          "name": "Malta"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0063",
+      "ianaId": "Europe/Minsk",
+      "city": "Minsk",
+      "primaryCountryCode": "BY",
+      "countries": [
+        {
+          "code": "BY",
+          "name": "Belarus"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0229",
+      "ianaId": "Europe/Moscow",
+      "city": "Moscow",
+      "primaryCountryCode": "RU",
+      "countries": [
+        {
+          "code": "RU",
+          "name": "Russia"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0117",
+      "ianaId": "Europe/Paris",
+      "city": "Paris",
+      "primaryCountryCode": "FR",
+      "countries": [
+        {
+          "code": "FR",
+          "name": "France"
+        },
+        {
+          "code": "MC",
+          "name": "Monaco"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0100",
+      "ianaId": "Europe/Prague",
+      "city": "Prague",
+      "primaryCountryCode": "CZ",
+      "countries": [
+        {
+          "code": "CZ",
+          "name": "Czech Republic"
+        },
+        {
+          "code": "SK",
+          "name": "Slovakia"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0168",
+      "ianaId": "Europe/Riga",
+      "city": "Riga",
+      "primaryCountryCode": "LV",
+      "countries": [
+        {
+          "code": "LV",
+          "name": "Latvia"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0146",
+      "ianaId": "Europe/Rome",
+      "city": "Rome",
+      "primaryCountryCode": "IT",
+      "countries": [
+        {
+          "code": "IT",
+          "name": "Italy"
+        },
+        {
+          "code": "SM",
+          "name": "San Marino"
+        },
+        {
+          "code": "VA",
+          "name": "Vatican City"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0236",
+      "ianaId": "Europe/Samara",
+      "city": "Samara",
+      "primaryCountryCode": "RU",
+      "countries": [
+        {
+          "code": "RU",
+          "name": "Russia"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0234",
+      "ianaId": "Europe/Saratov",
+      "city": "Saratov",
+      "primaryCountryCode": "RU",
+      "countries": [
+        {
+          "code": "RU",
+          "name": "Russia"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0230",
+      "ianaId": "Europe/Simferopol",
+      "city": "Simferopol",
+      "primaryCountryCode": "RU",
+      "countries": [
+        {
+          "code": "RU",
+          "name": "Russia"
+        },
+        {
+          "code": "UA",
+          "name": "Ukraine"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0043",
+      "ianaId": "Europe/Sofia",
+      "city": "Sofia",
+      "primaryCountryCode": "BG",
+      "countries": [
+        {
+          "code": "BG",
+          "name": "Bulgaria"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0106",
+      "ianaId": "Europe/Tallinn",
+      "city": "Tallinn",
+      "primaryCountryCode": "EE",
+      "countries": [
+        {
+          "code": "EE",
+          "name": "Estonia"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0004",
+      "ianaId": "Europe/Tirane",
+      "city": "Tirana",
+      "primaryCountryCode": "AL",
+      "countries": [
+        {
+          "code": "AL",
+          "name": "Albania"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0235",
+      "ianaId": "Europe/Ulyanovsk",
+      "city": "Ulyanovsk",
+      "primaryCountryCode": "RU",
+      "countries": [
+        {
+          "code": "RU",
+          "name": "Russia"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0026",
+      "ianaId": "Europe/Vienna",
+      "city": "Vienna",
+      "primaryCountryCode": "AT",
+      "countries": [
+        {
+          "code": "AT",
+          "name": "Austria"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0167",
+      "ianaId": "Europe/Vilnius",
+      "city": "Vilnius",
+      "primaryCountryCode": "LT",
+      "countries": [
+        {
+          "code": "LT",
+          "name": "Lithuania"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0232",
+      "ianaId": "Europe/Volgograd",
+      "city": "Volgograd",
+      "primaryCountryCode": "RU",
+      "countries": [
+        {
+          "code": "RU",
+          "name": "Russia"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0214",
+      "ianaId": "Europe/Warsaw",
+      "city": "Warsaw",
+      "primaryCountryCode": "PL",
+      "countries": [
+        {
+          "code": "PL",
+          "name": "Poland"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0085",
+      "ianaId": "Europe/Zurich",
+      "city": "Zurich",
+      "primaryCountryCode": "CH",
+      "countries": [
+        {
+          "code": "CH",
+          "name": "Switzerland"
+        },
+        {
+          "code": "DE",
+          "name": "Germany"
+        },
+        {
+          "code": "LI",
+          "name": "Liechtenstein"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0143",
+      "ianaId": "Indian/Chagos",
+      "city": "Chagos",
+      "primaryCountryCode": "IO",
+      "countries": [
+        {
+          "code": "IO",
+          "name": "British Indian Ocean Territory"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0180",
+      "ianaId": "Indian/Maldives",
+      "city": "Maldives",
+      "primaryCountryCode": "MV",
+      "countries": [
+        {
+          "code": "MV",
+          "name": "Maldives"
+        },
+        {
+          "code": "TF",
+          "name": "French S. Terr."
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0179",
+      "ianaId": "Indian/Mauritius",
+      "city": "Mauritius",
+      "primaryCountryCode": "MU",
+      "countries": [
+        {
+          "code": "MU",
+          "name": "Mauritius"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0311",
+      "ianaId": "Pacific/Apia",
+      "city": "Apia",
+      "primaryCountryCode": "WS",
+      "countries": [
+        {
+          "code": "WS",
+          "name": "Samoa (western)"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0203",
+      "ianaId": "Pacific/Auckland",
+      "city": "Auckland",
+      "primaryCountryCode": "NZ",
+      "countries": [
+        {
+          "code": "NZ",
+          "name": "New Zealand"
+        },
+        {
+          "code": "AQ",
+          "name": "Antarctica"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0211",
+      "ianaId": "Pacific/Bougainville",
+      "city": "Bougainville",
+      "primaryCountryCode": "PG",
+      "countries": [
+        {
+          "code": "PG",
+          "name": "Papua New Guinea"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0204",
+      "ianaId": "Pacific/Chatham",
+      "city": "Chatham",
+      "primaryCountryCode": "NZ",
+      "countries": [
+        {
+          "code": "NZ",
+          "name": "New Zealand"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0091",
+      "ianaId": "Pacific/Easter",
+      "city": "Easter Island",
+      "primaryCountryCode": "CL",
+      "countries": [
+        {
+          "code": "CL",
+          "name": "Chile"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0310",
+      "ianaId": "Pacific/Efate",
+      "city": "Efate",
+      "primaryCountryCode": "VU",
+      "countries": [
+        {
+          "code": "VU",
+          "name": "Vanuatu"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0268",
+      "ianaId": "Pacific/Fakaofo",
+      "city": "Fakaofo",
+      "primaryCountryCode": "TK",
+      "countries": [
+        {
+          "code": "TK",
+          "name": "Tokelau"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0113",
+      "ianaId": "Pacific/Fiji",
+      "city": "Fiji",
+      "primaryCountryCode": "FJ",
+      "countries": [
+        {
+          "code": "FJ",
+          "name": "Fiji"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0105",
+      "ianaId": "Pacific/Galapagos",
+      "city": "Galapagos",
+      "primaryCountryCode": "EC",
+      "countries": [
+        {
+          "code": "EC",
+          "name": "Ecuador"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0209",
+      "ianaId": "Pacific/Gambier",
+      "city": "Gambier",
+      "primaryCountryCode": "PF",
+      "countries": [
+        {
+          "code": "PF",
+          "name": "French Polynesia"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0256",
+      "ianaId": "Pacific/Guadalcanal",
+      "city": "Guadalcanal",
+      "primaryCountryCode": "SB",
+      "countries": [
+        {
+          "code": "SB",
+          "name": "Solomon Islands"
+        },
+        {
+          "code": "FM",
+          "name": "Micronesia"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0129",
+      "ianaId": "Pacific/Guam",
+      "city": "Guam",
+      "primaryCountryCode": "GU",
+      "countries": [
+        {
+          "code": "GU",
+          "name": "Guam"
+        },
+        {
+          "code": "MP",
+          "name": "Northern Mariana Islands"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0304",
+      "ianaId": "Pacific/Honolulu",
+      "city": "Honolulu",
+      "primaryCountryCode": "US",
+      "countries": [
+        {
+          "code": "US",
+          "name": "United States"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0153",
+      "ianaId": "Pacific/Kanton",
+      "city": "Kanton",
+      "primaryCountryCode": "KI",
+      "countries": [
+        {
+          "code": "KI",
+          "name": "Kiribati"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0154",
+      "ianaId": "Pacific/Kiritimati",
+      "city": "Kiritimati",
+      "primaryCountryCode": "KI",
+      "countries": [
+        {
+          "code": "KI",
+          "name": "Kiribati"
+        }
+      ],
+      "aliases": [
+        "Christmas Island"
+      ]
+    },
+    {
+      "id": "city-0115",
+      "ianaId": "Pacific/Kosrae",
+      "city": "Kosrae",
+      "primaryCountryCode": "FM",
+      "countries": [
+        {
+          "code": "FM",
+          "name": "Micronesia"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0172",
+      "ianaId": "Pacific/Kwajalein",
+      "city": "Kwajalein",
+      "primaryCountryCode": "MH",
+      "countries": [
+        {
+          "code": "MH",
+          "name": "Marshall Islands"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0208",
+      "ianaId": "Pacific/Marquesas",
+      "city": "Marquesas",
+      "primaryCountryCode": "PF",
+      "countries": [
+        {
+          "code": "PF",
+          "name": "French Polynesia"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0201",
+      "ianaId": "Pacific/Nauru",
+      "city": "Nauru",
+      "primaryCountryCode": "NR",
+      "countries": [
+        {
+          "code": "NR",
+          "name": "Nauru"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0202",
+      "ianaId": "Pacific/Niue",
+      "city": "Niue",
+      "primaryCountryCode": "NU",
+      "countries": [
+        {
+          "code": "NU",
+          "name": "Niue"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0197",
+      "ianaId": "Pacific/Norfolk",
+      "city": "Norfolk",
+      "primaryCountryCode": "NF",
+      "countries": [
+        {
+          "code": "NF",
+          "name": "Norfolk Island"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0196",
+      "ianaId": "Pacific/Noumea",
+      "city": "Noumea",
+      "primaryCountryCode": "NC",
+      "countries": [
+        {
+          "code": "NC",
+          "name": "New Caledonia"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0025",
+      "ianaId": "Pacific/Pago_Pago",
+      "city": "Pago Pago",
+      "primaryCountryCode": "AS",
+      "countries": [
+        {
+          "code": "AS",
+          "name": "Samoa (American)"
+        },
+        {
+          "code": "UM",
+          "name": "US minor outlying islands"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0223",
+      "ianaId": "Pacific/Palau",
+      "city": "Palau",
+      "primaryCountryCode": "PW",
+      "countries": [
+        {
+          "code": "PW",
+          "name": "Palau"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0216",
+      "ianaId": "Pacific/Pitcairn",
+      "city": "Pitcairn Islands",
+      "primaryCountryCode": "PN",
+      "countries": [
+        {
+          "code": "PN",
+          "name": "Pitcairn"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0210",
+      "ianaId": "Pacific/Port_Moresby",
+      "city": "Port Moresby",
+      "primaryCountryCode": "PG",
+      "countries": [
+        {
+          "code": "PG",
+          "name": "Papua New Guinea"
+        },
+        {
+          "code": "AQ",
+          "name": "Antarctica"
+        },
+        {
+          "code": "FM",
+          "name": "Micronesia"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0087",
+      "ianaId": "Pacific/Rarotonga",
+      "city": "Rarotonga",
+      "primaryCountryCode": "CK",
+      "countries": [
+        {
+          "code": "CK",
+          "name": "Cook Islands"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0207",
+      "ianaId": "Pacific/Tahiti",
+      "city": "Tahiti",
+      "primaryCountryCode": "PF",
+      "countries": [
+        {
+          "code": "PF",
+          "name": "French Polynesia"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0152",
+      "ianaId": "Pacific/Tarawa",
+      "city": "Tarawa",
+      "primaryCountryCode": "KI",
+      "countries": [
+        {
+          "code": "KI",
+          "name": "Kiribati"
+        },
+        {
+          "code": "MH",
+          "name": "Marshall Islands"
+        },
+        {
+          "code": "TV",
+          "name": "Tuvalu"
+        },
+        {
+          "code": "UM",
+          "name": "US minor outlying islands"
+        },
+        {
+          "code": "WF",
+          "name": "Wallis & Futuna"
+        }
+      ],
+      "aliases": []
+    },
+    {
+      "id": "city-0272",
+      "ianaId": "Pacific/Tongatapu",
+      "city": "Tongatapu",
+      "primaryCountryCode": "TO",
+      "countries": [
+        {
+          "code": "TO",
+          "name": "Tonga"
+        }
+      ],
+      "aliases": []
+    }
+  ]
+}

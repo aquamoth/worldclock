@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "catalogVersion": 1,
+  "sourceVersion": "iana-tzdata-2026c",
+  "ianaRelease": "2026c",
+  "retrievedOn": "2026-08-18",
+  "archiveUrl": "https://www.iana.org/time-zones/repository/releases/tzdata2026c.tar.gz",
+  "archiveSha256": "e4a178a4477f3d0ea77cc31828ff72aa38feff8d61aa13e7e99e142e9d902be4",
+  "files": {
+    "zone1970.tab": "77b5e45415fa684fcc42de3421a6b0f15cc9b2c137f258083850346e8f76eea8",
+    "iso3166.tab": "837c80785080c8433fd9d4ea87e78f161ac7a40389301c5153d4f90198baeb2a",
+    "LICENSE": "0613408568889f5739e5ae252b722a2659c02002839ad970a63dc5e9174b27cf"
+  },
+  "license": "IANA tz code and data are public domain; see iana/2026c/LICENSE"
+}

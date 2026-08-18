@@ -10,7 +10,9 @@ Index: [World Clock v1 implementation tickets](../index.md)
 
 **Blocked by:** 01 — [Launch the live local clock](01-launch-the-live-local-clock.md).
 
-**Status:** ready-for-agent
+**Status:** claimed
+
+**Assignee:** Codex
 
 **Delivery workflow:** Work directly on `master`; do not create a branch or pull request. Finish green and independently verifiable. Do not add selector UI or selected clocks.
 
