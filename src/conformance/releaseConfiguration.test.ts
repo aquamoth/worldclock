@@ -3,8 +3,8 @@ import packageManifest from "../../package.json";
 
 describe("Android release configuration", () => {
   it("pins Hermes, API 29, and reusable clean/CNG release gates", () => {
+    expect(appConfiguration.expo).not.toHaveProperty("jsEngine");
     expect(appConfiguration.expo).toMatchObject({
-      jsEngine: "hermes",
       android: { package: "com.mattias.worldclock" },
       plugins: expect.arrayContaining([
         [

@@ -3,7 +3,6 @@
     "name": "World Clock",
     "slug": "worldclock",
     "version": "1.0.0",
-    "jsEngine": "hermes",
     "orientation": "portrait",
     "userInterfaceStyle": "automatic",
     "android": {
