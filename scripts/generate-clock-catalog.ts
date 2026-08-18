@@ -5,13 +5,15 @@ import { resolve } from "node:path";
 import {
   createCatalogGenerationReport,
   generateClockCatalog,
-  reconcileCatalogIdentityLedger,
-  serializeCatalogIdentityLedger,
   serializeClockCatalog,
-  type CatalogIdentityLedger,
   type CatalogReleaseMetadata,
   type CuratedCatalogSource,
 } from "./catalog/generator";
+import {
+  reconcileCatalogIdentityLedger,
+  serializeCatalogIdentityLedger,
+  type CatalogIdentityLedger,
+} from "./catalog/identityLedger";
 
 interface ReleaseFile extends CatalogReleaseMetadata {
   readonly files: Readonly<Record<string, string>>;

@@ -26,6 +26,7 @@ describe("offline clock catalog search", () => {
   it("normalizes case, diacritics, punctuation, and whitespace", () => {
     expect(normalizeCatalogSearchText("  SÃO---Paulo\t")).toBe("sao paulo");
     expect(normalizeCatalogSearchText("STRAẞE ς")).toBe("strasse σ");
+    expect(normalizeCatalogSearchText("Ꭰ")).toBe("Ꭰ");
   });
 
   it("returns the complete catalog in stable city/country/ID order for an empty query", () => {
@@ -71,6 +72,22 @@ describe("offline clock catalog search", () => {
     expect(searchClockCatalog(reordered, "beta alpha").map(({ id }) => id)).toEqual([
       "alpha-beta",
       "beta-alpha",
+    ]);
+  });
+
+  it("recognizes an exact multiword field regardless of term order", () => {
+    const candidates = [
+      entry("prefix", "New York City", "Example", "AA"),
+      entry("exact", "York New", "Example", "AB"),
+    ];
+
+    expect(searchClockCatalog(candidates, "new york").map(({ id }) => id)).toEqual([
+      "exact",
+      "prefix",
+    ]);
+    expect(searchClockCatalog(candidates, "york new").map(({ id }) => id)).toEqual([
+      "exact",
+      "prefix",
     ]);
   });
 

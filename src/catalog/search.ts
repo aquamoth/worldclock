@@ -1,12 +1,9 @@
 import type { ClockCatalogEntry } from "./catalog";
+import { caseFold } from "unicode-case-folding";
 
 export function normalizeCatalogSearchText(value: string): string {
-  return value
-    .normalize("NFKD")
-    .replace(/\p{M}+/gu, "")
-    .toLowerCase()
-    .replaceAll("ß", "ss")
-    .replaceAll("ς", "σ")
+  const withoutCombiningMarks = value.normalize("NFKD").replace(/\p{M}+/gu, "");
+  return caseFold(withoutCombiningMarks)
     .replace(/[\p{P}\s]+/gu, " ")
     .trim();
 }
@@ -29,8 +26,16 @@ const termRank = (fields: readonly string[], term: string): number => {
   return 3;
 };
 
-const rank = (fields: readonly string[], terms: readonly string[]): number =>
-  terms.reduce((weakestRank, term) => Math.max(weakestRank, termRank(fields, term)), 0);
+const sortedTerms = (value: string): string => value.split(" ").sort().join("\u0000");
+
+const rank = (fields: readonly string[], terms: readonly string[]): number => {
+  const canonicalQuery = [...terms].sort().join("\u0000");
+  if (fields.some((field) => sortedTerms(field) === canonicalQuery)) return 0;
+  return terms.reduce(
+    (weakestRank, term) => Math.max(weakestRank, termRank(fields, term) + 1),
+    0,
+  );
+};
 
 export function searchClockCatalog(
   entries: readonly ClockCatalogEntry[],

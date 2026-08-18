@@ -1,10 +1,12 @@
 import {
   generateClockCatalog,
-  reconcileCatalogIdentityLedger,
   serializeClockCatalog,
-  type CatalogIdentityLedger,
   type CatalogGenerationInput,
 } from "./generator";
+import {
+  reconcileCatalogIdentityLedger,
+  type CatalogIdentityLedger,
+} from "./identityLedger";
 
 const input = (): CatalogGenerationInput => ({
   metadata: {
