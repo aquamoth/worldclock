@@ -4,7 +4,7 @@ Android world-clock application built with React Native, strict TypeScript, Expo
 
 ## Development
 
-Requirements: Node.js 20 or newer, Java 21, and an Android SDK accepted by the pinned Expo SDK.
+Requirements: Node.js `^20.19.4`, `^22.13.0`, `^24.3.0`, or `>=25.0.0`; Java 21; and an Android SDK accepted by the pinned Expo SDK.
 
 ```sh
 npm ci
