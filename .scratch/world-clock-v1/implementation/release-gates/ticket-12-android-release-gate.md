@@ -6,9 +6,9 @@ Status: non-device gate passed; Android/Hermes runtime and offline launch checkp
 
 ## Candidate identity
 
-- Source commit: `de0d14a2e5f7538cbf447ae3b1aee5271ce6b745`
+- Source commit: `72d0d0ddd25c118407397f499db1a2d40e6d9109`
 - Artifact: `.scratch/world-clock-v1/release-artifacts/worldclock-v1-1.0.0-release.apk`
-- SHA-256: `7a0d668fd7b27a991233ccaacb752938ca76cc32b3f161491a82ca0657ee401d`
+- SHA-256: `af1bf17233594999dc19427be111dce2d8c8da60ccb317af4df432631791a8ce`
 - Size: `83,622,035` bytes
 - Application ID: `com.mattias.worldclock`
 - Version: `versionCode=1`, `versionName=1.0.0`
@@ -38,7 +38,7 @@ npm run catalog:check
 npm run typecheck
 npm test -- --runInBand
 npx expo install --check
-npx expo-doctor
+./node_modules/.bin/expo-doctor
 npm run release:cng-check
 cd android && NODE_ENV=production ./gradlew assembleRelease
 apksigner verify --verbose <candidate>
@@ -47,14 +47,14 @@ aapt dump badging <candidate>
 
 Results:
 
-- Clean dependency install: passed (`793` packages installed from the lockfile).
+- Clean dependency install: passed (`794` packages installed from the lockfile, including exact `expo-doctor@1.20.2`).
 - Catalog: `312` source regions and `312` deterministic generated entries.
 - TypeScript: passed with no errors.
 - Jest: `29/29` suites and `235/235` tests passed.
 - Expo dependency check: dependencies up to date.
 - Expo Doctor: `21/21` checks passed.
 - CNG: two clean generations matched SHA-256 `f46678646a47314b4ee5e7b4e2d032310701236c151ffafc1d206d8e540e867e`; zero tracked native files.
-- Production Gradle build: passed (`405` tasks; clean run reported `BUILD SUCCESSFUL in 35s`).
+- Production Gradle build: passed (`405` tasks; clean run reported `BUILD SUCCESSFUL in 39s`).
 - APK signature and manifest identity: passed.
 - Static Hermes packaging check: `libhermesvm.so` is present for arm64-v8a, armeabi-v7a, x86, and x86_64; the production bundle is Hermes bytecode.
 - Shared host corpus: `19` named projections plus `105` fixed-offset projections (`124` total) passed through the production projection and Intl adapter.
