@@ -42,9 +42,10 @@ if [[ -z "$android_sdk_root" ]]; then
 fi
 build_tools=$(find "$android_sdk_root/build-tools" -mindepth 1 -maxdepth 1 -type d | sort -V | tail -n 1)
 "$build_tools/apksigner" verify --verbose "$artifact_path"
-"$build_tools/aapt" dump badging "$artifact_path" | head -n 3
+"$build_tools/aapt" dump badging "$artifact_path" | sed -n '1,3p'
 
-if ! unzip -l "$artifact_path" | grep -q 'libhermes\.so'; then
+apk_contents=$(unzip -Z1 "$artifact_path")
+if ! grep -q 'libhermes\.so' <<< "$apk_contents"; then
   echo "Release APK does not contain the Hermes runtime." >&2
   exit 1
 fi
