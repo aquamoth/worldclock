@@ -30,4 +30,4 @@ All tickets are single-session tracer-bullet slices. Work directly on `master`; 
 
 ## Current frontier
 
-[02 — Generate the validated offline clock catalog](issues/02-generate-the-validated-offline-clock-catalog.md) is now the frontier after completion of [01 — Launch the live local clock](issues/01-launch-the-live-local-clock.md). After 03 closes, 04, 05, and 07 can proceed independently; follow the dependency table for later joins.
+[03 — Add, project, and restore offline city clocks](issues/03-add-project-and-restore-offline-city-clocks.md) is now the frontier after completion of [02 — Generate the validated offline clock catalog](issues/02-generate-the-validated-offline-clock-catalog.md). After 03 closes, 04, 05, and 07 can proceed independently; follow the dependency table for later joins.

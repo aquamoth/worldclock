@@ -10,7 +10,7 @@ Index: [World Clock v1 implementation tickets](../index.md)
 
 **Blocked by:** 01 — [Launch the live local clock](01-launch-the-live-local-clock.md).
 
-**Status:** claimed
+**Status:** complete
 
 **Assignee:** Codex
 
@@ -22,13 +22,13 @@ Checked-in IANA/ISO source inputs and release metadata; curated city/country/ali
 
 ## Acceptance criteria
 
-- [ ] One pinned IANA release, `zone1970.tab`, `iso3166.tab`, source/schema/catalog versions, curated source, and generated JSON are checked in reproducibly.
-- [ ] The generated artifact contains exactly one entry for every canonical representative region and no extra runtime-inferred entries.
-- [ ] Every entry has immutable catalog identity, unique canonical IANA ID, reviewed city/country metadata, uppercase ISO code, multi-country data, and normalized unique aliases.
-- [ ] Regeneration is deterministic and fails on incomplete coverage, duplicate identity, unknown country, invalid display field, unsupported formatter ID, missing version, or normalized alias collision.
-- [ ] Search normalization/ranking follows the approved deterministic offline contract and raw IANA IDs match only when deliberately aliased.
-- [ ] The slice adds no network search, runtime localization, selector UI, selected clocks, or application persistence.
-- [ ] All generator/parser/search tests pass from a clean checkout.
+- [x] One pinned IANA release, `zone1970.tab`, `iso3166.tab`, source/schema/catalog versions, curated source, and generated JSON are checked in reproducibly.
+- [x] The generated artifact contains exactly one entry for every canonical representative region and no extra runtime-inferred entries.
+- [x] Every entry has immutable catalog identity, unique canonical IANA ID, reviewed city/country metadata, uppercase ISO code, multi-country data, and normalized unique aliases.
+- [x] Regeneration is deterministic and fails on incomplete coverage, duplicate identity, unknown country, invalid display field, unsupported formatter ID, missing version, or normalized alias collision.
+- [x] Search normalization/ranking follows the approved deterministic offline contract and raw IANA IDs match only when deliberately aliased.
+- [x] The slice adds no network search, runtime localization, selector UI, selected clocks, or application persistence.
+- [x] All generator/parser/search tests pass from a clean checkout.
 
 ## Automated acceptance subset
 
@@ -37,3 +37,11 @@ Validate source/schema/catalog versions; canonical coverage; unique catalog/IANA
 ## Later Pixel 7a checkpoint
 
 None separately. Ticket 03 consumes the artifact offline, while tickets 12 and 13 validate required identifiers under Hermes/Android and on the target.
+
+## Resolution
+
+Pinned authoritative IANA tzdata release `2026c` with its public-domain license, official archive URL, archive/input SHA-256 checksums, release metadata, and all 312 canonical `zone1970.tab` regions. A reviewed 312-entry English curation source generates a deterministic, versioned 312-entry runtime JSON artifact and coverage/checksum report. An identity ledger enforces catalog-version bumps, immutable IDs, explicit IANA-link transitions, retirement, and non-reuse across future releases.
+
+The public parser/validator rejects malformed versions and entries, incomplete or duplicate identities, unsupported formatter IDs, invalid countries/display fields, missing ASCII aliases, and normalized alias collisions. Offline search implements NFKD, combining-mark removal, Unicode-data-backed full case folding, punctuation/whitespace normalization, every-term matching, order-independent exact/field-prefix/token-prefix/substring ranking, stable city/country/ID ties, and deliberate-alias-only IANA matching.
+
+Verification passed: deterministic regeneration/check (`312` source regions → `312` entries), 37 focused catalog tests, all 53 repository tests, strict TypeScript, all 21 Expo Doctor checks, Gradle `assembleDebug`, and an Android Hermes bundle export. The final two-axis review against `962c3bb6b1f394b060c7191d3bdfc5712e4d906c` found no remaining Standards or Spec issues. No selector UI, selected-clock behavior, persistence, runtime networking/localization, or later-ticket work was added.
