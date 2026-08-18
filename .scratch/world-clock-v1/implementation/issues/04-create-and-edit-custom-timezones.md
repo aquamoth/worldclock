@@ -10,7 +10,9 @@ Index: [World Clock v1 implementation tickets](../index.md)
 
 **Blocked by:** 03 — [Add, project, and restore offline city clocks](03-add-project-and-restore-offline-city-clocks.md).
 
-**Status:** ready-for-agent
+**Status:** claimed
+
+**Assignee:** Codex
 
 **Delivery workflow:** Work directly on `master`; do not create a branch or pull request. Finish green and demoable. Do not add city editing.
 

@@ -1,9 +1,14 @@
-import type { CityClockDefinition } from "../domain/clockCollection";
+import type {
+  CityClockDefinition,
+  CustomClockDefinition,
+  SelectedClockDefinition,
+} from "../domain/clockCollection";
+import { validateCustomTimezoneDraft } from "../domain/customTimezone";
 
 export interface SelectedClockSnapshot {
   readonly version: 1;
   readonly nextAddSequence: number;
-  readonly selectedClocks: readonly CityClockDefinition[];
+  readonly selectedClocks: readonly SelectedClockDefinition[];
 }
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
@@ -28,9 +33,7 @@ const requiredNonnegativeInteger = (value: unknown, field: string): number => {
 };
 
 const parseCity = (value: unknown, index: number): CityClockDefinition => {
-  if (!isRecord(value) || value.kind !== "city") {
-    return invalid(`selectedClocks[${index}] must be a city clock`);
-  }
+  if (!isRecord(value)) return invalid(`selectedClocks[${index}] must be an object`);
   if (!Array.isArray(value.countries) || value.countries.length === 0) {
     return invalid(`selectedClocks[${index}].countries must be nonempty`);
   }
@@ -76,6 +79,29 @@ const parseCity = (value: unknown, index: number): CityClockDefinition => {
   };
 };
 
+const parseCustom = (value: Record<string, unknown>, index: number): CustomClockDefinition => {
+  const name = typeof value.name === "string" ? value.name : "";
+  const offsetMinutes = typeof value.offsetMinutes === "number" ? value.offsetMinutes : Number.NaN;
+  const validated = validateCustomTimezoneDraft({ name, offsetMinutes });
+  if (!validated.ok || validated.value.name !== name) {
+    return invalid(`selectedClocks[${index}] must be a valid custom clock`);
+  }
+  return {
+    kind: "custom",
+    selectionId: requiredString(value.selectionId, `selectedClocks[${index}].selectionId`),
+    addSequence: requiredNonnegativeInteger(value.addSequence, `selectedClocks[${index}].addSequence`),
+    name: validated.value.name,
+    offsetMinutes: validated.value.offsetMinutes,
+  };
+};
+
+const parseSelected = (value: unknown, index: number): SelectedClockDefinition => {
+  if (!isRecord(value)) return invalid(`selectedClocks[${index}] must be an object`);
+  if (value.kind === "city") return parseCity(value, index);
+  if (value.kind === "custom") return parseCustom(value, index);
+  return invalid(`selectedClocks[${index}].kind must be city or custom`);
+};
+
 export function decodeSelectedClockSnapshot(raw: string): SelectedClockSnapshot {
   let value: unknown;
   try {
@@ -96,7 +122,7 @@ export function decodeSelectedClockSnapshot(raw: string): SelectedClockSnapshot 
       value.nextAddSequence,
       "nextAddSequence",
     ),
-    selectedClocks: value.selectedClocks.map(parseCity),
+    selectedClocks: value.selectedClocks.map(parseSelected),
   };
 }
 

@@ -18,6 +18,13 @@ const snapshot: SelectedClockSnapshot = {
       countries: [{ code: "US", name: "United States" }],
       ianaId: "America/New_York",
     },
+    {
+      kind: "custom",
+      selectionId: "selection-8-custom",
+      addSequence: 8,
+      name: "Office",
+      offsetMinutes: 345,
+    },
   ],
 };
 
@@ -35,5 +42,16 @@ describe("selected-clock snapshot codec", () => {
     expect(encoded).not.toMatch(
       /displayOrder|calendarDate|effectiveOffset|dayDifference|timeZonePreference|sampledInstant|selector|focus|scroll/u,
     );
+  });
+
+  it.each([
+    [{ kind: "custom", selectionId: "x", addSequence: 1, name: "", offsetMinutes: 0 }],
+    [{ kind: "custom", selectionId: "x", addSequence: 1, name: "Office", offsetMinutes: 17 }],
+  ])("rejects invalid persisted custom definitions", (custom) => {
+    expect(() =>
+      decodeSelectedClockSnapshot(
+        JSON.stringify({ version: 1, nextAddSequence: 2, selectedClocks: [custom] }),
+      ),
+    ).toThrow("Invalid selected-clock snapshot");
   });
 });

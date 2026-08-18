@@ -3,6 +3,7 @@ import {
   projectClockCollection,
   sortChronologically,
   type CityClockDefinition,
+  type CustomClockDefinition,
 } from "./clockCollection";
 
 const city = (
@@ -21,10 +22,23 @@ const city = (
   ianaId,
 });
 
+const custom = (
+  selectionId: string,
+  name: string,
+  offsetMinutes: number,
+  addSequence = 1,
+): CustomClockDefinition => ({
+  kind: "custom",
+  selectionId,
+  addSequence,
+  name,
+  offsetMinutes,
+});
+
 const project = (
   instant: string,
   localTimeZone: string,
-  selected: readonly CityClockDefinition[],
+  selected: readonly (CityClockDefinition | CustomClockDefinition)[],
 ) =>
   projectClockCollection(
     {
@@ -155,6 +169,40 @@ describe("clock collection projection", () => {
       ]).find(({ id }) => id === "kathmandu"),
     ).toMatchObject({ time: "17:45", effectiveOffset: "UTC+05:45" });
   });
+
+  it.each([
+    [-720, "2026-01-15", "00:00", "UTC−12:00"],
+    [0, "2026-01-15", "12:00", "UTC+00:00"],
+    [345, "2026-01-15", "17:45", "UTC+05:45"],
+    [840, "2026-01-16", "02:00", "UTC+14:00"],
+  ])(
+    "projects fixed offset %s with integer arithmetic and no DST rules",
+    (offsetMinutes, calendarDate, time, effectiveOffset) => {
+      const rules = createIntlTimezoneRules();
+      const projectRules = jest.spyOn(rules, "project");
+
+      const selected = projectClockCollection(
+        {
+          instantMs: Date.parse("2026-01-15T12:00:00Z"),
+          localTimeZone: "Europe/Stockholm",
+          locale: "en-US",
+          hourPreference: "24-hour",
+          selected: [custom("reference", "Reference", offsetMinutes)],
+        },
+        rules,
+      ).find(({ id }) => id === "reference");
+
+      expect(selected).toMatchObject({
+        kind: "custom",
+        name: "Reference",
+        calendarDate,
+        time,
+        effectiveOffset,
+        canEdit: true,
+      });
+      expect(projectRules).toHaveBeenCalledTimes(1);
+    },
+  );
 
   it.each([
     ["2026-01-01T10:30:00Z", "Pacific/Pago_Pago", "Pacific/Kiritimati", "+2"],

@@ -36,6 +36,12 @@ const actions = () => ({
   onSearchSelector: jest.fn(),
   onCancelSelector: jest.fn(),
   onAddCity: jest.fn(),
+  onOpenCustomCreator: jest.fn(),
+  onOpenCustomEditor: jest.fn(),
+  onUpdateCustomName: jest.fn(),
+  onSelectCustomOffset: jest.fn(),
+  onCancelCustomForm: jest.fn(),
+  onSaveCustom: jest.fn(),
 });
 
 describe("clock collection screen", () => {
@@ -235,5 +241,98 @@ describe("clock collection screen", () => {
       screen.getByText("+1", { includeHiddenElements: true }),
     ).toBeOnTheScreen();
     expect(screen.queryByText(/delete|edit/i)).not.toBeOnTheScreen();
+  });
+
+  it("opens the separate custom path and renders an accessible selected-offset form", async () => {
+    const callbacks = actions();
+    const view = await render(
+      <ClockScreen
+        model={{ ...emptyModel, selector: { query: "", isAdding: false, results: [] } }}
+        {...callbacks}
+      />,
+    );
+    await fireEvent.press(screen.getByRole("button", { name: "Create custom timezone" }));
+    expect(callbacks.onOpenCustomCreator).toHaveBeenCalledTimes(1);
+
+    await view.rerender(
+      <ClockScreen
+        model={{
+          ...emptyModel,
+          customForm: {
+            mode: "create",
+            name: "",
+            offsetMinutes: 0,
+            offsetOptions: Array.from({ length: 105 }, (_value, index) => -720 + index * 15),
+            isSaving: false,
+            nameError: "Enter a name.",
+          },
+        }}
+        {...callbacks}
+      />,
+    );
+    const name = screen.getByLabelText("Custom timezone name");
+    expect(name.props.multiline).toBe(false);
+    await fireEvent.changeText(name, "Nepal office");
+    expect(callbacks.onUpdateCustomName).toHaveBeenCalledWith("Nepal office");
+    expect(screen.getByText("UTC+00:00")).toBeOnTheScreen();
+    await fireEvent.press(screen.getByRole("button", { name: "Increase offset" }));
+    expect(callbacks.onSelectCustomOffset).toHaveBeenCalledWith(15);
+    expect(screen.getByText("Enter a name.").props).toMatchObject({
+      accessibilityRole: "alert",
+      accessibilityLiveRegion: "polite",
+    });
+    await fireEvent.press(screen.getByRole("button", { name: "Save custom timezone" }));
+    expect(callbacks.onSaveCustom).toHaveBeenCalledTimes(1);
+  });
+
+  it("offers Edit only for custom rows and cancels a custom form with system Back", async () => {
+    const callbacks = actions();
+    let backHandler: Parameters<typeof BackHandler.addEventListener>[1] | undefined;
+    jest.spyOn(BackHandler, "addEventListener").mockImplementation((_event, handler) => {
+      backHandler = handler;
+      return { remove: jest.fn() };
+    });
+    const view = await render(
+      <ClockScreen
+        model={{
+          ...emptyModel,
+          clocks: [
+            localClock,
+            {
+              id: "custom-1",
+              kind: "custom",
+              name: "Office",
+              canDelete: false,
+              canEdit: true,
+              calendarDate: "2026-01-15",
+              time: "17:50",
+              effectiveOffset: "UTC+05:45",
+            },
+          ],
+        }}
+        {...callbacks}
+      />,
+    );
+    await fireEvent.press(screen.getByRole("button", { name: "Edit Office" }));
+    expect(callbacks.onOpenCustomEditor).toHaveBeenCalledWith("custom-1");
+    expect(screen.queryByRole("button", { name: "Edit Local" })).not.toBeOnTheScreen();
+
+    await view.rerender(
+      <ClockScreen
+        model={{
+          ...emptyModel,
+          customForm: {
+            mode: "edit",
+            name: "Office",
+            offsetMinutes: 345,
+            offsetOptions: [345],
+            isSaving: false,
+          },
+        }}
+        {...callbacks}
+      />,
+    );
+    expect(backHandler?.({ type: "hardwareBackPress", timeStamp: 0 })).toBe(true);
+    expect(callbacks.onCancelCustomForm).toHaveBeenCalledTimes(1);
   });
 });

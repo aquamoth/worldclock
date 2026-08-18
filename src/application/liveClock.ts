@@ -5,8 +5,14 @@ import {
 import {
   projectClockCollection,
   type ClockCollectionProjection,
+  type CustomClockDefinition,
   type TimezoneRules,
 } from "../domain/clockCollection";
+import {
+  CUSTOM_OFFSET_OPTIONS,
+  customDuplicateKey,
+  validateCustomTimezoneDraft,
+} from "../domain/customTimezone";
 import {
   emptySelectedClockSnapshot,
   type SelectedClockSnapshot,
@@ -53,6 +59,17 @@ export interface ClockSelectorModel {
   readonly isAdding: boolean;
 }
 
+export interface CustomTimezoneFormModel {
+  readonly mode: "create" | "edit";
+  readonly name: string;
+  readonly offsetMinutes: number;
+  readonly offsetOptions: readonly number[];
+  readonly isSaving: boolean;
+  readonly nameError?: string;
+  readonly offsetError?: string;
+  readonly duplicateError?: string;
+}
+
 export interface LiveClockScreenModel {
   readonly mode: "live";
   readonly isReady: boolean;
@@ -60,6 +77,7 @@ export interface LiveClockScreenModel {
   readonly clocks: readonly ClockCollectionProjection[];
   readonly emptyGuidance?: "Add a timezone to compare times around the world.";
   readonly selector?: ClockSelectorModel;
+  readonly customForm?: CustomTimezoneFormModel;
   readonly clockRequest?: {
     readonly clockId: string;
     readonly sequence: number;
@@ -79,6 +97,12 @@ export interface LiveClockApplication {
   searchSelector(query: string): void;
   cancelSelector(): void;
   addCity(catalogId: string): Promise<boolean>;
+  openCustomCreator(): boolean;
+  openCustomEditor(selectionId: string): boolean;
+  updateCustomName(name: string): void;
+  selectCustomOffset(offsetMinutes: number): void;
+  cancelCustomForm(): void;
+  saveCustom(): Promise<boolean>;
 }
 
 export interface LiveClockDependencies {
@@ -100,6 +124,19 @@ export function createLiveClockApplication(
   let selectorQuery: string | undefined;
   let heldClockOrder: readonly string[] | undefined;
   let isAdding = false;
+  let customForm:
+    | {
+        mode: "create" | "edit";
+        selectionId?: string;
+        name: string;
+        offsetMinutes: number;
+        returnSelectorQuery?: string;
+        isSaving: boolean;
+        nameError?: string | undefined;
+        offsetError?: string | undefined;
+        duplicateError?: string | undefined;
+      }
+    | undefined;
   let clockRequest: LiveClockScreenModel["clockRequest"];
   let clockRequestSequence = 0;
   let cancelScheduledTick: (() => void) | undefined;
@@ -108,7 +145,9 @@ export function createLiveClockApplication(
   const selectorResults = (): readonly SelectorResultModel[] => {
     if (selectorQuery === undefined) return [];
     const selectedCatalogIds = new Set(
-      snapshot.selectedClocks.map(({ catalogId }) => catalogId),
+      snapshot.selectedClocks.flatMap((clock) =>
+        clock.kind === "city" ? [clock.catalogId] : [],
+      ),
     );
     return dependencies.catalog.search(selectorQuery).map((entry) => ({
       catalogId: entry.id,
@@ -159,6 +198,26 @@ export function createLiveClockApplication(
               query: selectorQuery,
               results: selectorResults(),
               isAdding,
+            },
+          }),
+      ...(customForm === undefined
+        ? {}
+        : {
+            customForm: {
+              mode: customForm.mode,
+              name: customForm.name,
+              offsetMinutes: customForm.offsetMinutes,
+              offsetOptions: CUSTOM_OFFSET_OPTIONS,
+              isSaving: customForm.isSaving,
+              ...(customForm.nameError === undefined
+                ? {}
+                : { nameError: customForm.nameError }),
+              ...(customForm.offsetError === undefined
+                ? {}
+                : { offsetError: customForm.offsetError }),
+              ...(customForm.duplicateError === undefined
+                ? {}
+                : { duplicateError: customForm.duplicateError }),
             },
           }),
       ...(clockRequest === undefined ? {} : { clockRequest }),
@@ -230,7 +289,8 @@ export function createLiveClockApplication(
       if (selectorQuery === undefined || isAdding) return false;
       if (
         snapshot.selectedClocks.some(
-          (selected) => selected.catalogId === catalogId,
+          (selected) =>
+            selected.kind === "city" && selected.catalogId === catalogId,
         )
       ) {
         return false;
@@ -270,6 +330,167 @@ export function createLiveClockApplication(
 
       snapshot = candidate;
       isAdding = false;
+      selectorQuery = undefined;
+      heldClockOrder = undefined;
+      clockRequestSequence += 1;
+      clockRequest = {
+        clockId: selectionId,
+        sequence: clockRequestSequence,
+        scrollIntoView: true,
+        focus: true,
+      };
+      resample();
+      return true;
+    },
+    openCustomCreator: () => {
+      if (selectorQuery === undefined || isAdding || customForm !== undefined) {
+        return false;
+      }
+      const returnSelectorQuery = selectorQuery;
+      selectorQuery = undefined;
+      customForm = {
+        mode: "create",
+        name: "",
+        offsetMinutes: 0,
+        returnSelectorQuery,
+        isSaving: false,
+      };
+      resample();
+      return true;
+    },
+    openCustomEditor: (selectionId) => {
+      if (
+        selectorQuery !== undefined ||
+        customForm !== undefined ||
+        isAdding
+      ) {
+        return false;
+      }
+      const selected = snapshot.selectedClocks.find(
+        (clock): clock is CustomClockDefinition =>
+          clock.kind === "custom" && clock.selectionId === selectionId,
+      );
+      if (selected === undefined) return false;
+      heldClockOrder = screen.clocks.map(({ id }) => id);
+      customForm = {
+        mode: "edit",
+        selectionId,
+        name: selected.name,
+        offsetMinutes: selected.offsetMinutes,
+        isSaving: false,
+      };
+      resample();
+      return true;
+    },
+    updateCustomName: (name) => {
+      if (customForm === undefined || customForm.isSaving) return;
+      customForm = {
+        ...customForm,
+        name,
+        nameError: undefined,
+        duplicateError: undefined,
+      };
+      resample();
+    },
+    selectCustomOffset: (offsetMinutes) => {
+      if (customForm === undefined || customForm.isSaving) return;
+      customForm = {
+        ...customForm,
+        offsetMinutes,
+        offsetError: undefined,
+        duplicateError: undefined,
+      };
+      resample();
+    },
+    cancelCustomForm: () => {
+      if (customForm === undefined || customForm.isSaving) return;
+      const returnSelectorQuery = customForm.returnSelectorQuery;
+      customForm = undefined;
+      selectorQuery = returnSelectorQuery;
+      heldClockOrder = undefined;
+      resample();
+    },
+    saveCustom: async () => {
+      if (customForm === undefined || customForm.isSaving) return false;
+      const validation = validateCustomTimezoneDraft({
+        name: customForm.name,
+        offsetMinutes: customForm.offsetMinutes,
+      });
+      if (!validation.ok) {
+        customForm = {
+          ...customForm,
+          nameError: validation.nameError,
+          offsetError: validation.offsetError,
+          duplicateError: undefined,
+        };
+        resample();
+        return false;
+      }
+
+      const duplicateKey = customDuplicateKey(
+        validation.value.name,
+        validation.value.offsetMinutes,
+      );
+      const isDuplicate = snapshot.selectedClocks.some(
+        (clock) =>
+          clock.kind === "custom" &&
+          clock.selectionId !== customForm?.selectionId &&
+          customDuplicateKey(clock.name, clock.offsetMinutes) === duplicateKey,
+      );
+      if (isDuplicate) {
+        customForm = {
+          ...customForm,
+          nameError: undefined,
+          offsetError: undefined,
+          duplicateError:
+            "A custom timezone with this name and offset already exists.",
+        };
+        resample();
+        return false;
+      }
+
+      const editingId = customForm.selectionId;
+      const addSequence = snapshot.nextAddSequence;
+      const selectionId = editingId ?? `selection-${addSequence}-custom`;
+      const selectedClocks =
+        customForm.mode === "create"
+          ? [
+              ...snapshot.selectedClocks,
+              {
+                kind: "custom" as const,
+                selectionId,
+                addSequence,
+                name: validation.value.name,
+                offsetMinutes: validation.value.offsetMinutes,
+              },
+            ]
+          : snapshot.selectedClocks.map((clock) =>
+              clock.selectionId === editingId && clock.kind === "custom"
+                ? {
+                    ...clock,
+                    name: validation.value.name,
+                    offsetMinutes: validation.value.offsetMinutes,
+                  }
+                : clock,
+            );
+      const candidate: SelectedClockSnapshot = {
+        version: 1,
+        nextAddSequence:
+          customForm.mode === "create" ? addSequence + 1 : addSequence,
+        selectedClocks,
+      };
+
+      customForm = { ...customForm, isSaving: true };
+      resample();
+      try {
+        await dependencies.selectedClockStorage.replace(candidate);
+      } catch (error) {
+        customForm = { ...customForm, isSaving: false };
+        resample();
+        throw error;
+      }
+      snapshot = candidate;
+      customForm = undefined;
       selectorQuery = undefined;
       heldClockOrder = undefined;
       clockRequestSequence += 1;

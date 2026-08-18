@@ -53,6 +53,14 @@ export default function App() {
         onAddCity={(catalogId) => {
           void application.addCity(catalogId);
         }}
+        onOpenCustomCreator={application.openCustomCreator}
+        onOpenCustomEditor={application.openCustomEditor}
+        onUpdateCustomName={application.updateCustomName}
+        onSelectCustomOffset={application.selectCustomOffset}
+        onCancelCustomForm={application.cancelCustomForm}
+        onSaveCustom={() => {
+          void application.saveCustom();
+        }}
       />
       <StatusBar style="auto" />
     </SafeAreaProvider>

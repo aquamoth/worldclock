@@ -5,6 +5,7 @@ import {
   type HourPreference,
   type ZonedClockFields,
 } from "./clock";
+import { isCustomOffsetMinutes } from "./customTimezone";
 
 export interface CityClockDefinition {
   readonly kind: "city";
@@ -16,6 +17,18 @@ export interface CityClockDefinition {
   readonly countries: readonly CatalogCountry[];
   readonly ianaId: string;
 }
+
+export interface CustomClockDefinition {
+  readonly kind: "custom";
+  readonly selectionId: string;
+  readonly addSequence: number;
+  readonly name: string;
+  readonly offsetMinutes: number;
+}
+
+export type SelectedClockDefinition =
+  | CityClockDefinition
+  | CustomClockDefinition;
 
 export interface TimezoneRules {
   project(
@@ -41,20 +54,34 @@ export interface CityClockProjection extends ClockProjection {
   readonly dayDifference?: string;
 }
 
+export interface CustomClockProjection extends ClockProjection {
+  readonly id: string;
+  readonly kind: "custom";
+  readonly name: string;
+  readonly canDelete: false;
+  readonly canEdit: true;
+  readonly dayDifference?: string;
+}
+
 export type ClockCollectionProjection =
   | LocalClockProjection
-  | CityClockProjection;
+  | CityClockProjection
+  | CustomClockProjection;
 
 type SortableProjection =
   | (LocalClockProjection & { readonly minuteOfDay: number })
   | (CityClockProjection & {
       readonly minuteOfDay: number;
       readonly addSequence: number;
+    })
+  | (CustomClockProjection & {
+      readonly minuteOfDay: number;
+      readonly addSequence: number;
     });
 
 export interface ChronologicalClock {
   readonly id: string;
-  readonly kind: "local" | "selected" | "city";
+  readonly kind: "local" | "selected" | "city" | "custom";
   readonly calendarDate: string;
   readonly minuteOfDay: number;
   readonly addSequence?: number;
@@ -65,7 +92,7 @@ interface ProjectClockCollectionInput {
   readonly localTimeZone: string;
   readonly locale: string;
   readonly hourPreference: HourPreference;
-  readonly selected: readonly CityClockDefinition[];
+  readonly selected: readonly SelectedClockDefinition[];
 }
 
 const compareText = (left: string, right: string): number =>
@@ -128,7 +155,38 @@ export function projectClockCollection(
     ...localProjection,
   };
 
-  const selected = input.selected.map((definition) => {
+  const selected = input.selected.map((definition): Exclude<SortableProjection, LocalClockProjection & { readonly minuteOfDay: number }> => {
+    if (definition.kind === "custom") {
+      if (!isCustomOffsetMinutes(definition.offsetMinutes)) {
+        throw new Error(`Invalid custom UTC offset: ${definition.offsetMinutes}`);
+      }
+      const fixedDate = new Date(
+        input.instantMs + definition.offsetMinutes * 60_000,
+      );
+      const fields: ZonedClockFields = {
+        calendarDate: fixedDate.toISOString().slice(0, 10),
+        hour: fixedDate.getUTCHours(),
+        minute: fixedDate.getUTCMinutes(),
+        effectiveOffsetMinutes: definition.offsetMinutes,
+      };
+      const projection = projectClock(fields, input.hourPreference);
+      const dayDifference = formatDayDifference(
+        fields.calendarDate,
+        localFields.calendarDate,
+      );
+      return {
+        id: definition.selectionId,
+        kind: "custom",
+        name: definition.name,
+        canDelete: false,
+        canEdit: true,
+        addSequence: definition.addSequence,
+        minuteOfDay: fields.hour * 60 + fields.minute,
+        ...projection,
+        ...(dayDifference === undefined ? {} : { dayDifference }),
+      };
+    }
+
     const fields = timezoneRules.project(
       input.instantMs,
       definition.ianaId,
