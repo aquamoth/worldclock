@@ -1,0 +1,24 @@
+{
+  "expo": {
+    "name": "World Clock",
+    "slug": "worldclock",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "android": {
+      "package": "com.mattias.worldclock",
+      "softwareKeyboardLayoutMode": "resize"
+    },
+    "plugins": [
+      "expo-localization",
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "minSdkVersion": 29
+          }
+        }
+      ]
+    ]
+  }
+}
