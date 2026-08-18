@@ -1,10 +1,15 @@
-import { fireEvent, render, screen } from "@testing-library/react-native";
+import { act, fireEvent, render, screen } from "@testing-library/react-native";
 import {
   AccessibilityInfo,
   BackHandler,
   Dimensions,
   StyleSheet,
 } from "react-native";
+import { State } from "react-native-gesture-handler";
+import {
+  fireGestureHandler,
+  getByGestureTestId,
+} from "react-native-gesture-handler/jest-utils";
 
 import type { LiveClockScreenModel } from "../application/liveClock";
 import { ClockScreen } from "./ClockScreen";
@@ -26,6 +31,7 @@ const localClock = {
 
 const emptyModel: LiveClockScreenModel = {
   mode: "live",
+  status: { label: "Live", offset: "Now", accessibilityValue: "Live time" },
   isReady: true,
   sampledInstantMs: Date.parse("2026-01-15T12:05:00Z"),
   clocks: [localClock],
@@ -47,6 +53,12 @@ const actions = () => ({
   onCancelDelete: jest.fn(),
   onConfirmDelete: jest.fn(),
   onRetryPersistence: jest.fn(),
+  onBeginStatusScrub: jest.fn(),
+  onUpdateStatusScrub: jest.fn(),
+  onEndStatusScrub: jest.fn(),
+  onCancelStatusScrub: jest.fn(),
+  onAdjustStatus: jest.fn(),
+  onBackToLive: jest.fn(),
 });
 
 const runAnimationFramesImmediately = () =>
@@ -84,6 +96,154 @@ describe("clock collection screen", () => {
     await fireEvent.press(add);
     expect(callbacks.onOpenSelector).toHaveBeenCalledTimes(1);
     expect(screen.queryByText(/seconds?|delete|edit/i)).not.toBeOnTheScreen();
+  });
+
+  it("renders an adjustable Virtual status with earlier/later mappings and icon Back", async () => {
+    const callbacks = actions();
+    let backHandler:
+      | Parameters<typeof BackHandler.addEventListener>[1]
+      | undefined;
+    jest.spyOn(BackHandler, "addEventListener").mockImplementation(
+      (_event, handler) => {
+        backHandler = handler;
+        return { remove: jest.fn() };
+      },
+    );
+    await render(
+      <ClockScreen
+        model={{
+          ...emptyModel,
+          mode: "virtual",
+          sampledInstantMs: Date.parse("2026-01-15T11:50:00Z"),
+          status: {
+            label: "Virtual time",
+            offset: "−0:15",
+            offsetMinutes: -15,
+            accessibilityValue: "15 minutes earlier, 12:50",
+          },
+        }}
+        {...callbacks}
+      />,
+    );
+
+    const status = screen.getByRole("adjustable", {
+      name: "Adjust comparison time",
+    });
+    expect(screen.getAllByRole("adjustable")).toHaveLength(1);
+    expect(status).toHaveAccessibilityValue({
+      text: "15 minutes earlier, 12:50",
+    });
+    expect(screen.getByTestId("clock-screen")).toHaveProp(
+      "accessibilityLabel",
+      "Virtual time screen",
+    );
+    expect(
+      screen.getByText("Virtual time", { includeHiddenElements: true }),
+    ).toBeOnTheScreen();
+    expect(
+      screen.getByText("−0:15", { includeHiddenElements: true }),
+    ).toBeOnTheScreen();
+    expect(screen.queryByText("Back")).not.toBeOnTheScreen();
+    expect(screen.queryByText(/15-minute|24h|calendar|range|precision/i)).not.toBeOnTheScreen();
+
+    await fireEvent(status, "accessibilityAction", {
+      nativeEvent: { actionName: "decrement" },
+    });
+    await fireEvent(status, "accessibilityAction", {
+      nativeEvent: { actionName: "increment" },
+    });
+    await fireEvent(status, "keyDown", { nativeEvent: { key: "ArrowRight" } });
+    await fireEvent(status, "keyDown", { nativeEvent: { key: "ArrowLeft" } });
+    expect(callbacks.onAdjustStatus.mock.calls).toEqual([
+      ["earlier"],
+      ["later"],
+      ["earlier"],
+      ["later"],
+    ]);
+
+    const back = screen.getByRole("button", { name: "Back" });
+    expect(back).toHaveProp("accessibilityHint", "Return to current time");
+    expect(StyleSheet.flatten(back.props.style)).toMatchObject({
+      minWidth: 48,
+      minHeight: 48,
+    });
+    await fireEvent.press(back);
+    expect(callbacks.onBackToLive).toHaveBeenCalledTimes(1);
+    expect(
+      backHandler?.({ type: "hardwareBackPress", timeStamp: 0 }),
+    ).toBe(true);
+    expect(callbacks.onBackToLive).toHaveBeenCalledTimes(2);
+  });
+
+  it("forwards accepted native status-pan travel from gesture start through completion", async () => {
+    const callbacks = actions();
+    await render(<ClockScreen model={emptyModel} {...callbacks} />);
+
+    await act(async () => {
+      fireGestureHandler(getByGestureTestId("status-scrub-gesture"), [
+        { state: State.BEGAN, translationX: 0, translationY: 0 },
+        { state: State.ACTIVE, translationX: 9, translationY: 1 },
+        { state: State.ACTIVE, translationX: 18, translationY: 1 },
+        { state: State.END, translationX: 18, translationY: 1 },
+      ]);
+    });
+
+    expect(callbacks.onBeginStatusScrub).toHaveBeenCalledTimes(1);
+    expect(callbacks.onUpdateStatusScrub.mock.calls).toEqual([[-1], [-2]]);
+    expect(callbacks.onEndStatusScrub).toHaveBeenCalledTimes(1);
+    expect(callbacks.onCancelStatusScrub).not.toHaveBeenCalled();
+
+    await act(async () => {
+      fireGestureHandler(getByGestureTestId("status-scrub-gesture"), [
+        { state: State.BEGAN, translationX: 0, translationY: 0 },
+        { state: State.ACTIVE, translationX: -9, translationY: 1 },
+        { state: State.CANCELLED, translationX: -9, translationY: 1 },
+      ]);
+    });
+    expect(callbacks.onCancelStatusScrub).toHaveBeenCalledTimes(1);
+  });
+
+  it("locks the dominant axis after platform-slop activation", async () => {
+    const callbacks = actions();
+    await render(<ClockScreen model={emptyModel} {...callbacks} />);
+    const gesture = getByGestureTestId("status-scrub-gesture");
+
+    await act(async () => {
+      gesture.handlers.onStart?.({ translationX: 12, translationY: 10 } as never);
+    });
+    expect(screen.getByTestId("clock-scroll")).toHaveProp("scrollEnabled", false);
+    await act(async () => {
+      gesture.handlers.onFinalize?.({} as never, true);
+    });
+    expect(screen.getByTestId("clock-scroll")).toHaveProp("scrollEnabled", true);
+
+    callbacks.onBeginStatusScrub.mockClear();
+    callbacks.onUpdateStatusScrub.mockClear();
+    await act(async () => {
+      fireGestureHandler(gesture, [
+        { state: State.BEGAN, translationX: 0, translationY: 0 },
+        { state: State.ACTIVE, translationX: 12, translationY: 10 },
+        { state: State.END, translationX: 12, translationY: 16 },
+      ]);
+    });
+    expect(callbacks.onBeginStatusScrub).toHaveBeenCalledTimes(1);
+    expect(callbacks.onUpdateStatusScrub).toHaveBeenCalledWith(-1);
+    expect(callbacks.onEndStatusScrub).toHaveBeenCalledTimes(1);
+
+    callbacks.onBeginStatusScrub.mockClear();
+    callbacks.onUpdateStatusScrub.mockClear();
+    callbacks.onEndStatusScrub.mockClear();
+    await act(async () => {
+      fireGestureHandler(gesture, [
+        { state: State.BEGAN, translationX: 0, translationY: 0 },
+        { state: State.ACTIVE, translationX: 10, translationY: 12 },
+        { state: State.END, translationX: 18, translationY: 12 },
+      ]);
+    });
+    expect(screen.getByTestId("clock-scroll")).toHaveProp("scrollEnabled", true);
+    expect(callbacks.onBeginStatusScrub).not.toHaveBeenCalled();
+    expect(callbacks.onUpdateStatusScrub).not.toHaveBeenCalled();
+    expect(callbacks.onEndStatusScrub).not.toHaveBeenCalled();
   });
 
   it("searches, adds available cities, marks selected cities unavailable, and cancels", async () => {
@@ -221,6 +381,11 @@ describe("clock collection screen", () => {
       <ClockScreen
         model={{
           mode: "live",
+          status: {
+            label: "Live",
+            offset: "Now",
+            accessibilityValue: "Live time",
+          },
           isReady: true,
           sampledInstantMs: emptyModel.sampledInstantMs,
           clocks: [

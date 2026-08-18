@@ -15,6 +15,11 @@ import {
   validateCustomTimezoneDraft,
 } from "../domain/customTimezone";
 import {
+  moveStatusOffset,
+  stepStatusOffset,
+  type VirtualDirection,
+} from "../domain/statusOffsetGrid";
+import {
   emptySelectedClockSnapshot,
   type SelectedClockSnapshot,
 } from "./selectedClockSnapshot";
@@ -91,8 +96,7 @@ export type FocusRequestModel =
       readonly focus: true;
     };
 
-export interface LiveClockScreenModel {
-  readonly mode: "live";
+interface LiveClockScreenBase {
   readonly isReady: boolean;
   readonly sampledInstantMs: number;
   readonly clocks: readonly ClockCollectionProjection[];
@@ -115,6 +119,27 @@ export interface LiveClockScreenModel {
   };
 }
 
+type LiveClockStatusState =
+  | {
+      readonly mode: "live";
+      readonly status: {
+        readonly label: "Live";
+        readonly offset: "Now";
+        readonly accessibilityValue: "Live time";
+      };
+    }
+  | {
+      readonly mode: "virtual";
+      readonly status: {
+        readonly label: "Virtual time";
+        readonly offset: string;
+        readonly offsetMinutes: number;
+        readonly accessibilityValue: string;
+      };
+    };
+
+export type LiveClockScreenModel = LiveClockScreenBase & LiveClockStatusState;
+
 export interface LiveClockApplication {
   getScreen(): LiveClockScreenModel;
   subscribe(listener: () => void): () => void;
@@ -136,6 +161,12 @@ export interface LiveClockApplication {
   cancelDelete(): boolean;
   confirmDelete(): Promise<boolean>;
   retryPersistence(): Promise<boolean>;
+  adjustStatus(direction: VirtualDirection): void;
+  beginStatusScrub(): void;
+  updateStatusScrub(signedStepsFromGestureStart: number): void;
+  endStatusScrub(): void;
+  cancelStatusScrub(): void;
+  backToLive(): void;
 }
 
 export interface LiveClockDependencies {
@@ -148,6 +179,29 @@ export interface LiveClockDependencies {
 
 const EMPTY_GUIDANCE = "Add a timezone to compare times around the world.";
 const MAX_SELECTED_CLOCKS = 24;
+
+const formatVirtualOffset = (offsetMinutes: number): string => {
+  const absolute = Math.abs(offsetMinutes);
+  const hours = Math.floor(absolute / 60);
+  const minutes = String(absolute % 60).padStart(2, "0");
+  return `${offsetMinutes < 0 ? "−" : "+"}${hours}:${minutes}`;
+};
+
+const formatOffsetDuration = (offsetMinutes: number): string => {
+  const absolute = Math.abs(offsetMinutes);
+  const hours = Math.floor(absolute / 60);
+  const minutes = absolute % 60;
+  return [
+    ...(hours === 0 ? [] : [`${hours} ${hours === 1 ? "hour" : "hours"}`]),
+    ...(minutes === 0
+      ? []
+      : [`${minutes} ${minutes === 1 ? "minute" : "minutes"}`]),
+  ].join(" ");
+};
+
+const formatAccessibleOffset = (offsetMinutes: number, time: string): string => {
+  return `${formatOffsetDuration(offsetMinutes)} ${offsetMinutes < 0 ? "earlier" : "later"}, ${time}`;
+};
 
 type PersistenceState =
   | { readonly status: "idle" }
@@ -189,6 +243,20 @@ export function createLiveClockApplication(
   let cancelScheduledTick: (() => void) | undefined;
   let initialization: Promise<void> | undefined;
   let persistenceState: PersistenceState = { status: "idle" };
+  let virtualSession:
+    | {
+        readonly liveReferenceMs: number;
+        readonly comparisonInstantMs: number;
+        readonly offsetMinutes: number;
+      }
+    | undefined;
+  let statusGesture:
+    | {
+        readonly startSession: typeof virtualSession;
+        readonly liveReferenceMs: number;
+        readonly startOffsetMinutes: number;
+      }
+    | undefined;
 
   const selectorResults = (): readonly SelectorResultModel[] => {
     if (selectorQuery === undefined) return [];
@@ -207,7 +275,8 @@ export function createLiveClockApplication(
   };
 
   const sampleScreen = (): LiveClockScreenModel => {
-    const sampledInstantMs = dependencies.time.now();
+    const sampledInstantMs =
+      virtualSession?.comparisonInstantMs ?? dependencies.time.now();
     const preferences = dependencies.devicePreferences.read();
     let clocks = projectClockCollection(
       {
@@ -246,8 +315,35 @@ export function createLiveClockApplication(
             }
           : undefined;
 
+    const localClock = clocks.find(({ kind }) => kind === "local");
+    const localTime = localClock?.period
+      ? `${localClock.time} ${localClock.period}`
+      : (localClock?.time ?? "");
+    const statusState: LiveClockStatusState =
+      virtualSession === undefined
+        ? {
+            mode: "live",
+            status: {
+              label: "Live",
+              offset: "Now",
+              accessibilityValue: "Live time",
+            },
+          }
+        : {
+            mode: "virtual",
+            status: {
+              label: "Virtual time",
+              offset: formatVirtualOffset(virtualSession.offsetMinutes),
+              offsetMinutes: virtualSession.offsetMinutes,
+              accessibilityValue: formatAccessibleOffset(
+                virtualSession.offsetMinutes,
+                localTime,
+              ),
+            },
+          };
+
     return {
-      mode: "live",
+      ...statusState,
       isReady,
       sampledInstantMs,
       clocks,
@@ -381,6 +477,54 @@ export function createLiveClockApplication(
     if (persistenceState.status === "write-failed") {
       persistenceState = { status: "idle" };
     }
+  };
+
+  const announce = (message: string): void => {
+    announcementSequence += 1;
+    announcement = { sequence: announcementSequence, message };
+  };
+
+  const publishVirtualChange = (prefix: string): void => {
+    const nextScreen = sampleScreen();
+    if (nextScreen.mode !== "virtual") return;
+    announce(`${prefix}${nextScreen.status.accessibilityValue}.`);
+    screen = {
+      ...nextScreen,
+      ...(announcement === undefined ? {} : { announcement }),
+    };
+    notify();
+  };
+
+  const applyVirtualOffset = (
+    offsetMinutes: number,
+    wrapped: boolean,
+    liveReferenceMs?: number,
+  ): void => {
+    const previousOffset = virtualSession?.offsetMinutes ?? 0;
+    if (offsetMinutes === previousOffset) return;
+    const enteringVirtual = virtualSession === undefined && offsetMinutes !== 0;
+    if (offsetMinutes === 0) {
+      virtualSession = undefined;
+      announce("Live time.");
+    } else {
+      const reference =
+        liveReferenceMs ??
+        virtualSession?.liveReferenceMs ??
+        dependencies.time.now();
+      virtualSession = {
+        liveReferenceMs: reference,
+        comparisonInstantMs: reference + offsetMinutes * 60_000,
+        offsetMinutes,
+      };
+      const prefix = wrapped
+        ? "Wrapped. "
+        : enteringVirtual
+          ? "Virtual time, "
+          : "";
+      publishVirtualChange(prefix);
+      return;
+    }
+    resample();
   };
 
   return {
@@ -757,6 +901,61 @@ export function createLiveClockApplication(
       const retry = persistenceState.retry;
       persistenceState = { status: "idle" };
       return retry();
+    },
+    adjustStatus: (direction) => {
+      const result = stepStatusOffset(
+        virtualSession?.offsetMinutes ?? 0,
+        direction,
+      );
+      applyVirtualOffset(result.offsetMinutes, result.wrapped);
+    },
+    beginStatusScrub: () => {
+      if (statusGesture !== undefined) return;
+      statusGesture = {
+        startSession: virtualSession,
+        liveReferenceMs:
+          virtualSession?.liveReferenceMs ?? dependencies.time.now(),
+        startOffsetMinutes: virtualSession?.offsetMinutes ?? 0,
+      };
+      heldClockOrder = screen.clocks.map(({ id }) => id);
+    },
+    updateStatusScrub: (signedStepsFromGestureStart) => {
+      if (statusGesture === undefined) return;
+      const result = moveStatusOffset(
+        statusGesture.startOffsetMinutes,
+        signedStepsFromGestureStart,
+      );
+      applyVirtualOffset(
+        result.offsetMinutes,
+        result.wrapped,
+        statusGesture.liveReferenceMs,
+      );
+    },
+    endStatusScrub: () => {
+      if (statusGesture === undefined) return;
+      statusGesture = undefined;
+      heldClockOrder = undefined;
+      resample();
+    },
+    cancelStatusScrub: () => {
+      if (statusGesture === undefined) return;
+      virtualSession = statusGesture.startSession;
+      statusGesture = undefined;
+      heldClockOrder = undefined;
+      if (virtualSession === undefined) {
+        announce("Live time.");
+        resample();
+      } else {
+        publishVirtualChange("");
+      }
+    },
+    backToLive: () => {
+      if (virtualSession === undefined) return;
+      virtualSession = undefined;
+      statusGesture = undefined;
+      heldClockOrder = undefined;
+      announce("Live time.");
+      resample();
     },
   };
 }

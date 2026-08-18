@@ -1,5 +1,6 @@
 import {
   AccessibilityInfo,
+  Animated,
   BackHandler,
   FlatList,
   Modal,
@@ -14,7 +15,15 @@ import {
   type LayoutChangeEvent,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useEffect, useRef, type Ref } from "react";
+import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type Ref,
+} from "react";
 
 import type {
   LiveClockScreenModel,
@@ -23,6 +32,7 @@ import type {
 import type { ClockCollectionProjection } from "../domain/clockCollection";
 import { formatEffectiveOffset } from "../domain/clock";
 import { revealClock } from "./nativeClockReveal";
+import { statusStepsFromTravel } from "./statusScrubGesture";
 
 interface ClockScreenProps {
   readonly model: LiveClockScreenModel;
@@ -40,6 +50,12 @@ interface ClockScreenProps {
   readonly onCancelDelete: () => void;
   readonly onConfirmDelete: () => void;
   readonly onRetryPersistence: () => void;
+  readonly onBeginStatusScrub: () => void;
+  readonly onUpdateStatusScrub: (translationX: number) => void;
+  readonly onEndStatusScrub: () => void;
+  readonly onCancelStatusScrub: () => void;
+  readonly onAdjustStatus: (direction: "earlier" | "later") => void;
+  readonly onBackToLive: () => void;
 }
 
 const palette = {
@@ -51,6 +67,7 @@ const palette = {
     border: "#D7DBD2",
     accent: "#175F48",
     disabled: "#747A72",
+    virtualBackground: "#DDEFE8",
   },
   dark: {
     background: "#11130F",
@@ -60,6 +77,7 @@ const palette = {
     border: "#444B40",
     accent: "#79D8B4",
     disabled: "#92998E",
+    virtualBackground: "#173A31",
   },
 } as const;
 
@@ -234,6 +252,194 @@ function PersistenceError({
   );
 }
 
+function StatusSurface({
+  model,
+  colors,
+  onBeginScrub,
+  onUpdateScrub,
+  onEndScrub,
+  onCancelScrub,
+  onAdjust,
+  onBack,
+  scrollGesture,
+  onHorizontalLockChange,
+}: {
+  readonly model: LiveClockScreenModel;
+  readonly colors: Palette;
+  readonly onBeginScrub: () => void;
+  readonly onUpdateScrub: (translationX: number) => void;
+  readonly onEndScrub: () => void;
+  readonly onCancelScrub: () => void;
+  readonly onAdjust: (direction: "earlier" | "later") => void;
+  readonly onBack: () => void;
+  readonly scrollGesture: ReturnType<(typeof Gesture)["Native"]>;
+  readonly onHorizontalLockChange: (locked: boolean) => void;
+}) {
+  const status = model.status;
+  const gestureAxis = useRef<"horizontal" | "vertical" | null>(null);
+  const [reduceMotion, setReduceMotion] = useState(true);
+  const chevronPulse = useRef(new Animated.Value(0.55)).current;
+  useEffect(() => {
+    let active = true;
+    void AccessibilityInfo.isReduceMotionEnabled().then((enabled) => {
+      if (active) setReduceMotion(enabled);
+    });
+    const subscription = AccessibilityInfo.addEventListener(
+      "reduceMotionChanged",
+      setReduceMotion,
+    );
+    return () => {
+      active = false;
+      subscription.remove();
+    };
+  }, []);
+  useEffect(() => {
+    if (reduceMotion) {
+      chevronPulse.stopAnimation();
+      chevronPulse.setValue(0.55);
+      return;
+    }
+    const animation = Animated.loop(
+      Animated.sequence([
+        Animated.timing(chevronPulse, {
+          toValue: 0.82,
+          duration: 900,
+          useNativeDriver: true,
+        }),
+        Animated.timing(chevronPulse, {
+          toValue: 0.42,
+          duration: 900,
+          useNativeDriver: true,
+        }),
+      ]),
+    );
+    animation.start();
+    return () => animation.stop();
+  }, [chevronPulse, reduceMotion]);
+  const panGesture = useMemo(
+    () =>
+      Gesture.Pan()
+        .withTestId("status-scrub-gesture")
+        .simultaneousWithExternalGesture(scrollGesture)
+        .runOnJS(true)
+        .onStart(({ translationX, translationY }) => {
+          gestureAxis.current =
+            Math.abs(translationX) > Math.abs(translationY)
+              ? "horizontal"
+              : "vertical";
+          if (gestureAxis.current !== "horizontal") return;
+          onHorizontalLockChange(true);
+          onBeginScrub();
+          onUpdateScrub(statusStepsFromTravel(translationX));
+        })
+        .onUpdate(({ translationX }) => {
+          if (gestureAxis.current === "horizontal") {
+            onUpdateScrub(statusStepsFromTravel(translationX));
+          }
+        })
+        .onEnd(() => {
+          if (gestureAxis.current === "horizontal") onEndScrub();
+        })
+        .onFinalize((_event, succeeded) => {
+          if (gestureAxis.current === "horizontal" && !succeeded) {
+            onCancelScrub();
+          }
+          if (gestureAxis.current === "horizontal") {
+            onHorizontalLockChange(false);
+          }
+          gestureAxis.current = null;
+        }),
+    [
+      onBeginScrub,
+      onCancelScrub,
+      onEndScrub,
+      onHorizontalLockChange,
+      onUpdateScrub,
+      scrollGesture,
+    ],
+  );
+  const hardwareKeyProps = {
+    onKeyDown: (event: { readonly nativeEvent: { readonly key?: string } }) => {
+      if (event.nativeEvent.key === "ArrowRight") onAdjust("earlier");
+      if (event.nativeEvent.key === "ArrowLeft") onAdjust("later");
+    },
+  };
+
+  return (
+    <View
+      style={[
+        styles.statusSurface,
+        { backgroundColor: colors.surface, borderColor: colors.border },
+      ]}
+    >
+      <GestureDetector gesture={panGesture}>
+        <View
+          {...hardwareKeyProps}
+          accessible
+          focusable
+          accessibilityRole="adjustable"
+          accessibilityLabel="Adjust comparison time"
+          accessibilityValue={{ text: status.accessibilityValue }}
+          accessibilityActions={[
+            { name: "decrement", label: "Earlier" },
+            { name: "increment", label: "Later" },
+          ]}
+          onAccessibilityAction={({ nativeEvent }) => {
+            if (nativeEvent.actionName === "decrement") onAdjust("earlier");
+            if (nativeEvent.actionName === "increment") onAdjust("later");
+          }}
+          style={styles.statusAdjustable}
+        >
+          <View style={styles.statusText} accessibilityElementsHidden>
+            <Text style={[styles.statusLabel, { color: colors.primary }]}>
+              {status.label}
+            </Text>
+            <View style={styles.statusOffsetLine}>
+              <Animated.Text
+                importantForAccessibility="no-hide-descendants"
+                style={[
+                  styles.chevron,
+                  { color: colors.accent, opacity: chevronPulse },
+                ]}
+              >
+                ‹
+              </Animated.Text>
+              <Text style={[styles.statusOffset, { color: colors.primary }]}>{status.offset}</Text>
+              <Animated.Text
+                importantForAccessibility="no-hide-descendants"
+                style={[
+                  styles.chevron,
+                  { color: colors.accent, opacity: chevronPulse },
+                ]}
+              >
+                ›
+              </Animated.Text>
+            </View>
+          </View>
+        </View>
+      </GestureDetector>
+      {model.mode === "virtual" ? (
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Back"
+          accessibilityHint="Return to current time"
+          onPress={onBack}
+          style={styles.statusBack}
+        >
+          <Text
+            importantForAccessibility="no-hide-descendants"
+            style={[styles.backGlyph, { color: colors.accent }]}
+          >
+            ↶
+          </Text>
+        </Pressable>
+      ) : (
+        <View importantForAccessibility="no-hide-descendants" style={styles.statusActionSpacer} />
+      )}
+    </View>
+  );
+}
+
 export function ClockScreen({
   model,
   onOpenSelector,
@@ -250,6 +456,12 @@ export function ClockScreen({
   onCancelDelete,
   onConfirmDelete,
   onRetryPersistence,
+  onBeginStatusScrub,
+  onUpdateStatusScrub,
+  onEndStatusScrub,
+  onCancelStatusScrub,
+  onAdjustStatus,
+  onBackToLive,
 }: ClockScreenProps) {
   const colorScheme = useColorScheme() === "dark" ? "dark" : "light";
   const viewport = useWindowDimensions();
@@ -259,22 +471,41 @@ export function ClockScreen({
   const clockPositions = useRef(new Map<string, number>());
   const addTimezoneView = useRef<View>(null);
   const addTimezonePosition = useRef<number | undefined>(undefined);
+  const scrollGesture = useMemo(() => Gesture.Native(), []);
+  const [scrollEnabled, setScrollEnabled] = useState(true);
+  const handleHorizontalLockChange = useCallback((locked: boolean) => {
+    setScrollEnabled(!locked);
+  }, []);
 
   useEffect(() => {
-    if (model.selector === undefined && model.customForm === undefined) return;
+    if (
+      model.selector === undefined &&
+      model.customForm === undefined &&
+      model.mode !== "virtual"
+    ) {
+      return;
+    }
     const subscription = BackHandler.addEventListener(
       "hardwareBackPress",
       () => {
         if (model.customForm !== undefined) {
           if (!model.customForm.isSaving) onCancelCustomForm();
         } else if (!model.selector?.isAdding) {
-          onCancelSelector();
+          if (model.selector !== undefined) onCancelSelector();
+          else onBackToLive();
         }
         return true;
       },
     );
     return () => subscription.remove();
-  }, [model.customForm, model.selector, onCancelCustomForm, onCancelSelector]);
+  }, [
+    model.customForm,
+    model.mode,
+    model.selector,
+    onBackToLive,
+    onCancelCustomForm,
+    onCancelSelector,
+  ]);
 
   useEffect(() => {
     const request = model.clockRequest;
@@ -454,13 +685,41 @@ export function ClockScreen({
 
   return (
     <SafeAreaView
-      style={[styles.safeArea, { backgroundColor: colors.background }]}
+      testID="clock-screen"
+      accessibilityLabel={
+        model.mode === "virtual" ? "Virtual time screen" : "Live time screen"
+      }
+      style={[
+        styles.safeArea,
+        {
+          backgroundColor:
+            model.mode === "virtual"
+              ? colors.virtualBackground
+              : colors.background,
+        },
+      ]}
     >
-      <ScrollView
-        ref={scrollView}
-        contentContainerStyle={styles.viewport}
-        alwaysBounceVertical={false}
-      >
+      <GestureDetector gesture={scrollGesture}>
+        <ScrollView
+          ref={scrollView}
+          testID="clock-scroll"
+          scrollEnabled={scrollEnabled}
+          contentContainerStyle={styles.viewport}
+          alwaysBounceVertical={false}
+          stickyHeaderIndices={[0]}
+        >
+        <StatusSurface
+          model={model}
+          colors={colors}
+          onBeginScrub={onBeginStatusScrub}
+          onUpdateScrub={onUpdateStatusScrub}
+          onEndScrub={onEndStatusScrub}
+          onCancelScrub={onCancelStatusScrub}
+          onAdjust={onAdjustStatus}
+          onBack={onBackToLive}
+          scrollGesture={scrollGesture}
+          onHorizontalLockChange={handleHorizontalLockChange}
+        />
         <View
           testID="clock-content"
           style={[
@@ -542,7 +801,8 @@ export function ClockScreen({
             </Text>
           )}
         </View>
-      </ScrollView>
+        </ScrollView>
+      </GestureDetector>
       {model.deleteConfirmation === undefined ? null : (
         <Modal
           testID="delete-confirmation"
@@ -610,6 +870,27 @@ const styles = StyleSheet.create({
   viewport: { flexGrow: 1, paddingHorizontal: 20, paddingVertical: 24 },
   content: { width: "100%", alignSelf: "center" },
   title: { fontSize: 30, fontWeight: "700", marginBottom: 24 },
+  statusSurface: {
+    width: "100%",
+    maxWidth: 680,
+    minHeight: 64,
+    alignSelf: "center",
+    borderWidth: 1,
+    borderRadius: 16,
+    paddingLeft: 16,
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 16,
+  },
+  statusText: { flex: 1, minWidth: 0, flexDirection: "row", alignItems: "center", gap: 12 },
+  statusAdjustable: { flex: 1, minHeight: 64, justifyContent: "center" },
+  statusLabel: { fontSize: 18, fontWeight: "700" },
+  statusOffsetLine: { flexDirection: "row", alignItems: "center", gap: 6 },
+  statusOffset: { fontSize: 20, fontWeight: "700", fontVariant: ["tabular-nums"] },
+  chevron: { fontSize: 21, fontWeight: "700", opacity: 0.55 },
+  statusBack: { minWidth: 48, minHeight: 48, alignItems: "center", justifyContent: "center" },
+  statusActionSpacer: { width: 48, height: 48 },
+  backGlyph: { fontSize: 26, fontWeight: "700" },
   clockCollection: { gap: 12 },
   clockSurface: {
     minHeight: 96,

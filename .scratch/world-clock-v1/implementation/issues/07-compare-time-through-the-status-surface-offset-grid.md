@@ -10,7 +10,7 @@ Index: [World Clock v1 implementation tickets](../index.md)
 
 **Blocked by:** 03 — [Add, project, and restore offline city clocks](03-add-project-and-restore-offline-city-clocks.md).
 
-**Status:** ready-for-agent
+**Status:** complete
 
 **Delivery workflow:** Work directly on `master`; do not create a branch or pull request. Finish green and demoable. Do not implement row scrubbing yet.
 
@@ -20,13 +20,13 @@ Live/Virtual application state with live-reference/comparison instants; offset-g
 
 ## Acceptance criteria
 
-- [ ] An accepted status scrub captures one live reference and moves every row through one shared frozen comparison instant.
-- [ ] Right means earlier and left means later; first movement from Live is exactly −0:15/+0:15 and later status movements use exact 15-minute steps.
-- [ ] The allowed window is cyclic from −24:00 through +24:00 and wraps rather than clamping, stopping, or bouncing.
-- [ ] Virtual mode has a distinct semantic full-screen treatment and sticky status showing `Virtual time`, signed offset, and icon-only accessible Back in the aligned action column.
-- [ ] Back samples then-current Live time; exact zero exits Live without frozen `+0:00`; Virtual state is not persisted.
-- [ ] Hardware and adjustable actions expose the approved earlier/later semantics without fixed-step UI controls.
-- [ ] The slice adds no row scrubbing, calendar UI, banner, visible Back text, or range/precision subtitle.
+- [x] An accepted status scrub captures one live reference and moves every row through one shared frozen comparison instant.
+- [x] Right means earlier and left means later; first movement from Live is exactly −0:15/+0:15 and later status movements use exact 15-minute steps.
+- [x] The allowed window is cyclic from −24:00 through +24:00 and wraps rather than clamping, stopping, or bouncing.
+- [x] Virtual mode has a distinct semantic full-screen treatment and sticky status showing `Virtual time`, signed offset, and icon-only accessible Back in the aligned action column.
+- [x] Back samples then-current Live time; exact zero exits Live without frozen `+0:00`; Virtual state is not persisted.
+- [x] Hardware and adjustable actions expose the approved earlier/later semantics without fixed-step UI controls.
+- [x] The slice adds no row scrubbing, calendar UI, banner, visible Back text, or range/precision subtitle.
 
 ## Automated acceptance subset
 
@@ -35,3 +35,9 @@ At 07:32 assert first right/left = −0:15/+0:15 and 07:17/07:47; later exact st
 ## Later Pixel 7a checkpoint
 
 Confirm sensitivity/direction, shared freeze, both wrap edges, distinct Virtual treatment/sticky Back alignment, and exact-zero/Back return. Defer to ticket 13.
+
+## Resolution
+
+Implemented the transient Live/Virtual application state, cyclic relative offset grid, and native status-surface scrub using React Native Gesture Handler. The sticky semantic surface provides direction-correct 15-minute pointer, keyboard, and adjustable actions; freezes and shares one comparison instant across every clock; announces changes and wraps; restores current Live time through exact zero or icon-only Back; and never persists Virtual state. Platform-slop activation chooses and locks the dominant axis, with horizontal wins suppressing list scroll until finalization and vertical wins left to the native list.
+
+The ticket's focused and full automated suites, TypeScript, catalog, Expo dependency/doctor checks, and clean Android debug build pass. Independent standards and specification reviews found no remaining material issue. Physical Pixel acceptance remains intentionally deferred to ticket 13.

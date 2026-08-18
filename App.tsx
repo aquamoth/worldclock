@@ -1,6 +1,7 @@
 import { StatusBar } from "expo-status-bar";
 import { useEffect, useMemo, useSyncExternalStore } from "react";
 import { AppState } from "react-native";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import { createBundledClockCatalog } from "./src/adapters/bundledClockCatalog";
@@ -44,33 +45,41 @@ export default function App() {
   }, [application]);
 
   return (
-    <SafeAreaProvider>
-      <ClockScreen
-        model={model}
-        onOpenSelector={application.openSelector}
-        onSearchSelector={application.searchSelector}
-        onCancelSelector={application.cancelSelector}
-        onAddCity={(catalogId) => {
-          void application.addCity(catalogId);
-        }}
-        onOpenCustomCreator={application.openCustomCreator}
-        onOpenCustomEditor={application.openCustomEditor}
-        onUpdateCustomName={application.updateCustomName}
-        onSelectCustomOffset={application.selectCustomOffset}
-        onCancelCustomForm={application.cancelCustomForm}
-        onSaveCustom={() => {
-          void application.saveCustom();
-        }}
-        onOpenDelete={application.openDelete}
-        onCancelDelete={application.cancelDelete}
-        onConfirmDelete={() => {
-          void application.confirmDelete();
-        }}
-        onRetryPersistence={() => {
-          void application.retryPersistence();
-        }}
-      />
-      <StatusBar style="auto" />
-    </SafeAreaProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <SafeAreaProvider>
+        <ClockScreen
+          model={model}
+          onOpenSelector={application.openSelector}
+          onSearchSelector={application.searchSelector}
+          onCancelSelector={application.cancelSelector}
+          onAddCity={(catalogId) => {
+            void application.addCity(catalogId);
+          }}
+          onOpenCustomCreator={application.openCustomCreator}
+          onOpenCustomEditor={application.openCustomEditor}
+          onUpdateCustomName={application.updateCustomName}
+          onSelectCustomOffset={application.selectCustomOffset}
+          onCancelCustomForm={application.cancelCustomForm}
+          onSaveCustom={() => {
+            void application.saveCustom();
+          }}
+          onOpenDelete={application.openDelete}
+          onCancelDelete={application.cancelDelete}
+          onConfirmDelete={() => {
+            void application.confirmDelete();
+          }}
+          onRetryPersistence={() => {
+            void application.retryPersistence();
+          }}
+          onBeginStatusScrub={application.beginStatusScrub}
+          onUpdateStatusScrub={application.updateStatusScrub}
+          onEndStatusScrub={application.endStatusScrub}
+          onCancelStatusScrub={application.cancelStatusScrub}
+          onAdjustStatus={application.adjustStatus}
+          onBackToLive={application.backToLive}
+        />
+        <StatusBar style="auto" />
+      </SafeAreaProvider>
+    </GestureHandlerRootView>
   );
 }
