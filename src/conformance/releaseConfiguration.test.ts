@@ -17,5 +17,8 @@ describe("Android release configuration", () => {
       "release:cng-check": "bash scripts/release/verify-cng-reproducibility.sh",
       "release:clean-gate": "bash scripts/release/run-clean-android-gate.sh",
     });
+    expect(packageManifest.devDependencies).toMatchObject({
+      "expo-doctor": "1.20.2",
+    });
   });
 });
