@@ -1,7 +1,7 @@
 import generatedCatalog from "../../catalog/generated/catalog.json";
 import { parseClockCatalog } from "./catalog";
 
-export { parseClockCatalog } from "./catalog";
+export { parseClockCatalog, resolvePrimaryCountryName } from "./catalog";
 export type {
   CatalogCountry,
   ClockCatalog,

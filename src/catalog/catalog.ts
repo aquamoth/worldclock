@@ -22,6 +22,15 @@ export interface ClockCatalog {
   readonly entries: readonly ClockCatalogEntry[];
 }
 
+export function resolvePrimaryCountryName(
+  value: Pick<ClockCatalogEntry, "primaryCountryCode" | "countries">,
+): string {
+  return (
+    value.countries.find(({ code }) => code === value.primaryCountryCode)?.name ??
+    value.primaryCountryCode
+  );
+}
+
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
 

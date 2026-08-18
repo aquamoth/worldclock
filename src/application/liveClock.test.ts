@@ -1,5 +1,16 @@
 import { createLiveClockApplication } from "./liveClock";
 
+const emptyCollectionDependencies = {
+  catalog: {
+    search: () => [],
+    findById: () => undefined,
+  },
+  selectedClockStorage: {
+    load: async () => null,
+    replace: async () => undefined,
+  },
+};
+
 describe("live local clock", () => {
   it("samples one instant and refreshes at the next minute boundary", () => {
     let now = Date.parse("2026-01-15T12:00:42.125Z");
@@ -8,6 +19,7 @@ describe("live local clock", () => {
     const projectedInstants: number[] = [];
 
     const app = createLiveClockApplication({
+      ...emptyCollectionDependencies,
       time: {
         now: () => now,
         schedule: (callback, delayMs) => {
@@ -71,6 +83,7 @@ describe("live local clock", () => {
     }> = [];
 
     const app = createLiveClockApplication({
+      ...emptyCollectionDependencies,
       time: {
         now: () => Date.parse("2026-01-15T12:05:00Z"),
         schedule: () => () => undefined,

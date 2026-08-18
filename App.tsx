@@ -3,8 +3,10 @@ import { useEffect, useMemo, useSyncExternalStore } from "react";
 import { AppState } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
+import { createBundledClockCatalog } from "./src/adapters/bundledClockCatalog";
 import { createDevicePreferences } from "./src/adapters/devicePreferences";
 import { createIntlTimezoneRules } from "./src/adapters/intlTimezoneRules";
+import { createAsyncSelectedClockStorage } from "./src/adapters/selectedClockStorage";
 import { systemTime } from "./src/adapters/systemTime";
 import { createLiveClockApplication } from "./src/application/liveClock";
 import { ClockScreen } from "./src/ui/ClockScreen";
@@ -16,6 +18,8 @@ export default function App() {
         time: systemTime,
         devicePreferences: createDevicePreferences(),
         timezoneRules: createIntlTimezoneRules(),
+        catalog: createBundledClockCatalog(),
+        selectedClockStorage: createAsyncSelectedClockStorage(),
       }),
     [],
   );
@@ -41,7 +45,15 @@ export default function App() {
 
   return (
     <SafeAreaProvider>
-      <ClockScreen model={model} />
+      <ClockScreen
+        model={model}
+        onOpenSelector={application.openSelector}
+        onSearchSelector={application.searchSelector}
+        onCancelSelector={application.cancelSelector}
+        onAddCity={(catalogId) => {
+          void application.addCity(catalogId);
+        }}
+      />
       <StatusBar style="auto" />
     </SafeAreaProvider>
   );

@@ -1,4 +1,4 @@
-import type { ClockCatalogEntry } from "./catalog";
+import { resolvePrimaryCountryName, type ClockCatalogEntry } from "./catalog";
 import { caseFold } from "unicode-case-folding";
 
 export function normalizeCatalogSearchText(value: string): string {
@@ -59,11 +59,9 @@ export function searchClockCatalog(
       );
       if (cityDifference !== 0) return cityDifference;
 
-      const primaryCountry = (entry: ClockCatalogEntry): string =>
-        entry.countries.find(({ code }) => code === entry.primaryCountryCode)?.name ?? "";
       const countryDifference = compareText(
-        normalizeCatalogSearchText(primaryCountry(left.entry)),
-        normalizeCatalogSearchText(primaryCountry(right.entry)),
+        normalizeCatalogSearchText(resolvePrimaryCountryName(left.entry)),
+        normalizeCatalogSearchText(resolvePrimaryCountryName(right.entry)),
       );
       return countryDifference || compareText(left.entry.id, right.entry.id);
     })

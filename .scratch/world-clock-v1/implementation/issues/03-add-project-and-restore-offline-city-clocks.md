@@ -10,7 +10,7 @@ Index: [World Clock v1 implementation tickets](../index.md)
 
 **Blocked by:** 02 — [Generate the validated offline clock catalog](02-generate-the-validated-offline-clock-catalog.md).
 
-**Status:** ready-for-agent
+**Status:** complete
 
 **Delivery workflow:** Work directly on `master`; do not create a branch or pull request. Finish green and demoable. Keep catalog cities immutable and leave custom/edit/delete/capacity behavior to later tickets.
 
@@ -20,14 +20,14 @@ Clock-catalog port and generated JSON adapter; selector screen and result semant
 
 ## Acceptance criteria
 
-- [ ] `Add timezone` opens an entirely offline catalog whose empty and searched results follow the approved ranking.
-- [ ] One city is added per visit only after one successful atomic snapshot write; cancel changes nothing.
-- [ ] The new city closes the selector, appears at its chronological position with time/name/effective offset/day difference, scrolls into view, and receives accessibility focus.
-- [ ] The exact same catalog ID cannot be added twice; distinct catalog entries sharing one IANA zone may coexist.
-- [ ] Local participates in chronological sorting, ties use Local/add-sequence/stable-ID order, and date-line/DST changes can reorder correctly.
-- [ ] Relaunch offline restores committed city identity and captured display/country/IANA metadata, even when a later catalog renames or removes that entry.
-- [ ] Chronological display order and all derived/device/transient fields remain absent from the snapshot.
-- [ ] The UI and tests remain green and demoable offline.
+- [x] `Add timezone` opens an entirely offline catalog whose empty and searched results follow the approved ranking.
+- [x] One city is added per visit only after one successful atomic snapshot write; cancel changes nothing.
+- [x] The new city closes the selector, appears at its chronological position with time/name/effective offset/day difference, scrolls into view, and receives accessibility focus.
+- [x] The exact same catalog ID cannot be added twice; distinct catalog entries sharing one IANA zone may coexist.
+- [x] Local participates in chronological sorting, ties use Local/add-sequence/stable-ID order, and date-line/DST changes can reorder correctly.
+- [x] Relaunch offline restores committed city identity and captured display/country/IANA metadata, even when a later catalog renames or removes that entry.
+- [x] Chronological display order and all derived/device/transient fields remain absent from the snapshot.
+- [x] The UI and tests remain green and demoable offline.
 
 ## Automated acceptance subset
 
@@ -36,3 +36,7 @@ Run exact winter/summer, New York DST gap/overlap, Kathmandu fractional, date-li
 ## Later Pixel 7a checkpoint
 
 Offline, search with spelling variants; add ordinary, DST, fractional, and date-line cities; confirm offsets/day markers/chronological placement and duplicate unavailability; relaunch and confirm restoration. Defer the normative run to ticket 13.
+
+## Resolution
+
+Implemented the offline city-selector tracer bullet end to end: bundled catalog search, atomic versioned Async Storage snapshots, captured city metadata, IANA projection and chronological ordering, duplicate handling, offline restoration, system-Back/cancel behavior, and native scroll/accessibility-focus delivery after add. Standards and specification reviews were completed against `ac7fa8f`; all findings were fixed. A clean install, 13 suites/82 tests, strict typecheck, catalog check, Expo dependency check, Expo doctor (21/21), and Android debug build all pass. The deferred Pixel 7a acceptance remains assigned to ticket 13.

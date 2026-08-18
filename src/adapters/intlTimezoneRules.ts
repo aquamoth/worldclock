@@ -1,4 +1,4 @@
-import type { TimezoneRulesPort } from "../application/liveClock";
+import type { TimezoneRules } from "../domain/clockCollection";
 
 const PROJECTION_LOCALE = "en-US-u-ca-gregory-nu-latn";
 
@@ -13,7 +13,7 @@ function readNumericPart(
   return Number.parseInt(value, 10);
 }
 
-export function createIntlTimezoneRules(): TimezoneRulesPort {
+export function createIntlTimezoneRules(): TimezoneRules {
   return {
     project: (instantMs, timeZone, _locale) => {
       const formatter = new Intl.DateTimeFormat(PROJECTION_LOCALE, {
