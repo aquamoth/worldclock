@@ -1,5 +1,6 @@
 import { fireEvent, render, screen } from "@testing-library/react-native";
 import {
+  AccessibilityInfo,
   BackHandler,
   Dimensions,
   StyleSheet,
@@ -42,14 +43,28 @@ const actions = () => ({
   onSelectCustomOffset: jest.fn(),
   onCancelCustomForm: jest.fn(),
   onSaveCustom: jest.fn(),
+  onOpenDelete: jest.fn(),
+  onCancelDelete: jest.fn(),
+  onConfirmDelete: jest.fn(),
 });
+
+const runAnimationFramesImmediately = () =>
+  jest.spyOn(global, "requestAnimationFrame").mockImplementation((callback) => {
+    callback(0);
+    return 1;
+  });
 
 describe("clock collection screen", () => {
   beforeEach(() => {
+    revealClockMock.mockClear();
     Dimensions.set({
       window: { width: 411, height: 914, scale: 2.625, fontScale: 1.35 },
       screen: { width: 411, height: 914, scale: 2.625, fontScale: 1.35 },
     });
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
   });
 
   it("renders Local, empty guidance, and a 48dp Add timezone action", async () => {
@@ -155,12 +170,7 @@ describe("clock collection screen", () => {
   });
 
   it("scrolls to and accessibility-focuses the requested added clock", async () => {
-    const animationFrame = jest
-      .spyOn(global, "requestAnimationFrame")
-      .mockImplementation((callback) => {
-        callback(0);
-        return 1;
-      });
+    runAnimationFramesImmediately();
     const model: LiveClockScreenModel = {
       ...emptyModel,
       clocks: [
@@ -170,7 +180,7 @@ describe("clock collection screen", () => {
           kind: "city",
           name: "New York",
           countryName: "United States",
-          canDelete: false,
+          canDelete: true,
           calendarDate: "2026-01-15",
           time: "07:05",
           effectiveOffset: "UTC−05:00",
@@ -202,10 +212,10 @@ describe("clock collection screen", () => {
         focus: true,
       }),
     );
-    animationFrame.mockRestore();
   });
 
-  it("renders selected city time, offset, and nonzero day difference without extra row labels or mutation actions", async () => {
+  it("renders selected city time, offset, day difference, and an accessible delete action", async () => {
+    const callbacks = actions();
     await render(
       <ClockScreen
         model={{
@@ -218,7 +228,7 @@ describe("clock collection screen", () => {
               kind: "city",
               name: "Kiritimati",
               countryName: "Kiribati",
-              canDelete: false,
+              canDelete: true,
               calendarDate: "2026-01-16",
               time: "00:30",
               effectiveOffset: "UTC+14:00",
@@ -227,7 +237,7 @@ describe("clock collection screen", () => {
             localClock,
           ],
         }}
-        {...actions()}
+        {...callbacks}
       />,
     );
 
@@ -240,7 +250,16 @@ describe("clock collection screen", () => {
     expect(
       screen.getByText("+1", { includeHiddenElements: true }),
     ).toBeOnTheScreen();
-    expect(screen.queryByText(/delete|edit/i)).not.toBeOnTheScreen();
+    const remove = screen.getByRole("button", { name: "Delete Kiritimati" });
+    expect(StyleSheet.flatten(remove.props.style)).toMatchObject({
+      minWidth: 48,
+      minHeight: 48,
+    });
+    expect(screen.getByText("×")).toBeOnTheScreen();
+    await fireEvent.press(remove);
+    expect(callbacks.onOpenDelete).toHaveBeenCalledWith("kiritimati");
+    expect(screen.queryByRole("button", { name: "Delete Local" })).not.toBeOnTheScreen();
+    expect(screen.queryByText(/edit/i)).not.toBeOnTheScreen();
   });
 
   it("opens the separate custom path and renders an accessible selected-offset form", async () => {
@@ -302,7 +321,7 @@ describe("clock collection screen", () => {
               id: "custom-1",
               kind: "custom",
               name: "Office",
-              canDelete: false,
+              canDelete: true,
               canEdit: true,
               calendarDate: "2026-01-15",
               time: "17:50",
@@ -334,5 +353,137 @@ describe("clock collection screen", () => {
     );
     expect(backHandler?.({ type: "hardwareBackPress", timeStamp: 0 })).toBe(true);
     expect(callbacks.onCancelCustomForm).toHaveBeenCalledTimes(1);
+  });
+
+  it("shows a named irreversible modal whose Cancel and Android Back dismiss without deleting", async () => {
+    const callbacks = actions();
+    const view = await render(
+      <ClockScreen
+        model={{
+          ...emptyModel,
+          clocks: [
+            localClock,
+            {
+              id: "new-york",
+              kind: "city",
+              name: "New York",
+              countryName: "United States",
+              canDelete: true,
+              calendarDate: "2026-01-15",
+              time: "07:05",
+              effectiveOffset: "UTC−05:00",
+            },
+          ],
+        }}
+        {...callbacks}
+      />,
+    );
+
+    await view.rerender(
+      <ClockScreen
+        model={{
+          ...emptyModel,
+          deleteConfirmation: {
+            selectionId: "new-york",
+            name: "New York",
+            isDeleting: false,
+          },
+        }}
+        {...callbacks}
+      />,
+    );
+
+    expect(screen.getByText("Delete New York?")).toBeOnTheScreen();
+    expect(
+      screen.getByText("New York will be removed. This cannot be undone."),
+    ).toBeOnTheScreen();
+    expect(screen.queryByText(/undo/i)).toBeOnTheScreen();
+    expect(screen.queryByRole("button", { name: "Undo" })).not.toBeOnTheScreen();
+
+    await fireEvent.press(screen.getByRole("button", { name: "Cancel deletion" }));
+    expect(callbacks.onCancelDelete).toHaveBeenCalledTimes(1);
+
+    await fireEvent(screen.getByTestId("delete-confirmation"), "requestClose");
+    expect(callbacks.onCancelDelete).toHaveBeenCalledTimes(2);
+
+    await fireEvent.press(screen.getByRole("button", { name: "Delete New York" }));
+    expect(callbacks.onConfirmDelete).toHaveBeenCalledTimes(1);
+
+    await view.rerender(
+      <ClockScreen
+        model={{
+          ...emptyModel,
+          deleteConfirmation: {
+            selectionId: "new-york",
+            name: "New York",
+            isDeleting: true,
+          },
+        }}
+        {...callbacks}
+      />,
+    );
+    expect(screen.getByRole("button", { name: "Cancel deletion" })).toBeDisabled();
+    expect(screen.getByRole("button", { name: "Delete New York" })).toBeDisabled();
+  });
+
+  it("announces one completed removal and focuses a requested clock without scrolling", async () => {
+    const announce = jest
+      .spyOn(AccessibilityInfo, "announceForAccessibility")
+      .mockImplementation(() => undefined);
+    runAnimationFramesImmediately();
+    const clockRequest = {
+      clockId: "local",
+      sequence: 2,
+      scrollIntoView: false,
+      focus: true as const,
+    };
+    const announcement = { sequence: 1, message: "New York removed." };
+    const model: LiveClockScreenModel = {
+      ...emptyModel,
+      clockRequest,
+      announcement,
+    };
+    const view = await render(<ClockScreen model={model} {...actions()} />);
+
+    expect(announce).toHaveBeenCalledTimes(1);
+    expect(announce).toHaveBeenCalledWith("New York removed.");
+    expect(revealClockMock).toHaveBeenCalledWith(
+      expect.objectContaining({ scrollIntoView: false, focus: true }),
+    );
+
+    await view.rerender(
+      <ClockScreen
+        model={{ ...model, sampledInstantMs: model.sampledInstantMs + 60_000 }}
+        {...actions()}
+      />,
+    );
+    expect(announce).toHaveBeenCalledTimes(1);
+  });
+
+  it("can focus Add timezone as the final deletion fallback", async () => {
+    runAnimationFramesImmediately();
+    await render(
+      <ClockScreen
+        model={{
+          ...emptyModel,
+          clocks: [],
+          clockRequest: {
+            addTimezone: true,
+            sequence: 3,
+            scrollIntoView: false,
+            focus: true,
+          },
+        }}
+        {...actions()}
+      />,
+    );
+
+    expect(revealClockMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        clockView: expect.anything(),
+        scrollIntoView: false,
+        focus: true,
+      }),
+    );
   });
 });

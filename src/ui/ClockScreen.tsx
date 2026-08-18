@@ -1,6 +1,8 @@
 import {
+  AccessibilityInfo,
   BackHandler,
   FlatList,
+  Modal,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -34,6 +36,9 @@ interface ClockScreenProps {
   readonly onSelectCustomOffset: (offsetMinutes: number) => void;
   readonly onCancelCustomForm: () => void;
   readonly onSaveCustom: () => void;
+  readonly onOpenDelete: (selectionId: string) => void;
+  readonly onCancelDelete: () => void;
+  readonly onConfirmDelete: () => void;
 }
 
 const palette = {
@@ -78,12 +83,14 @@ function ClockRow({
   rowRef,
   onLayout,
   onEdit,
+  onDelete,
 }: {
   readonly clock: ClockCollectionProjection;
   readonly colors: Palette;
   readonly rowRef: Ref<View>;
   readonly onLayout: (event: LayoutChangeEvent) => void;
   readonly onEdit: (selectionId: string) => void;
+  readonly onDelete: (selectionId: string) => void;
 }) {
   return (
     <View
@@ -121,16 +128,28 @@ function ClockRow({
           </View>
         </View>
       </View>
-      {clock.kind === "custom" ? (
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel={`Edit ${clock.name}`}
-          onPress={() => onEdit(clock.id)}
-          style={({ pressed }) => [styles.rowAction, { opacity: pressed ? 0.7 : 1 }]}
-        >
-          <Text style={[styles.rowActionText, { color: colors.accent }]}>Edit</Text>
-        </Pressable>
-      ) : null}
+      {clock.kind === "local" ? null : (
+        <View style={styles.rowActions}>
+          {clock.kind === "custom" ? (
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel={`Edit ${clock.name}`}
+              onPress={() => onEdit(clock.id)}
+              style={({ pressed }) => [styles.rowAction, { opacity: pressed ? 0.7 : 1 }]}
+            >
+              <Text style={[styles.rowActionText, { color: colors.accent }]}>Edit</Text>
+            </Pressable>
+          ) : null}
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={`Delete ${clock.name}`}
+            onPress={() => onDelete(clock.id)}
+            style={({ pressed }) => [styles.rowAction, { opacity: pressed ? 0.7 : 1 }]}
+          >
+            <Text style={[styles.deleteGlyph, { color: colors.accent }]}>×</Text>
+          </Pressable>
+        </View>
+      )}
     </View>
   );
 }
@@ -194,6 +213,9 @@ export function ClockScreen({
   onSelectCustomOffset,
   onCancelCustomForm,
   onSaveCustom,
+  onOpenDelete,
+  onCancelDelete,
+  onConfirmDelete,
 }: ClockScreenProps) {
   const colorScheme = useColorScheme() === "dark" ? "dark" : "light";
   const viewport = useWindowDimensions();
@@ -201,6 +223,8 @@ export function ClockScreen({
   const scrollView = useRef<ScrollView>(null);
   const clockViews = useRef(new Map<string, View>());
   const clockPositions = useRef(new Map<string, number>());
+  const addTimezoneView = useRef<View>(null);
+  const addTimezonePosition = useRef<number | undefined>(undefined);
 
   useEffect(() => {
     if (model.selector === undefined && model.customForm === undefined) return;
@@ -221,17 +245,27 @@ export function ClockScreen({
   useEffect(() => {
     const request = model.clockRequest;
     if (request === undefined) return;
+    const targetsAddTimezone = "addTimezone" in request;
     const frame = requestAnimationFrame(() => {
       revealClock({
         scrollView: scrollView.current,
-        clockView: clockViews.current.get(request.clockId) ?? null,
-        position: clockPositions.current.get(request.clockId),
+        clockView: targetsAddTimezone
+          ? addTimezoneView.current
+          : (clockViews.current.get(request.clockId) ?? null),
+        position: targetsAddTimezone
+          ? addTimezonePosition.current
+          : clockPositions.current.get(request.clockId),
         scrollIntoView: request.scrollIntoView,
         focus: request.focus,
       });
     });
     return () => cancelAnimationFrame(frame);
   }, [model.clockRequest]);
+
+  useEffect(() => {
+    if (model.announcement === undefined) return;
+    AccessibilityInfo.announceForAccessibility(model.announcement.message);
+  }, [model.announcement?.message, model.announcement?.sequence]);
 
   if (model.customForm !== undefined) {
     const form = model.customForm;
@@ -405,6 +439,7 @@ export function ClockScreen({
                   clockPositions.current.set(clock.id, event.nativeEvent.layout.y);
                 }}
                 onEdit={onOpenCustomEditor}
+                onDelete={onOpenDelete}
               />
             ))}
           </View>
@@ -416,6 +451,10 @@ export function ClockScreen({
           )}
 
           <Pressable
+            ref={addTimezoneView}
+            onLayout={(event) => {
+              addTimezonePosition.current = event.nativeEvent.layout.y;
+            }}
             accessibilityRole="button"
             accessibilityLabel="Add timezone"
             disabled={!model.isReady}
@@ -433,6 +472,57 @@ export function ClockScreen({
           </Pressable>
         </View>
       </ScrollView>
+      {model.deleteConfirmation === undefined ? null : (
+        <Modal
+          testID="delete-confirmation"
+          visible
+          transparent
+          animationType="fade"
+          onRequestClose={() => {
+            if (!model.deleteConfirmation?.isDeleting) onCancelDelete();
+          }}
+        >
+          <View style={styles.modalBackdrop}>
+            <View
+              accessibilityViewIsModal
+              style={[styles.modalSurface, { backgroundColor: colors.surface }]}
+            >
+              <Text style={[styles.modalTitle, { color: colors.primary }]}>
+                {`Delete ${model.deleteConfirmation.name}?`}
+              </Text>
+              <Text style={[styles.modalBody, { color: colors.secondary }]}>
+                {`${model.deleteConfirmation.name} will be removed. This cannot be undone.`}
+              </Text>
+              <View style={styles.modalActions}>
+                <Pressable
+                  accessibilityRole="button"
+                  accessibilityLabel="Cancel deletion"
+                  accessibilityState={{
+                    disabled: model.deleteConfirmation.isDeleting,
+                  }}
+                  disabled={model.deleteConfirmation.isDeleting}
+                  onPress={onCancelDelete}
+                  style={styles.modalAction}
+                >
+                  <Text style={[styles.modalActionText, { color: colors.accent }]}>Cancel</Text>
+                </Pressable>
+                <Pressable
+                  accessibilityRole="button"
+                  accessibilityLabel={`Delete ${model.deleteConfirmation.name}`}
+                  accessibilityState={{
+                    disabled: model.deleteConfirmation.isDeleting,
+                  }}
+                  disabled={model.deleteConfirmation.isDeleting}
+                  onPress={onConfirmDelete}
+                  style={styles.modalAction}
+                >
+                  <Text style={[styles.modalActionText, styles.destructiveAction]}>Delete</Text>
+                </Pressable>
+              </View>
+            </View>
+          </View>
+        </Modal>
+      )}
     </SafeAreaView>
   );
 }
@@ -468,7 +558,9 @@ const styles = StyleSheet.create({
   offset: { fontSize: 15, fontVariant: ["tabular-nums"] },
   dayDifference: { fontSize: 15, fontWeight: "700" },
   rowAction: { minWidth: 48, minHeight: 48, alignItems: "center", justifyContent: "center" },
+  rowActions: { flexDirection: "row", alignItems: "center" },
   rowActionText: { fontSize: 15, fontWeight: "700" },
+  deleteGlyph: { fontSize: 28, fontWeight: "400", lineHeight: 32 },
   guidance: { fontSize: 16, lineHeight: 23, marginTop: 20 },
   addButton: {
     minHeight: 48,
@@ -523,4 +615,27 @@ const styles = StyleSheet.create({
   resultCity: { fontSize: 17, fontWeight: "600" },
   resultCountry: { fontSize: 14, marginTop: 2 },
   resultState: { fontSize: 15, fontWeight: "700" },
+  modalBackdrop: {
+    flex: 1,
+    justifyContent: "center",
+    paddingHorizontal: 24,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  modalSurface: { borderRadius: 20, padding: 24 },
+  modalTitle: { fontSize: 22, fontWeight: "700" },
+  modalBody: { fontSize: 16, lineHeight: 23, marginTop: 12 },
+  modalActions: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    gap: 8,
+    marginTop: 20,
+  },
+  modalAction: {
+    minWidth: 72,
+    minHeight: 48,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  modalActionText: { fontSize: 16, fontWeight: "700" },
+  destructiveAction: { color: "#B3261E" },
 });

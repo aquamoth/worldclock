@@ -61,6 +61,11 @@ export default function App() {
         onSaveCustom={() => {
           void application.saveCustom();
         }}
+        onOpenDelete={application.openDelete}
+        onCancelDelete={application.cancelDelete}
+        onConfirmDelete={() => {
+          void application.confirmDelete();
+        }}
       />
       <StatusBar style="auto" />
     </SafeAreaProvider>

@@ -10,7 +10,9 @@ Index: [World Clock v1 implementation tickets](../index.md)
 
 **Blocked by:** 03 — [Add, project, and restore offline city clocks](03-add-project-and-restore-offline-city-clocks.md).
 
-**Status:** ready-for-agent
+**Status:** closed
+
+**Assignee:** Codex
 
 **Delivery workflow:** Work directly on `master`; do not create a branch or pull request. Finish green and demoable.
 
@@ -20,13 +22,13 @@ Delete use case/effect contract; atomic snapshot replacement; selected-row actio
 
 ## Acceptance criteria
 
-- [ ] Every selected row has a far-right, at least 48dp `Delete <name>` action; Local has no delete action.
-- [ ] Delete opens a modal naming the clock, explaining irreversibility, and offering Cancel and destructive Delete.
-- [ ] Cancel and system dialog Back close the modal without visible or stored mutation.
-- [ ] Confirm performs one atomic write, removes exactly once, announces the named removal once, and offers no Undo.
-- [ ] Repeat activation while pending is ignored.
-- [ ] Focus moves to the next displayed row, otherwise previous row, otherwise `Add timezone`; stable render identity survives reconciliation.
-- [ ] The full slice remains green and demoable with city clocks.
+- [x] Every selected row has a far-right, at least 48dp `Delete <name>` action; Local has no delete action.
+- [x] Delete opens a modal naming the clock, explaining irreversibility, and offering Cancel and destructive Delete.
+- [x] Cancel and system dialog Back close the modal without visible or stored mutation.
+- [x] Confirm performs one atomic write, removes exactly once, announces the named removal once, and offers no Undo.
+- [x] Repeat activation while pending is ignored.
+- [x] Focus moves to the next displayed row, otherwise previous row, otherwise `Add timezone`; stable render identity survives reconciliation.
+- [x] The full slice remains green and demoable with city clocks.
 
 ## Automated acceptance subset
 
@@ -35,3 +37,7 @@ Cover accessible `Delete <name>`, 48dp selected action/no Local action, named mo
 ## Later Pixel 7a checkpoint
 
 Exercise Cancel, system dialog Back, confirmed removal, focus fallback, and absence of Undo with touch and later TalkBack. Defer to tickets 11 and 13.
+
+## Resolution
+
+Selected city and custom rows now expose a 48dp accessible `×` action. A named irreversible modal keeps the collection frozen until Cancel/Back or one successful atomic snapshot replacement; pending repeats are guarded, and success announces once before focus returns by next/previous/Add fallback. Application and native UI tests cover nonmutation, one-write deletion, reconciliation, announcements, modal behavior, and focus targets. Full Jest, TypeScript, catalog, Expo prebuild, and Android debug-build gates pass; the physical Pixel checkpoint remains deferred as specified.

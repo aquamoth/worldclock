@@ -71,6 +71,26 @@ export interface CustomTimezoneFormModel {
   readonly duplicateError?: string;
 }
 
+export interface DeleteConfirmationModel {
+  readonly selectionId: string;
+  readonly name: string;
+  readonly isDeleting: boolean;
+}
+
+export type FocusRequestModel =
+  | {
+      readonly clockId: string;
+      readonly sequence: number;
+      readonly scrollIntoView: boolean;
+      readonly focus: true;
+    }
+  | {
+      readonly addTimezone: true;
+      readonly sequence: number;
+      readonly scrollIntoView: boolean;
+      readonly focus: true;
+    };
+
 export interface LiveClockScreenModel {
   readonly mode: "live";
   readonly isReady: boolean;
@@ -79,11 +99,11 @@ export interface LiveClockScreenModel {
   readonly emptyGuidance?: "Add a timezone to compare times around the world.";
   readonly selector?: ClockSelectorModel;
   readonly customForm?: CustomTimezoneFormModel;
-  readonly clockRequest?: {
-    readonly clockId: string;
+  readonly deleteConfirmation?: DeleteConfirmationModel;
+  readonly clockRequest?: FocusRequestModel;
+  readonly announcement?: {
     readonly sequence: number;
-    readonly scrollIntoView: true;
-    readonly focus: true;
+    readonly message: string;
   };
 }
 
@@ -104,6 +124,9 @@ export interface LiveClockApplication {
   selectCustomOffset(offsetMinutes: number): void;
   cancelCustomForm(): void;
   saveCustom(): Promise<boolean>;
+  openDelete(selectionId: string): boolean;
+  cancelDelete(): boolean;
+  confirmDelete(): Promise<boolean>;
 }
 
 export interface LiveClockDependencies {
@@ -140,6 +163,9 @@ export function createLiveClockApplication(
     | undefined;
   let clockRequest: LiveClockScreenModel["clockRequest"];
   let clockRequestSequence = 0;
+  let deleteConfirmation: DeleteConfirmationModel | undefined;
+  let announcement: LiveClockScreenModel["announcement"];
+  let announcementSequence = 0;
   let cancelScheduledTick: (() => void) | undefined;
   let initialization: Promise<void> | undefined;
 
@@ -221,7 +247,9 @@ export function createLiveClockApplication(
                 : { duplicateError: customForm.duplicateError }),
             },
           }),
+      ...(deleteConfirmation === undefined ? {} : { deleteConfirmation }),
       ...(clockRequest === undefined ? {} : { clockRequest }),
+      ...(announcement === undefined ? {} : { announcement }),
     };
   };
 
@@ -301,6 +329,7 @@ export function createLiveClockApplication(
       cancelScheduledTick = undefined;
     },
     openSelector: () => {
+      if (deleteConfirmation !== undefined) return;
       selectorQuery = "";
       heldClockOrder = screen.clocks.map(({ id }) => id);
       resample();
@@ -375,7 +404,8 @@ export function createLiveClockApplication(
       if (
         selectorQuery !== undefined ||
         customForm !== undefined ||
-        isAdding
+        isAdding ||
+        deleteConfirmation !== undefined
       ) {
         return false;
       }
@@ -498,6 +528,98 @@ export function createLiveClockApplication(
           customForm = { ...customForm, isSaving: pending };
         }
       });
+      return true;
+    },
+    openDelete: (selectionId) => {
+      if (
+        selectorQuery !== undefined ||
+        customForm !== undefined ||
+        isAdding ||
+        deleteConfirmation !== undefined
+      ) {
+        return false;
+      }
+      const selected = snapshot.selectedClocks.find(
+        (clock) => clock.selectionId === selectionId,
+      );
+      if (selected === undefined) return false;
+
+      heldClockOrder = screen.clocks.map(({ id }) => id);
+      deleteConfirmation = {
+        selectionId,
+        name: selected.kind === "city" ? selected.city : selected.name,
+        isDeleting: false,
+      };
+      resample();
+      return true;
+    },
+    cancelDelete: () => {
+      if (deleteConfirmation === undefined || deleteConfirmation.isDeleting) {
+        return false;
+      }
+      deleteConfirmation = undefined;
+      heldClockOrder = undefined;
+      resample();
+      return true;
+    },
+    confirmDelete: async () => {
+      const confirmation = deleteConfirmation;
+      if (confirmation === undefined || confirmation.isDeleting) return false;
+
+      const selectedIndex = snapshot.selectedClocks.findIndex(
+        (clock) => clock.selectionId === confirmation.selectionId,
+      );
+      if (selectedIndex < 0) return false;
+
+      const previousOrder = heldClockOrder ?? screen.clocks.map(({ id }) => id);
+      const deletedPosition = previousOrder.indexOf(confirmation.selectionId);
+      const remainingOrder = previousOrder.filter(
+        (clockId) => clockId !== confirmation.selectionId,
+      );
+      const candidate: SelectedClockSnapshot = {
+        ...snapshot,
+        selectedClocks: snapshot.selectedClocks.filter(
+          (clock) => clock.selectionId !== confirmation.selectionId,
+        ),
+      };
+
+      deleteConfirmation = { ...confirmation, isDeleting: true };
+      resample();
+      try {
+        await dependencies.selectedClockStorage.replace(candidate);
+      } catch (error) {
+        deleteConfirmation = { ...confirmation, isDeleting: false };
+        resample();
+        throw error;
+      }
+
+      snapshot = candidate;
+      deleteConfirmation = undefined;
+      heldClockOrder = undefined;
+      const nextClockId =
+        remainingOrder[deletedPosition] ??
+        remainingOrder[Math.min(deletedPosition - 1, remainingOrder.length - 1)];
+      clockRequestSequence += 1;
+      clockRequest =
+        nextClockId === undefined
+          ? {
+              addTimezone: true,
+              sequence: clockRequestSequence,
+              scrollIntoView: false,
+              focus: true,
+            }
+          : {
+              clockId: nextClockId,
+              sequence: clockRequestSequence,
+              scrollIntoView: false,
+              focus: true,
+            };
+      announcementSequence += 1;
+      announcement = {
+        sequence: announcementSequence,
+        message: `${confirmation.name} removed.`,
+      };
+      resample();
       return true;
     },
   };

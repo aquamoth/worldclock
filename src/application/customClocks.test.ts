@@ -137,7 +137,10 @@ describe("custom timezone create and edit", () => {
       }],
     });
     expect(app.getScreen().clocks.map(({ id }) => id)).toEqual(["stable-custom", "local"]);
-    expect(app.getScreen().clockRequest?.clockId).toBe("stable-custom");
+    const request = app.getScreen().clockRequest;
+    expect(request !== undefined && "clockId" in request ? request.clockId : undefined).toBe(
+      "stable-custom",
+    );
   });
 
   it("keeps invalid and duplicate edits in place without changing visible or stored clocks", async () => {
