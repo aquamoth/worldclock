@@ -10,7 +10,7 @@ Index: [World Clock v1 implementation tickets](../index.md)
 
 **Blocked by:** 06 — [Make collection persistence and capacity failure-safe](06-make-collection-persistence-and-capacity-failure-safe.md); 08 — [Scrub any clock row without stealing vertical scroll](08-scrub-any-clock-row-without-stealing-vertical-scroll.md).
 
-**Status:** ready-for-agent
+**Status:** complete
 
 **Delivery workflow:** Work directly on `master`; do not create a branch or pull request. Finish green and demoable.
 
@@ -20,13 +20,13 @@ App-lifecycle/device-preference adapter events; application re-projection withou
 
 ## Acceptance criteria
 
-- [ ] Live mode catches up to current time after background/foreground.
-- [ ] Virtual mode retains live-reference/comparison instants while timezone, locale, theme, and 12/24 changes reproject those instants.
-- [ ] Add, custom edit, and confirmed delete remain available in Virtual time and successful writes do not alter either virtual instant.
-- [ ] New or edited rows project/sort at the frozen comparison; cancelled/failed mutations preserve collection and instants.
-- [ ] Overlays hold visible order and reconcile on close with stable focus.
-- [ ] Back resumes then-current Live time.
-- [ ] Process death/cold launch restores committed selected clocks in Live and restores no Virtual/device/derived transient data.
+- [x] Live mode catches up to current time after background/foreground.
+- [x] Virtual mode retains live-reference/comparison instants while timezone, locale, theme, and 12/24 changes reproject those instants.
+- [x] Add, custom edit, and confirmed delete remain available in Virtual time and successful writes do not alter either virtual instant.
+- [x] New or edited rows project/sort at the frozen comparison; cancelled/failed mutations preserve collection and instants.
+- [x] Overlays hold visible order and reconcile on close with stable focus.
+- [x] Back resumes then-current Live time.
+- [x] Process death/cold launch restores committed selected clocks in Live and restores no Virtual/device/derived transient data.
 
 ## Automated acceptance subset
 
@@ -35,3 +35,9 @@ Cover Live foreground catch-up; Virtual preference/timezone/locale/theme re-proj
 ## Later Pixel 7a checkpoint
 
 Background both modes, change timezone/12/24/theme/locale while backgrounded, mutate the collection in Virtual time, Back, then force-stop/cold-launch and verify restoration in Live. Defer to ticket 13.
+
+## Resolution
+
+Added a native app-lifecycle adapter and race-safe minute scheduler so backgrounding pauses ticks and foregrounding immediately reprojects current Live time or the unchanged Virtual comparison. Device timezone, locale, hour preference, and appearance changes re-render from current device state without changing either Virtual instant. City/custom add, custom edit, and confirmed delete now have end-to-end Virtual success, cancellation, and persistence-failure coverage; overlays retain visible order and return stable focus as chronological order reconciles.
+
+Process-recreation coverage proves only the committed versioned selected-clock snapshot returns and every cold launch begins Live, excluding Virtual, device-preference, appearance, order, and derived projection data. TypeScript, 203 automated tests, catalog validation, Expo dependency/doctor checks, and the Android debug build pass. Independent standards and specification reviews found no remaining material issue. Physical Pixel acceptance remains deferred to ticket 13.

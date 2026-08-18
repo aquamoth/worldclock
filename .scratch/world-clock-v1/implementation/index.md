@@ -30,4 +30,4 @@ All tickets are single-session tracer-bullet slices. Work directly on `master`; 
 
 ## Current frontier
 
-[09 — Preserve Virtual time through lifecycle and collection changes](issues/09-preserve-virtual-time-through-lifecycle-and-collection-changes.md) and [10 — Finish responsive light/dark and reduced-motion presentation](issues/10-finish-responsive-light-dark-and-reduced-motion-presentation.md) are the independent frontier after completion of [08 — Scrub any clock row without stealing vertical scroll](issues/08-scrub-any-clock-row-without-stealing-vertical-scroll.md). Follow the dependency table for the final accessibility and release joins.
+[10 — Finish responsive light/dark and reduced-motion presentation](issues/10-finish-responsive-light-dark-and-reduced-motion-presentation.md) is now the sole frontier after completion of [09 — Preserve Virtual time through lifecycle and collection changes](issues/09-preserve-virtual-time-through-lifecycle-and-collection-changes.md). Ticket 11 remains blocked on 10; follow the dependency table for the final accessibility and release joins.

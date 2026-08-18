@@ -151,6 +151,8 @@ export interface LiveClockApplication {
   initialize(): Promise<void>;
   refresh(): void;
   start(): void;
+  enterBackground(): void;
+  enterForeground(): void;
   stop(): void;
   openSelector(): void;
   searchSelector(query: string): void;
@@ -251,6 +253,7 @@ export function createLiveClockApplication(
   let announcement: LiveClockScreenModel["announcement"];
   let announcementSequence = 0;
   let cancelScheduledTick: (() => void) | undefined;
+  let minuteTicksActive = false;
   let initialization: Promise<void> | undefined;
   let persistenceState: PersistenceState = { status: "idle" };
   let virtualSession:
@@ -427,11 +430,27 @@ export function createLiveClockApplication(
 
   const scheduleNextMinute = (): void => {
     cancelScheduledTick?.();
+    cancelScheduledTick = undefined;
+    if (!minuteTicksActive) return;
     const delayMs = 60_000 - (dependencies.time.now() % 60_000);
     cancelScheduledTick = dependencies.time.schedule(() => {
+      cancelScheduledTick = undefined;
+      if (!minuteTicksActive) return;
       resample();
       scheduleNextMinute();
     }, delayMs);
+  };
+
+  const pauseMinuteTicks = (): void => {
+    minuteTicksActive = false;
+    cancelScheduledTick?.();
+    cancelScheduledTick = undefined;
+  };
+
+  const enterForeground = (): void => {
+    minuteTicksActive = true;
+    resample();
+    scheduleNextMinute();
   };
 
   const initialize = (): Promise<void> => {
@@ -506,6 +525,19 @@ export function createLiveClockApplication(
     announcement = { sequence: announcementSequence, message };
   };
 
+  const requestFocus = (
+    target: { readonly clockId: string } | { readonly addTimezone: true },
+    scrollIntoView: boolean,
+  ): void => {
+    clockRequestSequence += 1;
+    clockRequest = {
+      ...target,
+      sequence: clockRequestSequence,
+      scrollIntoView,
+      focus: true,
+    };
+  };
+
   const publishVirtualChange = (prefix: string): void => {
     const nextScreen = sampleScreen();
     if (nextScreen.mode !== "virtual") return;
@@ -569,13 +601,13 @@ export function createLiveClockApplication(
     initialize,
     refresh: resample,
     start: () => {
+      minuteTicksActive = true;
       scheduleNextMinute();
       void initialize();
     },
-    stop: () => {
-      cancelScheduledTick?.();
-      cancelScheduledTick = undefined;
-    },
+    enterBackground: pauseMinuteTicks,
+    enterForeground,
+    stop: pauseMinuteTicks,
     openSelector: () => {
       if (
         deleteConfirmation !== undefined ||
@@ -598,6 +630,7 @@ export function createLiveClockApplication(
       discardWriteRetry();
       selectorQuery = undefined;
       heldClockOrder = undefined;
+      requestFocus({ addTimezone: true }, false);
       resample();
     },
     addCity: async (catalogId) => {
@@ -649,13 +682,7 @@ export function createLiveClockApplication(
         () => {
           selectorQuery = undefined;
           heldClockOrder = undefined;
-          clockRequestSequence += 1;
-          clockRequest = {
-            clockId: selectionId,
-            sequence: clockRequestSequence,
-            scrollIntoView: true,
-            focus: true,
-          };
+          requestFocus({ clockId: selectionId }, true);
         },
       );
     },
@@ -731,9 +758,15 @@ export function createLiveClockApplication(
       if (customForm === undefined || customForm.isSaving) return;
       discardWriteRetry();
       const returnSelectorQuery = customForm.returnSelectorQuery;
+      const cancelledSelectionId = customForm.selectionId;
       customForm = undefined;
       selectorQuery = returnSelectorQuery;
-      if (returnSelectorQuery === undefined) heldClockOrder = undefined;
+      if (returnSelectorQuery === undefined) {
+        heldClockOrder = undefined;
+        if (cancelledSelectionId !== undefined) {
+          requestFocus({ clockId: cancelledSelectionId }, false);
+        }
+      }
       resample();
     },
     saveCustom: async () => {
@@ -823,13 +856,7 @@ export function createLiveClockApplication(
           customForm = undefined;
           selectorQuery = undefined;
           heldClockOrder = undefined;
-          clockRequestSequence += 1;
-          clockRequest = {
-            clockId: selectionId,
-            sequence: clockRequestSequence,
-            scrollIntoView: true,
-            focus: true,
-          };
+          requestFocus({ clockId: selectionId }, true);
         },
       );
     },
@@ -861,8 +888,10 @@ export function createLiveClockApplication(
         return false;
       }
       discardWriteRetry();
+      const cancelledSelectionId = deleteConfirmation.selectionId;
       deleteConfirmation = undefined;
       heldClockOrder = undefined;
+      requestFocus({ clockId: cancelledSelectionId }, false);
       resample();
       return true;
     },
@@ -900,21 +929,12 @@ export function createLiveClockApplication(
             remainingOrder[
               Math.min(deletedPosition - 1, remainingOrder.length - 1)
             ];
-          clockRequestSequence += 1;
-          clockRequest =
+          requestFocus(
             nextClockId === undefined
-              ? {
-                  addTimezone: true,
-                  sequence: clockRequestSequence,
-                  scrollIntoView: false,
-                  focus: true,
-                }
-              : {
-                  clockId: nextClockId,
-                  sequence: clockRequestSequence,
-                  scrollIntoView: false,
-                  focus: true,
-                };
+              ? { addTimezone: true }
+              : { clockId: nextClockId },
+            false,
+          );
           announcementSequence += 1;
           announcement = {
             sequence: announcementSequence,
@@ -985,13 +1005,7 @@ export function createLiveClockApplication(
         clock.wallMinuteOfDay,
         direction,
       );
-      clockRequestSequence += 1;
-      clockRequest = {
-        clockId,
-        sequence: clockRequestSequence,
-        scrollIntoView: false,
-        focus: true,
-      };
+      requestFocus({ clockId }, false);
       applyVirtualOffset(result.offsetMinutes, result.wrapped);
       return true;
     },
@@ -1028,13 +1042,7 @@ export function createLiveClockApplication(
       const clockId = rowGesture.clockId;
       rowGesture = undefined;
       heldClockOrder = undefined;
-      clockRequestSequence += 1;
-      clockRequest = {
-        clockId,
-        sequence: clockRequestSequence,
-        scrollIntoView: false,
-        focus: true,
-      };
+      requestFocus({ clockId }, false);
       resample();
     },
     cancelRowScrub: () => {

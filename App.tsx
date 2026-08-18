@@ -5,6 +5,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import { createBundledClockCatalog } from "./src/adapters/bundledClockCatalog";
+import { observeAppLifecycle } from "./src/adapters/appLifecycle";
 import { createDevicePreferences } from "./src/adapters/devicePreferences";
 import { createIntlTimezoneRules } from "./src/adapters/intlTimezoneRules";
 import { createAsyncSelectedClockStorage } from "./src/adapters/selectedClockStorage";
@@ -32,14 +33,10 @@ export default function App() {
 
   useEffect(() => {
     application.start();
-    const subscription = AppState.addEventListener("change", (nextState) => {
-      if (nextState === "active") {
-        application.refresh();
-      }
-    });
+    const stopObservingLifecycle = observeAppLifecycle(AppState, application);
 
     return () => {
-      subscription.remove();
+      stopObservingLifecycle();
       application.stop();
     };
   }, [application]);

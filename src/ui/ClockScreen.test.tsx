@@ -5,6 +5,7 @@ import {
   Dimensions,
   StyleSheet,
 } from "react-native";
+import * as ReactNative from "react-native";
 import { State } from "react-native-gesture-handler";
 import {
   fireGestureHandler,
@@ -181,6 +182,38 @@ describe("clock collection screen", () => {
       backHandler?.({ type: "hardwareBackPress", timeStamp: 0 }),
     ).toBe(true);
     expect(callbacks.onBackToLive).toHaveBeenCalledTimes(2);
+  });
+
+  it("updates Virtual appearance without changing its frozen screen model", async () => {
+    const colorScheme = jest
+      .spyOn(ReactNative, "useColorScheme")
+      .mockReturnValue("light");
+    const virtualModel: LiveClockScreenModel = {
+      ...emptyModel,
+      mode: "virtual",
+      sampledInstantMs: Date.parse("2026-01-15T11:50:00Z"),
+      status: {
+        label: "Virtual time",
+        offset: "−0:15",
+        offsetMinutes: -15,
+        offsetAccessibilityLabel: "15 minutes earlier",
+        accessibilityValue: "15 minutes earlier, 12:50",
+      },
+    };
+    const view = await render(<ClockScreen model={virtualModel} {...actions()} />);
+    expect(StyleSheet.flatten(screen.getByTestId("clock-screen").props.style)).toMatchObject({
+      backgroundColor: "#DDEFE8",
+    });
+
+    colorScheme.mockReturnValue("dark");
+    await view.rerender(<ClockScreen model={virtualModel} {...actions()} />);
+
+    expect(StyleSheet.flatten(screen.getByTestId("clock-screen").props.style)).toMatchObject({
+      backgroundColor: "#173A31",
+    });
+    expect(virtualModel.sampledInstantMs).toBe(
+      Date.parse("2026-01-15T11:50:00Z"),
+    );
   });
 
   it("forwards accepted native status-pan travel from gesture start through completion", async () => {
