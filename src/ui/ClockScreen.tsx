@@ -713,6 +713,7 @@ export function ClockScreen({
         <ScrollView
           testID="custom-form-scroll"
           horizontal={false}
+          style={styles.overlayScroll}
           keyboardShouldPersistTaps="handled"
           contentContainerStyle={styles.formScrollContent}
         >
@@ -851,6 +852,7 @@ export function ClockScreen({
         <FlatList
           testID="selector-results"
           horizontal={false}
+          style={styles.overlayScroll}
           data={model.selector.results}
           keyExtractor={({ catalogId }) => catalogId}
           keyboardShouldPersistTaps="handled"
@@ -1086,6 +1088,7 @@ export function ClockScreen({
 
 const styles = StyleSheet.create({
   safeArea: { flex: 1 },
+  overlayScroll: { flex: 1 },
   viewport: { flexGrow: 1, paddingHorizontal: 20, paddingVertical: 24 },
   content: { width: "100%", alignSelf: "center" },
   title: { fontSize: 30, fontWeight: "700", marginBottom: 24 },

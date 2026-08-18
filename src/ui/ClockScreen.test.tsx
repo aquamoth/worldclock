@@ -963,6 +963,7 @@ describe("clock collection screen", () => {
       />,
     );
     expect(screen.getByTestId("custom-form-scroll")).toHaveProp("horizontal", false);
+    expect(StyleSheet.flatten(screen.getByTestId("custom-form-scroll").props.style)).toMatchObject({ flex: 1 });
     expect(StyleSheet.flatten(screen.getByTestId("custom-form-header").props.style)).toMatchObject({
       flexDirection: "column",
     });
@@ -995,6 +996,7 @@ describe("clock collection screen", () => {
       />,
     );
     expect(screen.getByTestId("selector-results")).toHaveProp("horizontal", false);
+    expect(StyleSheet.flatten(screen.getByTestId("selector-results").props.style)).toMatchObject({ flex: 1 });
     expect(StyleSheet.flatten(screen.getByTestId("selector-header").props.style)).toMatchObject({
       flexDirection: "column",
     });
