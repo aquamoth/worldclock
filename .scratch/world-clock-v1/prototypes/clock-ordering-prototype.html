@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>THROWAWAY PROTOTYPE — World clock ordering</title>
+  <style>
+    :root { color-scheme:light dark; --bg:#f5f3ee; --surface:#fff; --ink:#17201d; --muted:#61706b; --line:#d9dedb; --accent:#076b58; --virtual:#d8eee8; --danger:#b52e2e; --shadow:0 12px 32px #09201922; }
+    @media (prefers-color-scheme:dark) { :root { --bg:#101714; --surface:#17211d; --ink:#f2f6f4; --muted:#a8b7b1; --line:#34433d; --accent:#65d7b6; --virtual:#163f35; --danger:#ff8b86; --shadow:0 12px 32px #0008; } }
+    * { box-sizing:border-box; }
+    body { margin:0; min-height:100vh; background:var(--bg); color:var(--ink); font:16px/1.35 system-ui,sans-serif; transition:background .12s; }
+    body.virtual { background:var(--virtual); }
+    button { min-width:48px; min-height:48px; font:inherit; color:inherit; border:1px solid var(--line); border-radius:999px; background:var(--surface); padding:.6rem .9rem; }
+    button:focus-visible, [tabindex]:focus-visible { outline:3px solid var(--accent); outline-offset:3px; }
+    .app { width:min(100%,720px); margin:auto; padding:max(1rem,env(safe-area-inset-top)) clamp(.8rem,4vw,1.5rem) 3rem; }
+    h1 { margin:0 0 1rem; font-size:clamp(1.35rem,6vw,2rem); letter-spacing:-.03em; }
+    .status { position:sticky; top:max(.25rem,env(safe-area-inset-top)); z-index:4; display:grid; grid-template-columns:auto minmax(0,1fr) 48px; align-items:center; gap:.75rem; min-height:72px; margin:0 0 1rem; padding:.55rem .6rem .55rem 1rem; border:1px solid var(--line); border-radius:1rem; background:var(--surface); box-shadow:var(--shadow); touch-action:pan-y; user-select:none; -webkit-user-select:none; }
+    .status strong { font-size:1.05rem; }
+    .status output { font-size:1.2rem; font-weight:800; font-variant-numeric:tabular-nums; }
+    .back { padding:0; border-color:var(--line); background:transparent; font-size:1.45rem; visibility:hidden; }
+    body.virtual .back { visibility:visible; }
+    .clock-list { display:grid; gap:.65rem; touch-action:pan-y; }
+    .clock { display:grid; grid-template-columns:minmax(0,1fr) 48px; align-items:center; gap:.5rem; padding:.7rem; border:1px solid var(--line); border-radius:1.15rem; background:var(--surface); user-select:none; -webkit-user-select:none; }
+    .clock.local { border:2px solid var(--accent); }
+    .scrub { display:grid; grid-template-columns:minmax(7.8rem,.86fr) minmax(0,1fr); align-items:center; gap:.55rem; min-width:0; touch-action:pan-y; }
+    .time-wrap { display:grid; grid-template-columns:auto 1fr auto; align-items:center; gap:.15rem; }
+    .time { font-size:clamp(2rem,11vw,3.7rem); line-height:1; font-weight:650; letter-spacing:-.06em; font-variant-numeric:tabular-nums; }
+    .chevron { color:var(--accent); opacity:.45; font-size:1.2rem; font-weight:900; }
+    .chevron:first-child { animation:nudge-left 1.8s ease-in-out infinite; }
+    .chevron:last-child { animation:nudge-right 1.8s ease-in-out infinite; }
+    .meta { min-width:0; }
+    .name { display:block; font-weight:780; overflow-wrap:anywhere; }
+    .detail { display:block; margin-top:.15rem; color:var(--muted); font-size:.85rem; font-variant-numeric:tabular-nums; }
+    .day { margin-left:.25rem; color:var(--accent); font-weight:850; }
+    .delete { width:48px; padding:0; border-color:var(--line); background:transparent; color:var(--muted); font-size:1.55rem; line-height:1; }
+    .add { display:block; margin:1rem auto 0; border-color:var(--accent); color:var(--accent); font-weight:800; }
+    dialog { width:min(calc(100% - 2rem),24rem); border:1px solid var(--line); border-radius:1.2rem; padding:1.2rem; color:var(--ink); background:var(--surface); box-shadow:var(--shadow); }
+    dialog::backdrop { background:#0008; }
+    dialog h2 { margin-top:0; }
+    .dialog-actions { display:flex; justify-content:flex-end; gap:.5rem; margin-top:1rem; }
+    .danger { color:#fff; background:#a62c2c; border-color:#a62c2c; }
+    @media (max-width:380px) { .scrub { grid-template-columns:minmax(7.2rem,.8fr) minmax(0,1fr); } .time { font-size:1.9rem; } .clock { padding:.6rem; } }
+    @keyframes nudge-left { 50% { transform:translateX(-2px); opacity:.75; } }
+    @keyframes nudge-right { 50% { transform:translateX(2px); opacity:.75; } }
+    @media (prefers-reduced-motion:reduce) { * { animation:none!important; transition:none!important; } }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <h1>World clock</h1>
+    <section class="status" id="status" role="slider" tabindex="0" aria-label="Adjust comparison time" aria-valuemin="-1440" aria-valuemax="1440" aria-valuenow="0">
+      <strong id="mode">Live</strong><output id="offset">Now</output><button class="back" id="back" aria-label="Back" title="Back">↶</button>
+    </section>
+    <section class="clock-list" id="clocks" aria-label="Clocks"></section>
+    <button class="add" id="add">＋ Add timezone</button>
+  </main>
+  <dialog id="confirm"><h2>Delete timezone?</h2><p id="confirm-copy"></p><div class="dialog-actions"><button id="cancel">Cancel</button><button class="danger" id="confirm-delete">Delete</button></div></dialog>
+<script>
+/* Single responsive chronological-ordering artifact. THROWAWAY PROTOTYPE: not production or a WebView implementation. */
+const minuteMs=60000, quarterMs=15*minuteMs, dayMs=1440*minuteMs, windowMs=2880*minuteMs;
+const local={id:'local',name:'Local · Stockholm',zone:'Europe/Stockholm',local:true,originalIndex:-1};
+const catalog=[
+  {id:'honolulu',name:'Honolulu',zone:'Pacific/Honolulu'},
+  {id:'new-york',name:'New York',zone:'America/New_York'},
+  {id:'london',name:'London',zone:'Europe/London'},
+  {id:'lagos',name:'Lagos',zone:'Africa/Lagos'},
+  {id:'kathmandu',name:'Kathmandu',zone:'Asia/Kathmandu'},
+  {id:'kiritimati',name:'Kiritimati',zone:'Pacific/Kiritimati'},
+  {id:'family',name:'Family',offset:390}
+];
+let selected=catalog.slice(0,6), liveReferenceMs=null, comparisonMs=null, pendingDelete=null, drag=null;
+const pad=n=>String(n).padStart(2,'0');
+function fixedFields(date,minutes){const shifted=new Date(date.getTime()+minutes*minuteMs);return {time:`${pad(shifted.getUTCHours())}:${pad(shifted.getUTCMinutes())}`,minute:shifted.getUTCMinutes(),date:shifted.toISOString().slice(0,10),utc:`UTC${minutes<0?'−':'+'}${pad(Math.floor(Math.abs(minutes)/60))}:${pad(Math.abs(minutes)%60)}`};}
+function fields(date,clock){
+  if(Number.isInteger(clock.offset))return fixedFields(date,clock.offset);
+  const parts=Object.fromEntries(new Intl.DateTimeFormat('en-CA',{timeZone:clock.zone,year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hourCycle:'h23',timeZoneName:'longOffset'}).formatToParts(date).map(part=>[part.type,part.value]));
+  return {time:`${parts.hour}:${parts.minute}`,minute:Number(parts.minute),date:`${parts.year}-${parts.month}-${parts.day}`,utc:(parts.timeZoneName||'GMT').replace('GMT','UTC')};
+}
+function wallMinutes(value){return Date.parse(`${value.date}T${value.time}:00Z`)/minuteMs;}
+function currentInstant(){return new Date(comparisonMs??Date.now());}
+function snapshot(){
+  const instant=currentInstant(), localFields=fields(instant,local), localWall=wallMinutes(localFields);
+  return [local,...selected.map((clock,index)=>({...clock,originalIndex:index}))].map(clock=>{const view=fields(instant,clock);return {...clock,...view,wall:wallMinutes(view),dayDifference:Math.round((Date.parse(`${view.date}T00:00Z`)-Date.parse(`${localFields.date}T00:00Z`))/86400000)};}).sort((a,b)=>a.wall-b.wall||a.originalIndex-b.originalIndex||a.id.localeCompare(b.id));
+}
+function signedOffset(){return comparisonMs===null?0:Math.round((comparisonMs-liveReferenceMs)/minuteMs);}
+function formatOffset(minutes){const absolute=Math.abs(minutes);return `${minutes<0?'−':'+'}${Math.floor(absolute/60)}:${pad(absolute%60)}`;}
+function wrapComparison(value){while(value-liveReferenceMs>dayMs)value-=windowMs;while(value-liveReferenceMs<(-dayMs))value+=windowMs;return value;}
+function setComparison(value){
+  const wrapped=wrapComparison(value);
+  if(wrapped===liveReferenceMs){comparisonMs=null;liveReferenceMs=null;}else comparisonMs=wrapped;
+  render();
+}
+function beginVirtual(){if(liveReferenceMs===null)liveReferenceMs=Math.floor(Date.now()/minuteMs)*minuteMs;return comparisonMs??liveReferenceMs;}
+function row(item){
+  const day=!item.local&&item.dayDifference?` <span class="day">${item.dayDifference>0?'+':''}${item.dayDifference}</span>`:'';
+  return `<article class="clock ${item.local?'local':''}" data-id="${item.id}"><div class="scrub" data-clock="${item.id}" role="slider" tabindex="0" aria-label="Adjust ${item.name}" aria-valuemin="-1440" aria-valuemax="1440" aria-valuenow="${signedOffset()}"><div class="time-wrap"><span class="chevron" aria-hidden="true">‹</span><span class="time">${item.time}</span><span class="chevron" aria-hidden="true">›</span></div><div class="meta"><span class="name">${item.name}${day}</span><span class="detail">${item.utc}</span></div></div>${item.local?'<span aria-hidden="true"></span>':`<button class="delete" data-delete="${item.id}" aria-label="Delete ${item.name}" title="Delete ${item.name}">×</button>`}</article>`;
+}
+function render(){
+  const virtual=comparisonMs!==null, offset=signedOffset();
+  document.body.className=virtual?'virtual':'';
+  document.querySelector('#mode').textContent=virtual?'Virtual time':'Live';
+  document.querySelector('#offset').textContent=virtual?formatOffset(offset):'Now';
+  document.querySelector('#status').setAttribute('aria-valuenow',offset);
+  document.querySelector('#status').setAttribute('aria-valuetext',virtual?`${Math.abs(offset)} minutes ${offset<0?'earlier':'later'}`:'Live time');
+  document.querySelector('#clocks').innerHTML=snapshot().map(row).join('');
+  wireRows();
+}
+function stepsFor(dx){return Math.max(1,Math.floor((Math.abs(dx)-10)/9)+1);}
+function wireScrub(element,kind,clockId){
+  element.addEventListener('pointerdown',event=>{
+    if(event.target.closest('button'))return;
+    drag={id:event.pointerId,x:event.clientX,y:event.clientY,axis:null,startComparison:comparisonMs,startReference:liveReferenceMs,kind,clockId};
+    const move=e=>{
+      if(!drag||e.pointerId!==drag.id)return;
+      const dx=e.clientX-drag.x,dy=e.clientY-drag.y;
+      if(!drag.axis&&Math.max(Math.abs(dx),Math.abs(dy))>10)drag.axis=Math.abs(dx)>Math.abs(dy)?'horizontal':'vertical';
+      if(drag.axis!=='horizontal')return;
+      if(liveReferenceMs===null)beginVirtual();
+      const direction=dx>0?-1:1,steps=stepsFor(dx),start=drag.startComparison??liveReferenceMs;
+      if(kind==='status'){setComparison(start+direction*steps*quarterMs);return;}
+      const clock=[local,...selected].find(value=>value.id===clockId),view=fields(new Date(start),clock),remainder=view.minute%15;
+      const anchorDelta=direction<0?(remainder===0?-15:-remainder):(remainder===0?15:15-remainder);
+      setComparison(start+(anchorDelta+direction*(steps-1)*15)*minuteMs);
+    };
+    const finish=e=>{if(!drag||e.pointerId!==drag.id)return;drag=null;window.removeEventListener('pointermove',move);window.removeEventListener('pointerup',finish);window.removeEventListener('pointercancel',finish);};
+    window.addEventListener('pointermove',move);window.addEventListener('pointerup',finish);window.addEventListener('pointercancel',finish);
+  });
+  element.addEventListener('keydown',event=>{if(event.key==='ArrowLeft'){event.preventDefault();keyboardStep(kind,clockId,1)}if(event.key==='ArrowRight'){event.preventDefault();keyboardStep(kind,clockId,-1)}});
+}
+function keyboardStep(kind,clockId,direction){
+  const start=beginVirtual();
+  if(kind==='status'){setComparison(start+direction*quarterMs);return;}
+  const clock=[local,...selected].find(value=>value.id===clockId),view=fields(new Date(start),clock),remainder=view.minute%15;
+  const delta=direction<0?(remainder===0?-15:-remainder):(remainder===0?15:15-remainder);
+  setComparison(start+delta*minuteMs);
+}
+function wireRows(){
+  document.querySelectorAll('[data-clock]').forEach(element=>wireScrub(element,'row',element.dataset.clock));
+  document.querySelectorAll('[data-delete]').forEach(button=>button.addEventListener('click',()=>openDelete(button.dataset.delete)));
+}
+function openDelete(id){pendingDelete=id;const item=selected.find(value=>value.id===id);document.querySelector('#confirm-copy').textContent=`${item.name} will be removed from your selected timezones. This cannot be undone.`;document.querySelector('#confirm').showModal();}
+function addClock(){const item=catalog.find(value=>!selected.some(existing=>existing.id===value.id));if(item)selected.push(item);else selected.push({id:`custom-${Date.now()}`,name:'Custom +03:30',offset:210});render();}
+wireScrub(document.querySelector('#status'),'status');
+document.querySelector('#back').addEventListener('click',()=>{comparisonMs=null;liveReferenceMs=null;render();});
+document.querySelector('#add').addEventListener('click',addClock);
+document.querySelector('#cancel').addEventListener('click',()=>{pendingDelete=null;document.querySelector('#confirm').close();});
+document.querySelector('#confirm-delete').addEventListener('click',()=>{selected=selected.filter(item=>item.id!==pendingDelete);pendingDelete=null;document.querySelector('#confirm').close();render();});
+render();
+setInterval(()=>{if(comparisonMs===null)render();},60000);
+</script>
+</body>
+</html>

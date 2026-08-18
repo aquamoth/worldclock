@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>PROTOTYPE — World clock scrubbing</title>
+  <style>
+    :root { color-scheme: light dark; --bg:#f5f3ee; --surface:#fff; --ink:#17201d; --muted:#61706b; --line:#d9dedb; --accent:#076b58; --virtual:#d8eee8; --shadow:0 12px 32px #09201922; }
+    @media (prefers-color-scheme:dark) { :root { --bg:#101714; --surface:#17211d; --ink:#f2f6f4; --muted:#a8b7b1; --line:#34433d; --accent:#65d7b6; --virtual:#163f35; --shadow:0 12px 32px #0008; } }
+    * { box-sizing:border-box; }
+    body { margin:0; background:var(--bg); color:var(--ink); font:16px/1.35 system-ui,sans-serif; min-height:100vh; transition:background .12s; }
+    body.virtual { background:var(--virtual); }
+    button { font:inherit; color:inherit; min-width:48px; min-height:48px; border:1px solid var(--line); border-radius:999px; background:var(--surface); padding:.65rem 1rem; }
+    button:focus-visible, [tabindex]:focus-visible { outline:3px solid var(--accent); outline-offset:3px; }
+    .app { width:min(100%, 720px); margin:auto; padding:max(1rem, env(safe-area-inset-top)) clamp(1rem,5vw,2rem) 3rem; }
+    header { display:flex; justify-content:space-between; align-items:center; gap:1rem; min-height:64px; }
+    h1 { font-size:clamp(1.35rem,6vw,2rem); margin:0; letter-spacing:-.03em; }
+    .back { border-color:var(--accent); font-weight:750; color:var(--accent); visibility:hidden; }
+    body.virtual .back { visibility:visible; }
+    .question { margin:.25rem 0 1.25rem; color:var(--muted); font-size:.88rem; }
+    .feedback { position:sticky; top:max(.25rem, env(safe-area-inset-top)); z-index:4; margin:.4rem 0 1rem; background:var(--ink); color:var(--bg); border-radius:1rem; padding:.55rem .65rem .55rem 1rem; display:grid; grid-template-columns:auto minmax(0,1fr) 48px; gap:.8rem; align-items:center; box-shadow:var(--shadow); }
+    .feedback strong { font-size:1.15rem; }
+    .feedback output { justify-self:start; font-variant-numeric:tabular-nums; font-size:1.3rem; font-weight:800; }
+    .feedback .back { padding:0; color:var(--bg); border-color:color-mix(in srgb,var(--bg) 55%,transparent); background:transparent; font-size:1.5rem; }
+    .clock-list { display:grid; gap:.65rem; touch-action:pan-y; }
+    .clock { display:grid; grid-template-columns:minmax(0,1fr) 48px; align-items:center; gap:clamp(.5rem,2vw,1rem); background:var(--surface); border:1px solid var(--line); border-radius:1.2rem; padding:.75rem; user-select:none; -webkit-user-select:none; }
+    .clock:first-child { border:2px solid var(--accent); }
+    .scrub-target { display:grid; grid-template-columns:minmax(8rem,.85fr) minmax(0,1fr); align-items:center; gap:clamp(.5rem,2vw,1rem); min-width:0; touch-action:pan-y; }
+    .time-wrap { display:grid; grid-template-columns:auto 1fr auto; align-items:center; gap:.2rem; }
+    .clock-time { font-size:clamp(2.15rem,12vw,4rem); letter-spacing:-.06em; line-height:1; font-variant-numeric:tabular-nums; font-weight:630; }
+    .chevron { color:var(--accent); font-size:1.3rem; font-weight:900; opacity:.42; }
+    .chevron:first-child { animation:nudge-left 1.8s ease-in-out infinite; }
+    .chevron:last-child { animation:nudge-right 1.8s ease-in-out infinite; }
+    .clock-meta { display:block; min-width:0; }
+    .clock-name { font-weight:750; }
+    .clock-detail { display:block; color:var(--muted); text-align:left; font-size:.9rem; margin-top:.2rem; }
+    .day { color:var(--accent); font-weight:800; margin-left:.3rem; }
+    .delete { padding:0; border-color:var(--line); background:transparent; color:var(--muted); font-size:1.35rem; }
+    .add { display:block; margin:1rem auto 0; border-color:var(--accent); color:var(--accent); font-weight:800; }
+    .hint { text-align:center; color:var(--muted); margin:.7rem auto; max-width:42ch; }
+    .state { margin-top:1rem; padding:.8rem 1rem; border-left:4px solid var(--accent); color:var(--muted); background:color-mix(in srgb,var(--surface) 70%,transparent); font-size:.82rem; }
+    @media (max-width:340px) { .scrub-target { grid-template-columns:minmax(6.6rem,.7fr) minmax(0,1fr); } .clock-time { font-size:2rem; } }
+    @keyframes nudge-left { 50% { transform:translateX(-2px); opacity:.75; } }
+    @keyframes nudge-right { 50% { transform:translateX(2px); opacity:.75; } }
+    @media (prefers-reduced-motion:reduce) { * { scroll-behavior:auto!important; transition:none!important; animation:none!important; } }
+  </style>
+</head>
+<body>
+  <main class="app" id="app">
+    <header><h1>World clock</h1></header>
+    <p class="question">PROTOTYPE — Test the approved clock scrub model. No state is saved.</p>
+    <section class="feedback" aria-live="polite"><strong id="mode">Live</strong><output id="offset">Now</output><button class="back" id="back" aria-label="Back" title="Back">↶</button></section>
+    <p class="hint">Drag sideways on any time. Drag vertically to scroll the list.</p>
+    <section class="clock-list" id="clocks" aria-label="Clocks"></section>
+    <button class="add" id="add">＋ Add timezone</button>
+    <p class="state" id="state"></p>
+  </main>
+<script>
+/* One responsive, owner-directed scrub model. THROWAWAY PROTOTYPE. */
+const localZone={name:'Local · Stockholm',zone:'Europe/Stockholm'};
+const catalog=[
+  {name:'New York',zone:'America/New_York'},
+  {name:'Kathmandu',zone:'Asia/Kathmandu'},
+  {name:'Kiritimati',zone:'Pacific/Kiritimati'},
+  {name:'London',zone:'Europe/London'},
+  {name:'Honolulu',zone:'Pacific/Honolulu'}
+];
+let selectedZones=catalog.slice(0,3);
+let offsetMinutes=0, drag=null;
+const wrap=n=>{let value=Math.round(n/15)*15;while(value>1440)value-=2880;while(value<-1440)value+=2880;return value};
+const pad=n=>String(n).padStart(2,'0');
+function fields(date,zone){
+  const parts=Object.fromEntries(new Intl.DateTimeFormat('en-CA',{timeZone:zone,year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hourCycle:'h23',timeZoneName:'longOffset'}).formatToParts(date).map(p=>[p.type,p.value]));
+  return {time:`${parts.hour}:${parts.minute}`,date:`${parts.year}-${parts.month}-${parts.day}`,utc:(parts.timeZoneName||'GMT').replace('GMT','UTC')};
+}
+function render(){
+  const zones=[localZone,...selectedZones], instant=new Date(Date.now()+offsetMinutes*60000), local=fields(instant,localZone.zone), virtual=offsetMinutes!==0;
+  document.body.className=virtual?'virtual':'';
+  document.querySelector('#mode').textContent=virtual?'Virtual time':'Live';
+  document.querySelector('#offset').textContent=virtual?`${offsetMinutes<0?'−':'+'}${Math.floor(Math.abs(offsetMinutes)/60)}:${pad(Math.abs(offsetMinutes)%60)}`:'Now';
+  document.querySelector('#clocks').innerHTML=zones.map((z,i)=>{const f=fields(instant,z.zone),delta=Math.round((Date.parse(f.date+'T00:00Z')-Date.parse(local.date+'T00:00Z'))/86400000); return `<article class="clock"><div class="scrub-target" role="slider" tabindex="0" aria-label="Scrub all clocks from ${z.name}" aria-valuemin="-1440" aria-valuemax="1440" aria-valuenow="${offsetMinutes}" aria-valuetext="${virtual?`${offsetMinutes} minutes from now`:'Live time'}"><div class="time-wrap"><span class="chevron" aria-hidden="true">‹</span><div class="clock-time">${f.time}</div><span class="chevron" aria-hidden="true">›</span></div><div class="clock-meta"><span class="clock-name">${z.name}${delta?` <span class="day">${delta>0?'+':''}${delta}</span>`:''}</span><span class="clock-detail">${f.utc}<br>${f.date}</span></div></div>${i===0?'<span aria-hidden="true"></span>':`<button class="delete" data-delete="${i-1}" aria-label="Delete ${z.name}" title="Delete ${z.name}">×</button>`}</article>`}).join('');
+  document.querySelector('#add').disabled=selectedZones.length===catalog.length;
+  document.querySelector('#state').textContent=`Full state: ${virtual?'Virtual time':'Live mode'} · shared offset ${offsetMinutes} minutes · shared instant ${instant.toISOString()}`;
+  wireGesture();
+}
+function setOffset(value){ offsetMinutes=wrap(value); render(); }
+function wireGesture(){
+  document.querySelectorAll('.scrub-target').forEach(el=>{
+    wirePointer(el,(e,start)=>setOffset(start.offset-(e.clientX-start.x)*1.75));
+    el.addEventListener('keydown',e=>{if(e.key==='ArrowLeft'){e.preventDefault();setOffset(offsetMinutes+15)}if(e.key==='ArrowRight'){e.preventDefault();setOffset(offsetMinutes-15)}});
+  });
+  document.querySelectorAll('[data-delete]').forEach(button=>button.addEventListener('click',()=>{selectedZones.splice(Number(button.dataset.delete),1);render()}));
+}
+function wirePointer(el,move){
+  el.addEventListener('pointerdown',e=>{
+    drag={id:e.pointerId,x:e.clientX,y:e.clientY,offset:offsetMinutes,axis:null};
+    const onMove=event=>{if(!drag||drag.id!==event.pointerId)return;const dx=Math.abs(event.clientX-drag.x),dy=Math.abs(event.clientY-drag.y);if(!drag.axis&&Math.max(dx,dy)>10)drag.axis=dx>dy?'horizontal':'vertical';if(drag.axis==='horizontal')move(event,drag)};
+    const finish=event=>{if(!drag||drag.id!==event.pointerId)return; drag=null; window.removeEventListener('pointermove',onMove); window.removeEventListener('pointerup',finish); window.removeEventListener('pointercancel',finish)};
+    window.addEventListener('pointermove',onMove); window.addEventListener('pointerup',finish); window.addEventListener('pointercancel',finish);
+  });
+}
+document.querySelector('#back').addEventListener('click',()=>setOffset(0));
+document.querySelector('#add').addEventListener('click',()=>{const candidate=catalog.find(zone=>!selectedZones.includes(zone));if(candidate){selectedZones.push(candidate);render()}});
+render(); setInterval(()=>{if(offsetMinutes===0)render()},60000);
+</script>
+</body>
+</html>
