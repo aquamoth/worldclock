@@ -30,4 +30,4 @@ All tickets are single-session tracer-bullet slices. Work directly on `master`; 
 
 ## Current frontier
 
-[06 — Make collection persistence and capacity failure-safe](issues/06-make-collection-persistence-and-capacity-failure-safe.md) and [07 — Compare time through the status-surface offset grid](issues/07-compare-time-through-the-status-surface-offset-grid.md) are the independent frontier after completion of [05 — Delete selected clocks safely](issues/05-delete-selected-clocks-safely.md). Follow the dependency table for later joins.
+[07 — Compare time through the status-surface offset grid](issues/07-compare-time-through-the-status-surface-offset-grid.md) is the remaining frontier after completion of [06 — Make collection persistence and capacity failure-safe](issues/06-make-collection-persistence-and-capacity-failure-safe.md). Ticket 09 remains blocked on 08, and ticket 10 remains blocked on 08; follow the dependency table for later joins.
