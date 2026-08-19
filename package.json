@@ -5,6 +5,7 @@
   "author": "Trustfall AB (https://www.trustfall.se)",
   "homepage": "https://aquamoth.github.io/worldclock/",
   "license": "Apache-2.0",
+  "packageManager": "pnpm@10.29.2",
   "engines": {
     "node": "^20.19.4 || ^22.13.0 || ^24.3.0 || >=25.0.0"
   },
@@ -13,8 +14,8 @@
     "start": "expo start",
     "android": "expo run:android",
     "prebuild": "expo prebuild --platform android --clean",
-    "build:android": "npm run prebuild && cd android && ./gradlew assembleDebug",
-    "build:android:release": "npm run prebuild && cd android && NODE_ENV=production ./gradlew assembleRelease",
+    "build:android": "pnpm run prebuild && cd android && ./gradlew assembleDebug",
+    "build:android:release": "pnpm run prebuild && cd android && NODE_ENV=production ./gradlew assembleRelease",
     "release:cng-check": "bash scripts/release/verify-cng-reproducibility.sh",
     "release:clean-gate": "bash scripts/release/run-clean-android-gate.sh",
     "typecheck": "tsc --noEmit",
@@ -41,14 +42,26 @@
   "devDependencies": {
     "@testing-library/react-native": "14.0.1",
     "@types/jest": "29.5.14",
-    "@types/node": "22.18.6",
+    "@types/node": "26.2.0",
     "@types/react": "19.2.4",
     "expo-doctor": "1.20.2",
     "jest": "29.7.0",
     "jest-expo": "57.0.4",
     "react-test-renderer": "19.2.3",
-    "tsx": "4.20.6",
-    "typescript": "6.0.3"
+    "tsx": "4.23.12",
+    "typescript": "7.0.2"
+  },
+  "pnpm": {
+    "overrides": {
+      "xcode>uuid": "^11.1.1"
+    }
+  },
+  "expo": {
+    "install": {
+      "exclude": [
+        "typescript"
+      ]
+    }
   },
   "jest": {
     "preset": "jest-expo",

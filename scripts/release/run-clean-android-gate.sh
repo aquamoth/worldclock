@@ -10,15 +10,15 @@ if [[ -n "$(git status --porcelain)" ]]; then
   exit 1
 fi
 
-npm ci
-npm run catalog:generate
+pnpm install --frozen-lockfile
+pnpm run catalog:generate
 git diff --exit-code -- catalog
-npm run catalog:check
-npm run typecheck
-npm test -- --runInBand --no-watchman
-npx expo install --check
+pnpm run catalog:check
+pnpm run typecheck
+pnpm test -- --runInBand --no-watchman
+pnpm exec expo install --check
 ./node_modules/.bin/expo-doctor
-npm run release:cng-check
+pnpm run release:cng-check
 
 (
   cd android
