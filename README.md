@@ -4,7 +4,7 @@ Offline Android world clock by [Trustfall AB](https://www.trustfall.se). It
 projects one shared instant through the phone's local timezone and a collection
 of selected city and custom clocks.
 
-Product page: <https://www.trustfall.se/worldclock>
+Product page: <https://aquamoth.github.io/worldclock/>
 
 The local clock is always present. Selected clocks persist on the device: city
 clocks follow IANA timezone rules including DST, and custom clocks use a name

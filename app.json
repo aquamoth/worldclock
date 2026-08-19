@@ -20,7 +20,7 @@
     "extra": {
       "publisher": "Trustfall AB",
       "publisherUrl": "https://www.trustfall.se",
-      "homepage": "https://www.trustfall.se/worldclock"
+      "homepage": "https://aquamoth.github.io/worldclock/"
     },
     "plugins": [
       "expo-localization",

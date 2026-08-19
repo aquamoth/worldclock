@@ -1,5 +1,6 @@
 import appConfiguration from "../../app.json";
 import packageManifest from "../../package.json";
+import { HOMEPAGE_URL, PRIVACY_POLICY_URL } from "../application/productLinks";
 
 describe("Android release configuration", () => {
   it("pins Hermes, API 29, and reusable clean/CNG release gates", () => {
@@ -27,10 +28,15 @@ describe("Android release configuration", () => {
     expect(appConfiguration.expo.extra).toMatchObject({
       publisher: "Trustfall AB",
       publisherUrl: "https://www.trustfall.se",
-      homepage: "https://www.trustfall.se/worldclock",
+      homepage: "https://aquamoth.github.io/worldclock/",
     });
     expect(packageManifest.author).toBe("Trustfall AB (https://www.trustfall.se)");
-    expect(packageManifest.homepage).toBe("https://www.trustfall.se/worldclock");
+    expect(packageManifest.homepage).toBe("https://aquamoth.github.io/worldclock/");
     expect(packageManifest.license).toBe("Apache-2.0");
+  });
+
+  it("keeps the in-app product links aligned with the published homepage", () => {
+    expect(HOMEPAGE_URL).toBe(appConfiguration.expo.extra.homepage);
+    expect(PRIVACY_POLICY_URL).toBe(`${HOMEPAGE_URL}privacy/`);
   });
 });
