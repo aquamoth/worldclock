@@ -31,7 +31,7 @@ the development line from this point.
 
 ## Decisions so far
 
-- [Design the GitHub Pages product site](issues/06-design-the-github-pages-product-site.md) — Canonical URL `https://aquamoth.github.io/worldclock/` with the policy at `privacy/`; two static dress-watch-styled pages implemented in `docs/`, an in-app Privacy policy link in Settings, homepage references retargeted, and the root `App.tsx`/`conformance/` leftovers folded into `src/`. Pages enablement and the scrub-demo capture remain owner steps.
+- [Design the GitHub Pages product site](issues/06-design-the-github-pages-product-site.md) — Canonical URL `https://aquamoth.github.io/worldclock/` with the policy at `privacy/`; two static dark-glass-styled pages implemented in `docs/`, an in-app Privacy policy link in Settings, homepage references retargeted, and the root `App.tsx`/`conformance/` leftovers folded into `src/`. Pages enablement and the scrub-demo capture remain owner steps.
 - [Add an analog clock-face theme](issues/05-add-an-analog-clock-face-theme.md) — App-wide analog/digital clock face, independent of layout design; reduced hour/minute dial with a compact digital caption and digital TalkBack labels.
 - [Add an About dialog](issues/01-add-an-about-dialog.md) — Skip the About UI; use a user-facing GitHub Pages site for product identity and expose the required privacy policy directly in-app.
 

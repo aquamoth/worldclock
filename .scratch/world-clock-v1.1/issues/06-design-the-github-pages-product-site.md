@@ -54,9 +54,13 @@ Designed and implemented in the same session at the owner's direction.
   custom domain; trustfall.se may link here whenever desired.
 - Two hand-written static pages (HTML/CSS, no JS, no webfonts, no analytics)
   served from `docs/` on `master` via Pages deploy-from-branch. Visual
-  direction: classic dress-watch luxury extending the Small-Seconds Classic
-  mark — dark dial background, ivory type, brass hands/accents, serif faces —
-  deliberately not Material You mimicry. English only.
+  direction (revised on owner review of the first serif dress-watch cut):
+  dark glass — system-ui sans-serif, near-invisible blurred red/blue/green/
+  yellow background blobs with a fine grain layer, glass feature cards that
+  sit in a row and stack on phones, the Small-Seconds Classic mark in
+  ivory/brass as the hero, a GitHub corner banner (Tim Holman pattern) top
+  right, support and the privacy link merged into a footer area, and a plain
+  © byline at the bottom. English only.
 - Landing page order: hero (recolored mark, wordmark, headline **"Ad-free
   world clock with virtual time comparisons"**, no subline, a "Coming soon to
   Google Play" pill that becomes the official Play badge when v1 issue 14
