@@ -1386,4 +1386,161 @@ describe("clock collection screen", () => {
     await act(async () => Promise.resolve());
     expect(loop).toHaveBeenCalledTimes(1);
   });
+
+  it("renders the local clock as a tinted hero separated from selected clocks", async () => {
+    await render(
+      <ClockScreen
+        model={{
+          ...emptyModel,
+          clocks: [
+            localClock,
+            {
+              id: "office",
+              kind: "custom",
+              name: "Office",
+              canDelete: true,
+              canEdit: true,
+              calendarDate: "2026-01-15",
+              time: "14:05",
+              effectiveOffset: "UTC+02:00",
+              wallMinuteOfDay: 14 * 60 + 5,
+            },
+          ],
+        }}
+        {...actions()}
+      />,
+    );
+
+    const local = StyleSheet.flatten(screen.getByTestId("clock-local").props.style);
+    const office = StyleSheet.flatten(screen.getByTestId("clock-office").props.style);
+    expect(["#E7F1EC", "#25332C"]).toContain(local.backgroundColor);
+    expect(local.backgroundColor).not.toEqual(office.backgroundColor);
+    expect(local.flexDirection).toBe("column");
+    expect(office.flexDirection).toBe("row");
+  });
+
+  it("offers only design and scrub-direction settings, hiding the gear without handlers", async () => {
+    const withoutHandlers = await render(<ClockScreen model={emptyModel} {...actions()} />);
+    expect(screen.queryByRole("button", { name: "Open settings" })).not.toBeOnTheScreen();
+    await withoutHandlers.unmount();
+
+    await render(
+      <ClockScreen
+        model={emptyModel}
+        {...actions()}
+        design="grouped"
+        onSelectDesign={jest.fn()}
+        scrubDirection="rightEarlier"
+        onSelectScrubDirection={jest.fn()}
+      />,
+    );
+
+    await fireEvent.press(screen.getByRole("button", { name: "Open settings" }));
+    expect(screen.getByRole("radio", { name: "Tonal groups" })).toBeOnTheScreen();
+    expect(
+      screen.getByRole("radio", { name: "Swipe right goes earlier" }),
+    ).toBeOnTheScreen();
+    expect(screen.queryByText(/vibrat/i)).not.toBeOnTheScreen();
+
+    await fireEvent.press(screen.getByRole("button", { name: "Close settings" }));
+    expect(screen.queryByRole("radio", { name: "Tonal groups" })).not.toBeOnTheScreen();
+  });
+
+  it("mirrors swipe travel and arrow keys when rightward swipes are set to move later", async () => {
+    const onSelectScrubDirection = jest.fn();
+    const callbacks = actions();
+    await render(
+      <ClockScreen
+        model={emptyModel}
+        {...callbacks}
+        scrubDirection="rightLater"
+        onSelectScrubDirection={onSelectScrubDirection}
+      />,
+    );
+
+    await act(async () => {
+      fireGestureHandler(getByGestureTestId("status-scrub-gesture"), [
+        { state: State.BEGAN, translationX: 0, translationY: 0 },
+        { state: State.ACTIVE, translationX: 18, translationY: 1 },
+        { state: State.END, translationX: 18, translationY: 1 },
+      ]);
+    });
+    expect(callbacks.onUpdateStatusScrub).toHaveBeenLastCalledWith(2);
+
+    const status = screen.getByRole("adjustable", {
+      name: "Adjust comparison time",
+    });
+    await fireEvent(status, "keyDown", { nativeEvent: { key: "ArrowRight" } });
+    await fireEvent(status, "keyDown", { nativeEvent: { key: "ArrowLeft" } });
+    expect(callbacks.onAdjustStatus.mock.calls).toEqual([
+      ["later"],
+      ["earlier"],
+    ]);
+
+    await fireEvent.press(screen.getByRole("button", { name: "Open settings" }));
+    expect(
+      screen.getByRole("radio", { name: "Swipe right goes later" }).props
+        .accessibilityState,
+    ).toMatchObject({ checked: true });
+    await fireEvent.press(
+      screen.getByRole("radio", { name: "Swipe right goes earlier" }),
+    );
+    expect(onSelectScrubDirection).toHaveBeenCalledWith("rightEarlier");
+  });
+
+  it("offers the design choice in settings and keeps the scrub contract in every design", async () => {
+    const onSelectDesign = jest.fn();
+    const clocks = [
+      localClock,
+      {
+        id: "office",
+        kind: "custom" as const,
+        name: "Office",
+        canDelete: true as const,
+        canEdit: true as const,
+        calendarDate: "2026-01-15",
+        time: "14:05",
+        effectiveOffset: "UTC+02:00",
+        wallMinuteOfDay: 14 * 60 + 5,
+      },
+    ];
+
+    for (const design of ["grouped", "airy", "tiles"] as const) {
+      const callbacks = actions();
+      const view = await render(
+        <ClockScreen
+          model={{ ...emptyModel, clocks }}
+          {...callbacks}
+          design={design}
+          onSelectDesign={onSelectDesign}
+        />,
+      );
+
+      expect(screen.getByRole("adjustable", { name: "13:05" })).toBeOnTheScreen();
+      expect(screen.getByRole("adjustable", { name: "14:05" })).toBeOnTheScreen();
+      expect(
+        screen.getByRole("summary", { name: "Office, Selected clock, UTC+02:00" }),
+      ).toBeOnTheScreen();
+      expect(screen.getByRole("button", { name: "Delete Office" })).toBeOnTheScreen();
+      expect(getByGestureTestId("row-scrub-office")).toBeDefined();
+      expect(getByGestureTestId("status-scrub-gesture")).toBeDefined();
+      const add = screen.getByRole("button", { name: "Add timezone" });
+      expect(StyleSheet.flatten(add.props.style)).toMatchObject({
+        position: "absolute",
+        bottom: 20,
+        minHeight: 48,
+      });
+
+      await fireEvent.press(screen.getByRole("button", { name: "Open settings" }));
+      const checked = screen.getByRole("radio", {
+        name: { grouped: "Tonal groups", airy: "Airy type", tiles: "Tile grid" }[
+          design
+        ],
+      });
+      expect(checked.props.accessibilityState).toMatchObject({ checked: true });
+      await fireEvent.press(screen.getByRole("radio", { name: "Airy type" }));
+      expect(onSelectDesign).toHaveBeenLastCalledWith("airy");
+      await view.unmount();
+    }
+  });
 });

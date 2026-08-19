@@ -36,10 +36,13 @@ import { formatEffectiveOffset } from "../domain/clock";
 import { revealClock } from "./nativeClockReveal";
 import {
   resolvePresentation,
-  semanticThemes,
+  resolveSemanticTheme,
   type SemanticTheme,
 } from "./presentation";
-import { scrubStepsFromTravel } from "./scrubGesture";
+import {
+  scrubStepsFromTravel,
+  type ScrubDirection,
+} from "./scrubGesture";
 
 interface ClockScreenProps {
   readonly model: LiveClockScreenModel;
@@ -72,7 +75,30 @@ interface ClockScreenProps {
   ) => void;
   readonly onFocusClock: (clockId: string | undefined) => void;
   readonly onBackToLive: () => void;
+  readonly design?: DesignVariant;
+  readonly onSelectDesign?: (design: DesignVariant) => void;
+  readonly scrubDirection?: ScrubDirection;
+  readonly onSelectScrubDirection?: (direction: ScrubDirection) => void;
 }
+
+export const scrubDirections: readonly {
+  readonly key: ScrubDirection;
+  readonly label: string;
+}[] = [
+  { key: "rightEarlier", label: "Swipe right goes earlier" },
+  { key: "rightLater", label: "Swipe right goes later" },
+];
+
+export type DesignVariant = "airy" | "grouped" | "tiles";
+
+export const designVariants: readonly {
+  readonly key: DesignVariant;
+  readonly label: string;
+}[] = [
+  { key: "grouped", label: "Tonal groups" },
+  { key: "airy", label: "Airy type" },
+  { key: "tiles", label: "Tile grid" },
+];
 
 const semanticTime = (clock: ClockCollectionProjection): string =>
   clock.period ? `${clock.time} ${clock.period}` : clock.time;
@@ -133,43 +159,27 @@ const useChevronPulse = (): Animated.Value => {
   return pulse;
 };
 
-function ScrubSurface({
+function useScrubPan({
   testId,
-  nativeId,
-  accessibilityLabel,
-  accessibilityHint,
-  accessibilityValue,
-  targetRef,
-  style,
-  children,
+  scrubDirection,
   scrollGesture,
   onHorizontalLockChange,
   onBegin,
   onUpdate,
   onEnd,
   onCancel,
-  onAdjust,
-  onFocus,
 }: {
   readonly testId: string;
-  readonly nativeId?: string;
-  readonly accessibilityLabel: string;
-  readonly accessibilityHint?: string;
-  readonly accessibilityValue: string;
-  readonly targetRef?: Ref<View>;
-  readonly style: ComponentProps<typeof View>["style"];
-  readonly children: ReactNode;
+  readonly scrubDirection: ScrubDirection;
   readonly scrollGesture: ReturnType<(typeof Gesture)["Native"]>;
   readonly onHorizontalLockChange: (locked: boolean) => void;
   readonly onBegin: () => void;
   readonly onUpdate: (signedStepsFromGestureStart: number) => void;
   readonly onEnd: () => void;
   readonly onCancel: () => void;
-  readonly onAdjust: (direction: "earlier" | "later") => void;
-  readonly onFocus?: () => void;
 }) {
   const gestureAxis = useRef<"horizontal" | "vertical" | null>(null);
-  const panGesture = useMemo(() => {
+  return useMemo(() => {
     const chooseAxis = (translationX: number, translationY: number) => {
       if (gestureAxis.current !== null) return gestureAxis.current;
       if (Math.max(Math.abs(translationX), Math.abs(translationY)) < 8) {
@@ -192,12 +202,12 @@ function ScrubSurface({
         .runOnJS(true)
         .onStart(({ translationX, translationY }) => {
           if (chooseAxis(translationX, translationY) === "horizontal") {
-            onUpdate(scrubStepsFromTravel(translationX));
+            onUpdate(scrubStepsFromTravel(translationX, scrubDirection));
           }
         })
         .onUpdate(({ translationX, translationY }) => {
           if (chooseAxis(translationX, translationY) === "horizontal") {
-            onUpdate(scrubStepsFromTravel(translationX));
+            onUpdate(scrubStepsFromTravel(translationX, scrubDirection));
           }
         })
         .onEnd(() => {
@@ -218,42 +228,68 @@ function ScrubSurface({
       onHorizontalLockChange,
       onUpdate,
       scrollGesture,
+      scrubDirection,
       testId,
     ],
   );
+}
+
+function AdjustableSurface({
+  nativeId,
+  accessibilityLabel,
+  accessibilityHint,
+  accessibilityValue,
+  scrubDirection,
+  targetRef,
+  style,
+  children,
+  onAdjust,
+  onFocus,
+}: {
+  readonly nativeId?: string;
+  readonly accessibilityLabel: string;
+  readonly accessibilityHint?: string;
+  readonly accessibilityValue: string;
+  readonly scrubDirection: ScrubDirection;
+  readonly targetRef?: Ref<View>;
+  readonly style: ComponentProps<typeof View>["style"];
+  readonly children: ReactNode;
+  readonly onAdjust: (direction: "earlier" | "later") => void;
+  readonly onFocus?: () => void;
+}) {
+  const rightward = scrubDirection === "rightEarlier" ? "earlier" : "later";
+  const leftward = scrubDirection === "rightEarlier" ? "later" : "earlier";
   const hardwareKeyProps = {
     onKeyDown: (event: { readonly nativeEvent: { readonly key?: string } }) => {
-      if (event.nativeEvent.key === "ArrowRight") onAdjust("earlier");
-      if (event.nativeEvent.key === "ArrowLeft") onAdjust("later");
+      if (event.nativeEvent.key === "ArrowRight") onAdjust(rightward);
+      if (event.nativeEvent.key === "ArrowLeft") onAdjust(leftward);
     },
   };
 
   return (
-    <GestureDetector gesture={panGesture}>
-      <View
-        {...hardwareKeyProps}
-        nativeID={nativeId}
-        ref={targetRef}
-        accessible
-        focusable
-        accessibilityRole="adjustable"
-        accessibilityLabel={accessibilityLabel}
-        accessibilityHint={accessibilityHint}
-        accessibilityValue={{ text: accessibilityValue }}
-        accessibilityActions={[
-          { name: "decrement", label: "Earlier" },
-          { name: "increment", label: "Later" },
-        ]}
-        onAccessibilityAction={({ nativeEvent }) => {
-          if (nativeEvent.actionName === "decrement") onAdjust("earlier");
-          if (nativeEvent.actionName === "increment") onAdjust("later");
-        }}
-        onFocus={onFocus}
-        style={style}
-      >
-        {children}
-      </View>
-    </GestureDetector>
+    <View
+      {...hardwareKeyProps}
+      nativeID={nativeId}
+      ref={targetRef}
+      accessible
+      focusable
+      accessibilityRole="adjustable"
+      accessibilityLabel={accessibilityLabel}
+      accessibilityHint={accessibilityHint}
+      accessibilityValue={{ text: accessibilityValue }}
+      accessibilityActions={[
+        { name: "decrement", label: "Earlier" },
+        { name: "increment", label: "Later" },
+      ]}
+      onAccessibilityAction={({ nativeEvent }) => {
+        if (nativeEvent.actionName === "decrement") onAdjust("earlier");
+        if (nativeEvent.actionName === "increment") onAdjust("later");
+      }}
+      onFocus={onFocus}
+      style={style}
+    >
+      {children}
+    </View>
   );
 }
 
@@ -261,6 +297,9 @@ function ClockRow({
   clock,
   model,
   colors,
+  design,
+  isHero,
+  scrubDirection,
   stackDenseContent,
   chevronPulse,
   rowRef,
@@ -279,6 +318,9 @@ function ClockRow({
   readonly clock: ClockCollectionProjection;
   readonly model: LiveClockScreenModel;
   readonly colors: SemanticTheme;
+  readonly design: DesignVariant;
+  readonly isHero: boolean;
+  readonly scrubDirection: ScrubDirection;
   readonly stackDenseContent: boolean;
   readonly chevronPulse: Animated.Value;
   readonly rowRef: Ref<View>;
@@ -309,43 +351,68 @@ function ClockRow({
     (direction: "earlier" | "later") => onAdjust(clock.id, direction),
     [clock.id, onAdjust],
   );
+  const panGesture = useScrubPan({
+    testId: `row-scrub-${clock.id}`,
+    scrubDirection,
+    scrollGesture,
+    onHorizontalLockChange,
+    onBegin: handleBeginScrub,
+    onUpdate: onUpdateScrub,
+    onEnd: onEndScrub,
+    onCancel: onCancelScrub,
+  });
+  const stackedContent = stackDenseContent || isHero || design === "tiles";
   return (
+    <GestureDetector gesture={panGesture}>
     <View
       onLayout={onLayout}
       testID={`clock-${clock.id}`}
       style={[
         styles.clockSurface,
+        design === "airy" && styles.airyRowSurface,
+        design === "tiles" && !isHero && [
+          styles.tileSurface,
+          { backgroundColor: colors.surface },
+          stackDenseContent && styles.tileSurfaceDense,
+        ],
+        isHero && styles.heroSurface,
+        isHero && design === "grouped" && [
+          styles.groupedHeroSurface,
+          { backgroundColor: colors.localSurface },
+        ],
+        isHero && design === "tiles" && styles.tilesHeroSurface,
         stackDenseContent && styles.clockSurfaceDense,
-        { backgroundColor: colors.surface, borderColor: colors.border },
       ]}
     >
       <View
         testID={`clock-summary-${clock.id}`}
-        style={[styles.clockSummary, stackDenseContent && styles.clockSummaryStacked]}
+        style={[
+          styles.clockSummary,
+          stackedContent && styles.clockSummaryStacked,
+          isHero && design === "tiles" && styles.clockSummaryCentered,
+        ]}
       >
-        <ScrubSurface
-          testId={`row-scrub-${clock.id}`}
+        <AdjustableSurface
           nativeId={`clock-time-${clock.id}`}
           accessibilityLabel={semanticTime(clock)}
           accessibilityHint={`Adjust ${clock.name} time`}
           accessibilityValue={scrubValue}
+          scrubDirection={scrubDirection}
           targetRef={rowRef}
           style={[
             styles.rowTimeAdjustable,
             stackDenseContent && styles.rowTimeAdjustableDense,
           ]}
-          scrollGesture={scrollGesture}
-          onHorizontalLockChange={onHorizontalLockChange}
-          onBegin={handleBeginScrub}
-          onUpdate={onUpdateScrub}
-          onEnd={onEndScrub}
-          onCancel={onCancelScrub}
           onAdjust={handleAdjust}
           onFocus={() => onFocus(clock.id)}
         >
           <View
             testID={`clock-time-line-${clock.id}`}
-            style={[styles.timeLine, stackDenseContent && styles.timeLineDense]}
+            style={[
+              styles.timeLine,
+              isHero && design === "tiles" && styles.timeLineCentered,
+              stackDenseContent && styles.timeLineDense,
+            ]}
             accessibilityElementsHidden
           >
             <Animated.Text
@@ -363,8 +430,16 @@ function ClockRow({
                 testID={`clock-time-${clock.id}`}
                 style={[
                   styles.time,
+                  design === "airy" && styles.timeAiry,
+                  design === "tiles" && styles.timeTile,
+                  isHero && styles.timeHero,
                   stackDenseContent && styles.timeDense,
-                  { color: colors.primary },
+                  {
+                    color:
+                      isHero && design === "airy"
+                        ? colors.accent
+                        : colors.primary,
+                  },
                 ]}
               >
                 {clock.time}
@@ -386,7 +461,7 @@ function ClockRow({
               ›
             </Animated.Text>
           </View>
-        </ScrubSurface>
+        </AdjustableSurface>
         <View
           accessible
           accessibilityRole="summary"
@@ -413,7 +488,13 @@ function ClockRow({
         </View>
       </View>
       {clock.kind === "local" ? null : (
-        <View testID={`clock-actions-${clock.id}`} style={styles.rowActions}>
+        <View
+          testID={`clock-actions-${clock.id}`}
+          style={[
+            styles.rowActions,
+            design === "tiles" && styles.rowActionsTiles,
+          ]}
+        >
           {clock.kind === "custom" ? (
             <Pressable
               accessibilityRole="button"
@@ -439,6 +520,7 @@ function ClockRow({
         </View>
       )}
     </View>
+    </GestureDetector>
   );
 }
 
@@ -446,11 +528,17 @@ function SelectorResult({
   result,
   isAdding,
   colors,
+  design,
+  isFirst,
+  isLast,
   onAddCity,
 }: {
   readonly result: SelectorResultModel;
   readonly isAdding: boolean;
   readonly colors: SemanticTheme;
+  readonly design: DesignVariant;
+  readonly isFirst: boolean;
+  readonly isLast: boolean;
   readonly onAddCity: (catalogId: string) => void;
 }) {
   const disabled = !result.available || isAdding;
@@ -467,9 +555,13 @@ function SelectorResult({
       onPress={() => onAddCity(result.catalogId)}
       style={({ pressed }) => [
         styles.result,
+        design === "grouped" && isFirst && styles.resultGroupedFirst,
+        design === "grouped" && isLast && styles.resultGroupedLast,
+        design === "airy" && styles.resultAiry,
+        design === "tiles" && styles.resultTile,
         {
-          backgroundColor: colors.surface,
-          borderColor: colors.border,
+          backgroundColor:
+            design === "airy" ? "transparent" : colors.surface,
           opacity: pressed ? 0.72 : 1,
         },
       ]}
@@ -506,7 +598,7 @@ function PersistenceError({
       style={[
         styles.errorBanner,
         stackDenseContent && styles.errorBannerStacked,
-        { borderColor: colors.border },
+        { backgroundColor: colors.surface },
       ]}
     >
       <Text
@@ -531,6 +623,7 @@ function PersistenceError({
 function StatusSurface({
   model,
   colors,
+  scrubDirection,
   stackDenseContent,
   chevronPulse,
   onBeginScrub,
@@ -545,6 +638,7 @@ function StatusSurface({
 }: {
   readonly model: LiveClockScreenModel;
   readonly colors: SemanticTheme;
+  readonly scrubDirection: ScrubDirection;
   readonly stackDenseContent: boolean;
   readonly chevronPulse: Animated.Value;
   readonly onBeginScrub: () => void;
@@ -558,26 +652,34 @@ function StatusSurface({
   readonly onFocus: () => void;
 }) {
   const status = model.status;
+  const panGesture = useScrubPan({
+    testId: "status-scrub-gesture",
+    scrubDirection,
+    scrollGesture,
+    onHorizontalLockChange,
+    onBegin: onBeginScrub,
+    onUpdate: onUpdateScrub,
+    onEnd: onEndScrub,
+    onCancel: onCancelScrub,
+  });
+  const virtual = model.mode === "virtual";
+  const statusPrimary = virtual ? colors.background : colors.primary;
+  const statusAccent = virtual ? colors.background : colors.accent;
 
   return (
+    <GestureDetector gesture={panGesture}>
     <View
       style={[
         styles.statusSurface,
         stackDenseContent && styles.statusSurfaceDense,
-        { backgroundColor: colors.surface, borderColor: colors.border },
+        { backgroundColor: virtual ? colors.accent : colors.surface },
       ]}
     >
-      <ScrubSurface
-        testId="status-scrub-gesture"
+      <AdjustableSurface
         accessibilityLabel="Adjust comparison time"
         accessibilityValue={status.accessibilityValue}
+        scrubDirection={scrubDirection}
         style={styles.statusAdjustable}
-        scrollGesture={scrollGesture}
-        onHorizontalLockChange={onHorizontalLockChange}
-        onBegin={onBeginScrub}
-        onUpdate={onUpdateScrub}
-        onEnd={onEndScrub}
-        onCancel={onCancelScrub}
         onAdjust={onAdjust}
         onFocus={onFocus}
       >
@@ -586,7 +688,7 @@ function StatusSurface({
           style={[styles.statusText, stackDenseContent && styles.statusTextStacked]}
           accessibilityElementsHidden
         >
-          <Text style={[styles.statusLabel, { color: colors.primary }]}>
+          <Text style={[styles.statusLabel, { color: statusPrimary }]}>
             {status.label}
           </Text>
           <View style={styles.statusOffsetLine}>
@@ -594,26 +696,26 @@ function StatusSurface({
               importantForAccessibility="no-hide-descendants"
               style={[
                 styles.chevron,
-                { color: colors.accent, opacity: chevronPulse },
+                { color: statusAccent, opacity: chevronPulse },
               ]}
             >
               ‹
             </Animated.Text>
-            <Text style={[styles.statusOffset, { color: colors.primary }]}>
+            <Text style={[styles.statusOffset, { color: statusPrimary }]}>
               {status.offset}
             </Text>
             <Animated.Text
               importantForAccessibility="no-hide-descendants"
               style={[
                 styles.chevron,
-                { color: colors.accent, opacity: chevronPulse },
+                { color: statusAccent, opacity: chevronPulse },
               ]}
             >
               ›
             </Animated.Text>
           </View>
         </View>
-      </ScrubSurface>
+      </AdjustableSurface>
       {model.mode === "virtual" ? (
         <Pressable
           accessibilityRole="button"
@@ -624,7 +726,7 @@ function StatusSurface({
         >
           <Text
             importantForAccessibility="no-hide-descendants"
-            style={[styles.backGlyph, { color: colors.accent }]}
+            style={[styles.backGlyph, { color: statusAccent }]}
           >
             ↶
           </Text>
@@ -633,6 +735,7 @@ function StatusSurface({
         <View importantForAccessibility="no-hide-descendants" style={styles.statusActionSpacer} />
       )}
     </View>
+    </GestureDetector>
   );
 }
 
@@ -664,10 +767,15 @@ export function ClockScreen({
   onAdjustRow,
   onFocusClock,
   onBackToLive,
+  design = "grouped",
+  onSelectDesign,
+  scrubDirection = "rightEarlier",
+  onSelectScrubDirection,
 }: ClockScreenProps) {
   const colorScheme = useColorScheme() === "dark" ? "dark" : "light";
   const viewport = useWindowDimensions();
-  const colors = semanticThemes[colorScheme];
+  const colors = resolveSemanticTheme(colorScheme);
+  const [settingsVisible, setSettingsVisible] = useState(false);
   const presentation = resolvePresentation(viewport);
   const scrollView = useRef<ScrollView>(null);
   const clockViews = useRef(new Map<string, View>());
@@ -850,8 +958,8 @@ export function ClockScreen({
             accessibilityState={{ disabled: form.isSaving }}
             disabled={form.isSaving}
             onPress={onSaveCustom}
-            style={[styles.addButton, { borderColor: colors.border, backgroundColor: colors.surface }]}
-          ><Text style={[styles.addButtonText, { color: colors.accent }]}>Save</Text></Pressable>
+            style={[styles.addButton, { backgroundColor: colors.accent }]}
+          ><Text style={[styles.addButtonText, { color: colors.background }]}>Save</Text></Pressable>
         </View>
         </ScrollView>
       </SafeAreaView>
@@ -925,21 +1033,43 @@ export function ClockScreen({
           ]}
         ><Text style={[styles.addButtonText, { color: colors.accent }]}>Create custom timezone</Text></Pressable>
         <FlatList
+          key={design}
           testID="selector-results"
           horizontal={false}
+          numColumns={design === "tiles" ? 2 : 1}
+          {...(design === "tiles"
+            ? { columnWrapperStyle: styles.resultsColumns }
+            : {})}
+          ItemSeparatorComponent={
+            design === "grouped"
+              ? () => (
+                  <View
+                    style={[
+                      styles.groupedDivider,
+                      { backgroundColor: colors.border },
+                    ]}
+                  />
+                )
+              : undefined
+          }
           style={styles.overlayScroll}
           data={model.selector.results}
           keyExtractor={({ catalogId }) => catalogId}
           keyboardShouldPersistTaps="handled"
           contentContainerStyle={[
             styles.results,
+            design === "grouped" && styles.resultsGrouped,
+            design === "tiles" && styles.resultsTiles,
             { paddingHorizontal: presentation.horizontalPadding },
           ]}
-          renderItem={({ item }) => (
+          renderItem={({ item, index }) => (
             <SelectorResult
               result={item}
               isAdding={model.selector?.isAdding ?? false}
               colors={colors}
+              design={design}
+              isFirst={index === 0}
+              isLast={index === (model.selector?.results.length ?? 0) - 1}
               onAddCity={onAddCity}
             />
           )}
@@ -980,6 +1110,7 @@ export function ClockScreen({
         <StatusSurface
           model={model}
           colors={colors}
+          scrubDirection={scrubDirection}
           stackDenseContent={presentation.stackDenseContent}
           chevronPulse={chevronPulse}
           onBeginScrub={onBeginStatusScrub}
@@ -996,13 +1127,35 @@ export function ClockScreen({
           testID="clock-content"
           style={[
             styles.content,
-            {
-              maxWidth: presentation.contentMaxWidth,
-              minHeight: Math.max(viewport.height - 48, 0),
-            },
+            { maxWidth: presentation.contentMaxWidth },
           ]}
         >
-          <Text style={[styles.title, { color: colors.primary }]}>World Clock</Text>
+          <View style={styles.titleRow}>
+            {design === "grouped" ? (
+              <Text style={[styles.title, { color: colors.primary }]}>World Clock</Text>
+            ) : (
+              <View />
+            )}
+            {onSelectDesign === undefined &&
+            onSelectScrubDirection === undefined ? null : (
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel="Open settings"
+                onPress={() => setSettingsVisible(true)}
+                style={({ pressed }) => [
+                  styles.headerAction,
+                  { opacity: pressed ? 0.7 : 1 },
+                ]}
+              >
+                <Text
+                  importantForAccessibility="no-hide-descendants"
+                  style={[styles.settingsGlyph, { color: colors.secondary }]}
+                >
+                  ⚙
+                </Text>
+              </Pressable>
+            )}
+          </View>
 
           {model.persistenceError === undefined ||
           model.deleteConfirmation !== undefined ? null : (
@@ -1014,13 +1167,19 @@ export function ClockScreen({
             />
           )}
 
-          <View style={styles.clockCollection}>
-            {model.clocks.map((clock) => (
+          {(() => {
+            const renderRow = (
+              clock: ClockCollectionProjection,
+              isHero: boolean,
+            ) => (
               <ClockRow
                 key={clock.id}
                 clock={clock}
                 model={model}
                 colors={colors}
+                design={design}
+                isHero={isHero}
+                scrubDirection={scrubDirection}
                 stackDenseContent={presentation.stackDenseContent}
                 chevronPulse={chevronPulse}
                 rowRef={(view) => {
@@ -1041,8 +1200,47 @@ export function ClockScreen({
                 onAdjust={onAdjustRow}
                 onFocus={onFocusClock}
               />
-            ))}
-          </View>
+            );
+            const heroClock = model.clocks.find(({ kind }) => kind === "local");
+            const selectedClocks = model.clocks.filter(
+              ({ kind }) => kind !== "local",
+            );
+            return (
+              <>
+                {heroClock === undefined ? null : renderRow(heroClock, true)}
+                {selectedClocks.length === 0 ? null : design === "grouped" ? (
+                  <View
+                    style={[
+                      styles.groupedList,
+                      { backgroundColor: colors.surface },
+                    ]}
+                  >
+                    {selectedClocks.map((clock, index) => (
+                      <View key={clock.id}>
+                        {index === 0 ? null : (
+                          <View
+                            style={[
+                              styles.groupedDivider,
+                              { backgroundColor: colors.border },
+                            ]}
+                          />
+                        )}
+                        {renderRow(clock, false)}
+                      </View>
+                    ))}
+                  </View>
+                ) : design === "tiles" ? (
+                  <View style={styles.tilesGrid}>
+                    {selectedClocks.map((clock) => renderRow(clock, false))}
+                  </View>
+                ) : (
+                  <View style={styles.clockCollection}>
+                    {selectedClocks.map((clock) => renderRow(clock, false))}
+                  </View>
+                )}
+              </>
+            );
+          })()}
 
           {model.emptyGuidance === undefined ? null : (
             <Text style={[styles.guidance, { color: colors.secondary }]}>
@@ -1050,36 +1248,6 @@ export function ClockScreen({
             </Text>
           )}
 
-          <Pressable
-            ref={addTimezoneView}
-            onLayout={(event) => {
-              addTimezonePosition.current = event.nativeEvent.layout.y;
-            }}
-            accessibilityRole="button"
-            accessibilityLabel="Add timezone"
-            accessibilityHint={model.addTimezoneUnavailableReason}
-            onFocus={() => onFocusClock(undefined)}
-            disabled={
-              !model.isReady || model.addTimezoneUnavailableReason !== undefined
-            }
-            onPress={onOpenSelector}
-            style={({ pressed }) => [
-              styles.addButton,
-              {
-                borderColor: colors.border,
-                backgroundColor: colors.surface,
-                opacity:
-                  pressed
-                    ? 0.72
-                    : model.isReady &&
-                        model.addTimezoneUnavailableReason === undefined
-                      ? 1
-                      : 1,
-              },
-            ]}
-          >
-            <Text style={[styles.addButtonText, { color: colors.accent }]}>+ Add timezone</Text>
-          </Pressable>
           {model.addTimezoneUnavailableReason === undefined ? null : (
             <Text style={[styles.capacityMessage, { color: colors.secondary }]}>
               {model.addTimezoneUnavailableReason}
@@ -1088,6 +1256,134 @@ export function ClockScreen({
         </View>
         </ScrollView>
       </GestureDetector>
+      <Pressable
+        ref={addTimezoneView}
+        onLayout={(event) => {
+          addTimezonePosition.current = event.nativeEvent.layout.y;
+        }}
+        accessibilityRole="button"
+        accessibilityLabel="Add timezone"
+        accessibilityHint={model.addTimezoneUnavailableReason}
+        onFocus={() => onFocusClock(undefined)}
+        disabled={
+          !model.isReady || model.addTimezoneUnavailableReason !== undefined
+        }
+        onPress={onOpenSelector}
+        style={({ pressed }) => [
+          styles.fab,
+          design !== "grouped" && styles.fabRound,
+          {
+            backgroundColor: colors.accent,
+            opacity: pressed ? 0.85 : 1,
+          },
+        ]}
+      >
+        <Text
+          style={[
+            styles.fabText,
+            design !== "grouped" && styles.fabTextRound,
+            { color: colors.background },
+          ]}
+        >
+          {design === "grouped" ? "+  Add timezone" : "+"}
+        </Text>
+      </Pressable>
+      {settingsVisible &&
+      (onSelectDesign !== undefined ||
+        onSelectScrubDirection !== undefined) ? (
+        <Modal
+          testID="settings-modal"
+          visible
+          transparent
+          animationType="fade"
+          onRequestClose={() => setSettingsVisible(false)}
+        >
+          <View style={styles.modalBackdrop}>
+            <View
+              accessibilityViewIsModal
+              style={[styles.modalSurface, { backgroundColor: colors.surface }]}
+            >
+              <Text style={[styles.modalTitle, { color: colors.primary }]}>
+                Settings
+              </Text>
+              {onSelectDesign === undefined ? null : (
+                <View accessibilityRole="radiogroup" style={styles.settingGroup}>
+                  <Text
+                    style={[styles.settingGroupLabel, { color: colors.secondary }]}
+                  >
+                    Design
+                  </Text>
+                  {designVariants.map(({ key, label }) => (
+                    <Pressable
+                      key={key}
+                      accessibilityRole="radio"
+                      accessibilityLabel={label}
+                      accessibilityState={{ checked: design === key }}
+                      onPress={() => onSelectDesign(key)}
+                      style={({ pressed }) => [
+                        styles.settingRadio,
+                        { opacity: pressed ? 0.7 : 1 },
+                      ]}
+                    >
+                      <Text
+                        importantForAccessibility="no-hide-descendants"
+                        style={[styles.settingRadioMark, { color: colors.accent }]}
+                      >
+                        {design === key ? "◉" : "○"}
+                      </Text>
+                      <Text style={[styles.settingLabel, { color: colors.primary }]}>
+                        {label}
+                      </Text>
+                    </Pressable>
+                  ))}
+                </View>
+              )}
+              {onSelectScrubDirection === undefined ? null : (
+                <View accessibilityRole="radiogroup" style={styles.settingGroup}>
+                  <Text
+                    style={[styles.settingGroupLabel, { color: colors.secondary }]}
+                  >
+                    Scrub direction
+                  </Text>
+                  {scrubDirections.map(({ key, label }) => (
+                    <Pressable
+                      key={key}
+                      accessibilityRole="radio"
+                      accessibilityLabel={label}
+                      accessibilityState={{ checked: scrubDirection === key }}
+                      onPress={() => onSelectScrubDirection(key)}
+                      style={({ pressed }) => [
+                        styles.settingRadio,
+                        { opacity: pressed ? 0.7 : 1 },
+                      ]}
+                    >
+                      <Text
+                        importantForAccessibility="no-hide-descendants"
+                        style={[styles.settingRadioMark, { color: colors.accent }]}
+                      >
+                        {scrubDirection === key ? "◉" : "○"}
+                      </Text>
+                      <Text style={[styles.settingLabel, { color: colors.primary }]}>
+                        {label}
+                      </Text>
+                    </Pressable>
+                  ))}
+                </View>
+              )}
+              <View style={styles.modalActions}>
+                <Pressable
+                  accessibilityRole="button"
+                  accessibilityLabel="Close settings"
+                  onPress={() => setSettingsVisible(false)}
+                  style={styles.modalAction}
+                >
+                  <Text style={[styles.modalActionText, { color: colors.accent }]}>Done</Text>
+                </Pressable>
+              </View>
+            </View>
+          </View>
+        </Modal>
+      ) : null}
       {model.deleteConfirmation === undefined ? null : (
         <Modal
           testID="delete-confirmation"
@@ -1168,49 +1464,134 @@ export function ClockScreen({
 const styles = StyleSheet.create({
   safeArea: { flex: 1 },
   overlayScroll: { flex: 1 },
-  viewport: { flexGrow: 1, paddingHorizontal: 20, paddingVertical: 24 },
+  viewport: {
+    flexGrow: 1,
+    paddingHorizontal: 20,
+    paddingTop: 12,
+    paddingBottom: 120,
+  },
   content: { width: "100%", alignSelf: "center" },
-  title: { fontSize: 30, fontWeight: "700", marginBottom: 24 },
+  titleRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: 24,
+  },
+  title: { fontSize: 30, fontWeight: "700" },
+  settingsGlyph: { fontSize: 22, fontWeight: "400" },
+  settingLabel: { flex: 1, minWidth: 0, fontSize: 16, lineHeight: 22 },
+  settingGroup: { marginTop: 20 },
+  settingGroupLabel: {
+    fontSize: 13,
+    fontWeight: "600",
+    textTransform: "uppercase",
+    letterSpacing: 0.5,
+    marginBottom: 4,
+  },
+  settingRadio: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+    minHeight: 44,
+  },
+  settingRadioMark: { fontSize: 18 },
+  fab: {
+    position: "absolute",
+    right: 20,
+    bottom: 20,
+    minWidth: 56,
+    minHeight: 48,
+    height: 56,
+    borderRadius: 28,
+    paddingHorizontal: 24,
+    alignItems: "center",
+    justifyContent: "center",
+    elevation: 4,
+  },
+  fabRound: { width: 56, paddingHorizontal: 0 },
+  fabText: { fontSize: 16, fontWeight: "600" },
+  fabTextRound: { fontSize: 26, fontWeight: "400", includeFontPadding: false },
   statusSurface: {
     width: "100%",
     maxWidth: 680,
-    minHeight: 64,
+    minHeight: 56,
     alignSelf: "center",
-    borderWidth: 1,
-    borderRadius: 16,
-    paddingLeft: 16,
+    borderRadius: 28,
+    paddingLeft: 20,
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 16,
+    marginBottom: 12,
+    elevation: 1,
   },
-  statusSurfaceDense: { paddingLeft: 12 },
+  statusSurfaceDense: { paddingLeft: 14 },
   statusText: { flex: 1, minWidth: 0, flexDirection: "row", alignItems: "center", gap: 12 },
   statusTextStacked: { flexDirection: "column", alignItems: "flex-start", gap: 2, paddingVertical: 8 },
   statusAdjustable: { flex: 1, minHeight: 64, justifyContent: "center" },
   statusLabel: { fontSize: 18, fontWeight: "700" },
   statusOffsetLine: { flexDirection: "row", alignItems: "center", gap: 6 },
   statusOffset: { fontSize: 20, fontWeight: "700", fontVariant: ["tabular-nums"] },
-  chevron: { fontSize: 21, fontWeight: "700", opacity: 0.55 },
+  chevron: {
+    fontSize: 21,
+    fontWeight: "700",
+    opacity: 0.55,
+    includeFontPadding: false,
+  },
   statusBack: { minWidth: 48, minHeight: 48, alignItems: "center", justifyContent: "center" },
   statusActionSpacer: { width: 48, height: 48 },
   backGlyph: { fontSize: 26, fontWeight: "700" },
-  clockCollection: { gap: 12 },
+  clockCollection: { gap: 4 },
   clockSurface: {
-    minHeight: 96,
-    borderWidth: 1,
-    borderRadius: 20,
+    minHeight: 80,
     paddingHorizontal: 20,
-    paddingVertical: 18,
+    paddingVertical: 14,
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
   },
-  clockSurfaceDense: { paddingHorizontal: 12, paddingVertical: 14, alignItems: "flex-start" },
+  clockSurfaceDense: { paddingHorizontal: 12, paddingVertical: 12, alignItems: "flex-start" },
+  airyRowSurface: { paddingHorizontal: 4, paddingVertical: 10, minHeight: 72 },
+  heroSurface: {
+    flexDirection: "column",
+    alignItems: "stretch",
+    paddingVertical: 18,
+    marginBottom: 8,
+  },
+  groupedHeroSurface: {
+    borderRadius: 28,
+    paddingHorizontal: 24,
+    paddingVertical: 22,
+    marginBottom: 12,
+  },
+  tilesHeroSurface: { paddingVertical: 8, marginBottom: 4 },
+  groupedList: { borderRadius: 28, overflow: "hidden" },
+  groupedDivider: {
+    height: StyleSheet.hairlineWidth,
+    opacity: 0.5,
+    marginHorizontal: 20,
+  },
+  tilesGrid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 12,
+    justifyContent: "space-between",
+  },
+  tileSurface: {
+    width: "48%",
+    minHeight: 120,
+    borderRadius: 24,
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    flexDirection: "column",
+    alignItems: "stretch",
+  },
+  tileSurfaceDense: { width: "100%" },
   clockSummary: { flex: 1, minWidth: 0, flexDirection: "row", alignItems: "center", gap: 20 },
   clockSummaryStacked: { flexDirection: "column", alignItems: "stretch", gap: 8 },
+  clockSummaryCentered: { alignItems: "center" },
   rowTimeAdjustable: { minHeight: 48, justifyContent: "center", flexShrink: 0 },
   rowTimeAdjustableDense: { width: "100%", flexShrink: 1 },
-  timeLine: { flexDirection: "row", alignItems: "baseline", flexShrink: 0 },
+  timeLine: { flexDirection: "row", alignItems: "center", flexShrink: 0 },
+  timeLineCentered: { justifyContent: "center" },
   timeLineDense: {
     minHeight: 48,
     alignItems: "center",
@@ -1220,15 +1601,37 @@ const styles = StyleSheet.create({
   },
   timeValue: { flexDirection: "row", alignItems: "baseline" },
   timeValueDense: { flexDirection: "column", alignItems: "center" },
-  rowChevron: { fontSize: 21, fontWeight: "700", marginHorizontal: 4 },
-  rowChevronDenseLeft: { position: "absolute", left: 0, top: 0, marginHorizontal: 0 },
-  rowChevronDenseRight: { position: "absolute", right: 0, top: 0, marginHorizontal: 0 },
-  time: {
-    fontSize: 42,
-    fontVariant: ["tabular-nums"],
-    fontWeight: "500",
+  rowChevron: {
+    fontSize: 21,
+    fontWeight: "700",
+    marginHorizontal: 4,
     includeFontPadding: false,
   },
+  rowChevronDenseLeft: {
+    position: "absolute",
+    left: 0,
+    top: 0,
+    bottom: 0,
+    marginHorizontal: 0,
+    textAlignVertical: "center",
+  },
+  rowChevronDenseRight: {
+    position: "absolute",
+    right: 0,
+    top: 0,
+    bottom: 0,
+    marginHorizontal: 0,
+    textAlignVertical: "center",
+  },
+  time: {
+    fontSize: 32,
+    fontVariant: ["tabular-nums"],
+    fontWeight: "400",
+    includeFontPadding: false,
+  },
+  timeAiry: { fontSize: 34, fontWeight: "300" },
+  timeTile: { fontSize: 28 },
+  timeHero: { fontSize: 56, fontWeight: "300", letterSpacing: -1 },
   timeDense: { fontSize: 30 },
   period: { fontSize: 16, fontWeight: "600", marginLeft: 5 },
   clockDetails: { flex: 1, minWidth: 0 },
@@ -1238,6 +1641,11 @@ const styles = StyleSheet.create({
   dayDifference: { fontSize: 15, fontWeight: "700" },
   rowAction: { width: 48, minWidth: 48, minHeight: 48, alignItems: "center", justifyContent: "center" },
   rowActions: { width: 48, flexDirection: "column", alignItems: "center" },
+  rowActionsTiles: {
+    width: "100%",
+    flexDirection: "row",
+    justifyContent: "flex-end",
+  },
   rowActionText: { fontSize: 15, fontWeight: "700" },
   deleteGlyph: { fontSize: 28, fontWeight: "400", lineHeight: 32 },
   guidance: { fontSize: 16, lineHeight: 23, marginTop: 20 },
@@ -1245,8 +1653,7 @@ const styles = StyleSheet.create({
   addButton: {
     minHeight: 48,
     marginTop: 20,
-    borderWidth: 1,
-    borderRadius: 14,
+    borderRadius: 24,
     paddingHorizontal: 18,
     alignItems: "center",
     justifyContent: "center",
@@ -1267,18 +1674,24 @@ const styles = StyleSheet.create({
     minHeight: 48,
     marginHorizontal: 20,
     marginBottom: 12,
-    borderWidth: 1,
-    borderRadius: 14,
-    paddingHorizontal: 16,
+    borderRadius: 24,
+    paddingHorizontal: 20,
     fontSize: 16,
   },
-  customPath: { minHeight: 48, marginHorizontal: 20, marginBottom: 12, borderWidth: 1, borderRadius: 14, alignItems: "center", justifyContent: "center" },
+  customPath: {
+    minHeight: 48,
+    marginHorizontal: 20,
+    marginBottom: 12,
+    borderRadius: 24,
+    alignItems: "center",
+    justifyContent: "center",
+  },
   formScrollContent: { flexGrow: 1, paddingBottom: 24 },
   form: { paddingHorizontal: 20 },
   fieldLabel: { fontSize: 16, fontWeight: "700", marginBottom: 8, marginTop: 12 },
   formInput: { marginHorizontal: 0, marginBottom: 0 },
   error: { fontSize: 14, lineHeight: 20, marginTop: 6 },
-  errorBanner: { marginHorizontal: 20, marginBottom: 12, borderWidth: 1, borderRadius: 14, paddingHorizontal: 14, paddingVertical: 10, flexDirection: "row", alignItems: "center", gap: 8 },
+  errorBanner: { marginHorizontal: 20, marginBottom: 12, borderRadius: 20, paddingHorizontal: 16, paddingVertical: 10, flexDirection: "row", alignItems: "center", gap: 8 },
   errorBannerStacked: { flexDirection: "column", alignItems: "stretch" },
   errorMessage: { flex: 1, fontSize: 15, lineHeight: 21 },
   retryAction: { minWidth: 48, minHeight: 48, alignItems: "center", justifyContent: "center" },
@@ -1287,16 +1700,28 @@ const styles = StyleSheet.create({
   offsetAction: { minWidth: 80, minHeight: 48, alignItems: "center", justifyContent: "center" },
   offsetActionText: { fontSize: 15, fontWeight: "700" },
   selectedOffset: { fontSize: 20, fontWeight: "700", fontVariant: ["tabular-nums"] },
-  results: { paddingHorizontal: 20, paddingBottom: 24, gap: 10 },
+  results: { paddingHorizontal: 20, paddingBottom: 24, gap: 6 },
+  resultsGrouped: { gap: 0 },
+  resultsTiles: { gap: 12 },
+  resultsColumns: { gap: 12 },
   result: {
     minHeight: 64,
-    borderWidth: 1,
-    borderRadius: 14,
-    paddingHorizontal: 16,
+    paddingHorizontal: 18,
     paddingVertical: 10,
     flexDirection: "row",
     alignItems: "center",
     gap: 12,
+  },
+  resultGroupedFirst: { borderTopLeftRadius: 28, borderTopRightRadius: 28 },
+  resultGroupedLast: { borderBottomLeftRadius: 28, borderBottomRightRadius: 28 },
+  resultAiry: { paddingHorizontal: 4 },
+  resultTile: {
+    flex: 1,
+    borderRadius: 24,
+    paddingVertical: 14,
+    flexDirection: "column",
+    alignItems: "flex-start",
+    gap: 8,
   },
   resultLabels: { flex: 1, minWidth: 0 },
   resultCity: { fontSize: 17, fontWeight: "600" },
