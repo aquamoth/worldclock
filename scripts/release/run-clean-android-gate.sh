@@ -15,7 +15,7 @@ npm run catalog:generate
 git diff --exit-code -- catalog
 npm run catalog:check
 npm run typecheck
-npm test -- --runInBand
+npm test -- --runInBand --no-watchman
 npx expo install --check
 ./node_modules/.bin/expo-doctor
 npm run release:cng-check
