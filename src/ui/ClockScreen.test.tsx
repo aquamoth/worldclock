@@ -1440,6 +1440,7 @@ describe("clock collection screen", () => {
     expect(
       screen.getByRole("radio", { name: "Swipe right goes earlier" }),
     ).toBeOnTheScreen();
+    expect(screen.queryByRole("radio", { name: "Analog" })).not.toBeOnTheScreen();
     expect(screen.queryByText(/vibrat/i)).not.toBeOnTheScreen();
 
     await fireEvent.press(screen.getByRole("button", { name: "Close settings" }));
@@ -1540,6 +1541,167 @@ describe("clock collection screen", () => {
       expect(checked.props.accessibilityState).toMatchObject({ checked: true });
       await fireEvent.press(screen.getByRole("radio", { name: "Airy type" }));
       expect(onSelectDesign).toHaveBeenLastCalledWith("airy");
+      await view.unmount();
+    }
+  });
+
+  it("offers analog as a clock-face choice independent of layout design", async () => {
+    const onSelectClockFace = jest.fn();
+    await render(
+      <ClockScreen
+        model={emptyModel}
+        {...actions()}
+        design="grouped"
+        onSelectDesign={jest.fn()}
+        clockFace="digital"
+        onSelectClockFace={onSelectClockFace}
+      />,
+    );
+
+    await fireEvent.press(screen.getByRole("button", { name: "Open settings" }));
+    expect(screen.getByRole("radio", { name: "Tonal groups" })).toBeOnTheScreen();
+    expect(screen.getByRole("radio", { name: "Digital" }).props.accessibilityState).toMatchObject(
+      { checked: true },
+    );
+    await fireEvent.press(screen.getByRole("radio", { name: "Analog" }));
+    expect(onSelectClockFace).toHaveBeenCalledWith("analog");
+  });
+
+  it("shows analog hands for the projected wall time and still speaks digital time", async () => {
+    await render(
+      <ClockScreen
+        model={emptyModel}
+        {...actions()}
+        clockFace="analog"
+        onSelectClockFace={jest.fn()}
+      />,
+    );
+
+    expect(screen.getByRole("adjustable", { name: "13:05" })).toBeOnTheScreen();
+    expect(
+      screen.getByTestId("clock-analog-local", { includeHiddenElements: true }),
+    ).toBeOnTheScreen();
+    expect(
+      StyleSheet.flatten(
+        screen.getByTestId("clock-analog-local-hour-hand", {
+          includeHiddenElements: true,
+        }).props.style,
+      ),
+    ).toMatchObject({ transform: [{ rotate: "32.5deg" }] });
+    expect(
+      StyleSheet.flatten(
+        screen.getByTestId("clock-analog-local-minute-hand", {
+          includeHiddenElements: true,
+        }).props.style,
+      ),
+    ).toMatchObject({ transform: [{ rotate: "30deg" }] });
+    expect(screen.getByText("13:05", { includeHiddenElements: true })).toBeOnTheScreen();
+  });
+
+  it("moves analog hands with virtual-time wall minutes", async () => {
+    await render(
+      <ClockScreen
+        model={{
+          ...emptyModel,
+          mode: "virtual",
+          clocks: [
+            {
+              ...localClock,
+              time: "6:30",
+              wallMinuteOfDay: 6 * 60 + 30,
+            },
+          ],
+          status: {
+            label: "Virtual time",
+            offset: "−6:35",
+            offsetMinutes: -(6 * 60 + 35),
+            offsetAccessibilityLabel: "6 hours 35 minutes earlier",
+            accessibilityValue: "6 hours 35 minutes earlier, 6:30",
+          },
+        }}
+        {...actions()}
+        clockFace="analog"
+        onSelectClockFace={jest.fn()}
+      />,
+    );
+
+    expect(screen.getByRole("adjustable", { name: "6:30" })).toHaveAccessibilityValue({
+      text: "6 hours 35 minutes earlier, 6:30",
+    });
+    expect(
+      StyleSheet.flatten(
+        screen.getByTestId("clock-analog-local-hour-hand", {
+          includeHiddenElements: true,
+        }).props.style,
+      ),
+    ).toMatchObject({ transform: [{ rotate: "195deg" }] });
+    expect(
+      StyleSheet.flatten(
+        screen.getByTestId("clock-analog-local-minute-hand", {
+          includeHiddenElements: true,
+        }).props.style,
+      ),
+    ).toMatchObject({ transform: [{ rotate: "180deg" }] });
+  });
+
+  it("keeps analog 12-hour rows speaking and showing the period marker", async () => {
+    await render(
+      <ClockScreen
+        model={{
+          ...emptyModel,
+          clocks: [{ ...localClock, time: "1:05", period: "PM" }],
+        }}
+        {...actions()}
+        clockFace="analog"
+        onSelectClockFace={jest.fn()}
+      />,
+    );
+
+    expect(screen.getByRole("adjustable", { name: "1:05 PM" })).toBeOnTheScreen();
+    expect(screen.getByText("PM", { includeHiddenElements: true })).toBeOnTheScreen();
+  });
+
+  it("keeps analog rows scrubbable in every layout design", async () => {
+    const clocks = [
+      localClock,
+      {
+        id: "office",
+        kind: "custom" as const,
+        name: "Office",
+        canDelete: true as const,
+        canEdit: true as const,
+        calendarDate: "2026-01-15",
+        time: "14:05",
+        effectiveOffset: "UTC+02:00",
+        wallMinuteOfDay: 14 * 60 + 5,
+      },
+    ];
+
+    for (const design of ["grouped", "airy", "tiles"] as const) {
+      const callbacks = actions();
+      const view = await render(
+        <ClockScreen
+          model={{ ...emptyModel, clocks }}
+          {...callbacks}
+          design={design}
+          clockFace="analog"
+          onSelectClockFace={jest.fn()}
+        />,
+      );
+
+      expect(screen.getByRole("adjustable", { name: "13:05" })).toBeOnTheScreen();
+      expect(screen.getByRole("adjustable", { name: "14:05" })).toBeOnTheScreen();
+      expect(
+        screen.getByTestId("clock-analog-local", { includeHiddenElements: true }),
+      ).toBeOnTheScreen();
+      expect(
+        screen.getByTestId("clock-analog-office", { includeHiddenElements: true }),
+      ).toBeOnTheScreen();
+      expect(
+        screen.getByRole("summary", { name: "Office, Selected clock, UTC+02:00" }),
+      ).toBeOnTheScreen();
+      expect(getByGestureTestId("row-scrub-office")).toBeDefined();
+      expect(getByGestureTestId("status-scrub-gesture")).toBeDefined();
       await view.unmount();
     }
   });
