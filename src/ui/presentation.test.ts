@@ -19,6 +19,9 @@ describe("semantic presentation", () => {
       expect(contrastRatio(colors.border, colors.surface)).toBeGreaterThanOrEqual(3);
       expect(contrastRatio(colors.primary, colors.virtualBackground)).toBeGreaterThanOrEqual(4.5);
       expect(contrastRatio(colors.accent, colors.virtualBackground)).toBeGreaterThanOrEqual(4.5);
+      expect(contrastRatio(colors.primary, colors.localSurface)).toBeGreaterThanOrEqual(4.5);
+      expect(contrastRatio(colors.secondary, colors.localSurface)).toBeGreaterThanOrEqual(4.5);
+      expect(contrastRatio(colors.localBorder, colors.localSurface)).toBeGreaterThanOrEqual(3);
     },
   );
 
