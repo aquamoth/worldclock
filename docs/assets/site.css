@@ -196,6 +196,16 @@ section > h2,
 @media (max-width: 720px) {
   .features .cards {
     grid-template-columns: 1fr;
+    gap: 28px;
+  }
+
+  /* On phones the cards dissolve into plain paragraphs. */
+  .feature {
+    border: none;
+    border-radius: 0;
+    background: none;
+    backdrop-filter: none;
+    padding: 0;
   }
 }
 
@@ -275,25 +285,30 @@ section > h2,
   margin-top: 56px;
 }
 
-/* Footer area: support grid, then the byline under its own rule */
+/* Footer area: centered support grid, then the byline under a full-bleed rule */
 
 .site-footer {
+  margin-top: 48px;
+}
+
+.site-footer .footer-inner {
   max-width: 960px;
-  margin: 48px auto 0;
-  padding: 24px 24px 40px;
-  text-align: left;
+  margin: 0 auto;
+  padding: 24px 24px 0;
+  text-align: center;
 }
 
 .site-footer h2 {
-  text-align: left;
   margin-bottom: 24px;
 }
 
+/* The grid block centers on screen; each row stays left-aligned inside it. */
 .site-footer .contact {
   list-style: none;
   display: grid;
   gap: 14px;
-  justify-content: start;
+  justify-content: center;
+  text-align: left;
 }
 
 .site-footer .contact li {
@@ -312,12 +327,25 @@ section > h2,
   color: var(--muted);
 }
 
-.site-footer .byline {
+.site-footer .byline-bar {
   border-top: 1px solid var(--hairline);
   margin-top: 72px;
-  padding-top: 24px;
+}
+
+.site-footer .byline {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 12px 24px 20px;
+  text-align: left;
+  font-size: 13px;
+}
+
+.site-footer .byline a {
   color: var(--muted);
-  font-size: 14px;
+}
+
+.site-footer .byline a:hover {
+  color: var(--accent);
 }
 
 @media (max-width: 480px) {
