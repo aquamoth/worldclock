@@ -90,3 +90,9 @@ Final device readback: Wi-Fi `1`, mobile data `0`, automatic time/timezone `1/1`
 timezone `Europe/Stockholm`, locale `sv-SE`, 24-hour, dark, font scale `1.35`, all
 animation scales `1.0`, Bitwarden-only accessibility, touch exploration `0`, and
 TalkBack notification permission revoked.
+
+Handoff cleanup: `pm clear com.mattias.worldclock` removed only the synthetic
+acceptance collection. The unchanged installed exact candidate (`com.mattias.worldclock`
+version `1.0.0`, code `1`) then cold-launched to Live with Local-only state, empty
+guidance, and enabled Add; it remained resumed with no crash or unhandled-rejection
+signature. A final readback reconfirmed every device setting above unchanged.
