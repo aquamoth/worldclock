@@ -10,7 +10,7 @@ Index: [World Clock v1 implementation tickets](../index.md)
 
 **Blocked by:** 12 — [Prove the clean Android release and Hermes conformance gate](12-prove-the-clean-android-release-and-hermes-conformance-gate.md).
 
-**Status:** ready-for-agent
+**Status:** in-progress (claimed by `/root/impl_01_live_local`)
 
 **Delivery workflow:** Work directly on `master`; do not create a branch or pull request. Make no new product decision or opportunistic redesign. Finish only when the destination is genuinely accepted.
 
