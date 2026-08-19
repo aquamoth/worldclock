@@ -74,6 +74,14 @@ The default clock face, showing hour and minute as numerals, with an AM/PM marke
 **Analog clock face**:
 A clock face that shows the same projected hour and minute as hour and minute hands on a 12-hour dial. It does not show seconds. A compact digital caption remains so 12/24-hour preference stays visible.
 
+**Clock widget**:
+The home-screen and lock-screen surface showing selected clocks only — never the local clock, which those surfaces already display. Each clock appears as its name, its ticking wall time, and its localized day name; the day name stands in for the day difference. The widget is always in live mode and opens the app when tapped.
+_Avoid_: Lock-screen app, mini app
+
+**Snapshot mirror**:
+The native-readable copy of the selected-clock snapshot that the app refreshes whenever the collection changes, so surfaces outside the app UI (such as the clock widget) can read the collection without the app running. It carries source data only, never derived projections.
+_Avoid_: Widget API, cache
+
 **Product site**:
 The user-facing World Clock website at https://aquamoth.github.io/worldclock/, carrying product identity, support, and the privacy policy. The development repository is a secondary destination linked from it.
 _Avoid_: Repository README, About page
