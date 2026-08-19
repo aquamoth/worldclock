@@ -26,7 +26,7 @@ required and pass.
 - Support system light/dark appearance, portrait-first responsive layout, font scaling, and screen readers.
 - Automated timezone/UI/accessibility coverage and the non-deferred manual acceptance pass on the connected Pixel 7a are required. Physical TalkBack operation is owner-deferred indefinitely.
 - ADB is authorized for the connected Google Pixel 7a (`lynx`), serial `34051JEHN12837`.
-- The approved implementation set is indexed at [World Clock v1 implementation tickets](implementation/index.md). Work its ready, unblocked frontier directly on `master`; do not use branches or pull requests.
+- The approved implementation set is indexed at [World Clock v1 implementation tickets](implementation/index.md). v1 was implemented on `master`. From v1.1 onward, work on a topic branch and merge to `master` with `git merge --no-ff`; see [World Clock v1.1](../world-clock-v1.1/map.md).
 
 ## Decisions so far
 
@@ -46,9 +46,10 @@ required and pass.
 
 ## Not yet specified
 
-<!-- The v1 destination is reached. Physical TalkBack operation remains owner-deferred indefinitely. The frontier below is post-v1 work toward a public release. -->
+<!-- The v1 destination is reached. Physical TalkBack operation remains owner-deferred indefinitely. Remaining work lives on the v1.1 map; issue 14 is inherited there as public-release hygiene. -->
 
 - [Prepare for public release](issues/14-prepare-for-public-release.md) — Publish v1 on the Play Store as Trustfall AB: landing page and privacy policy on www.trustfall.se, final logotype package from the drafts in `.scratch/branding/drafts/`, permission audit, signing custody, and re-validated release gates under the new `se.trustfall.worldclock` application ID.
+- Further product work is tracked in [World Clock v1.1](../world-clock-v1.1/map.md).
 
 ## Out of scope
 
