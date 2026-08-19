@@ -27,6 +27,11 @@ The bundled city catalog includes IANA Time Zone Database data, which IANA
 places in the public domain. See
 [catalog/iana/2026c/LICENSE](catalog/iana/2026c/LICENSE).
 
+The Pixel 8 device frame on the product site (`docs/assets/pixel8-frame.png`)
+comes from [MockUPhone](https://github.com/oursky/mockuphone.com) by Oursky
+(Apache License 2.0), frame artwork credited to
+[Sajjad Mohammadi Nia](https://www.figma.com/@sajjadmohamamdi).
+
 ## Development
 
 Requirements: Node.js `^20.19.4`, `^22.13.0`, `^24.3.0`, or `>=25.0.0`; Java 21;

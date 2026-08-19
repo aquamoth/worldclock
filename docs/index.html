@@ -46,10 +46,19 @@
 
       <section class="demo" aria-label="App preview">
         <figure>
-          <!-- Replace with the looping scrub screen-recording and stills. -->
-          <div class="placeholder">
-            <span>Screen previews are being prepared.</span>
+          <div class="phone">
+            <video
+              src="assets/scrub-demo.webm"
+              autoplay
+              muted
+              loop
+              playsinline
+              aria-label="Screen recording: dragging one clock scrubs virtual time and every world clock follows"
+            ></video>
+            <!-- Pixel 8 frame from MockUPhone (Apache-2.0); attribution in README. -->
+            <img class="frame" src="assets/pixel8-frame.png" alt="" />
           </div>
+          <figcaption>Drag any clock — every timezone follows.</figcaption>
         </figure>
       </section>
 
