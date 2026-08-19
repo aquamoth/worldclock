@@ -1,8 +1,8 @@
 # Ticket 12 Android release gate
 
-Recorded: 2026-08-18
+Recorded: 2026-08-19
 
-Status: non-device gate passed; Android/Hermes runtime and offline launch checkpoint pending because `adb devices -l` reported no attached device.
+Status: passed, including the connected Android/Hermes and offline launch checkpoint.
 
 ## Candidate identity
 
@@ -61,20 +61,20 @@ Results:
 
 The clean install reported the repository's existing dependency audit result of 19 findings (7 moderate, 12 high). This was informational and did not change the locked dependency graph.
 
-## Pending connected-device proof
+## Connected Android/Hermes checkpoint
 
-Required before ticket 12 can close:
+- Serial: `34051JEHN12837` (authorized over USB)
+- Device: Google Pixel 7a, product/device `lynx`
+- OS: Android 17, API 37
+- Installed candidate SHA-256: `af1bf17233594999dc19427be111dce2d8c8da60ccb317af4df432631791a8ce`
+- Installed package: `com.mattias.worldclock`, `versionCode=1`, `versionName=1.0.0`, `minSdk=29`, `targetSdk=36`
+- Original connectivity: Wi-Fi on; mobile data off
+- Offline launch connectivity: Wi-Fi off (`cmd wifi status` reported disabled); mobile data off
+- Launch setup: application data cleared, logcat cleared, application force-stopped, launcher activity started
+- Hermes evidence: one release-process marker, `WORLD_CLOCK_HERMES_CONFORMANCE_PASS {"schemaVersion":1,"projectionCases":19,"fixedOffsetCases":105,"totalCases":124}`
+- Visible offline UI: `World Clock`, `Local`, `Add a timezone to compare times around the world.`, and `+ Add timezone`
+- Activity evidence: `com.mattias.worldclock/.MainActivity` was the resumed activity after the smoke interval
+- Error scan: zero fatal-exception, application-process crash, unhandled promise/rejection, or React Native JavaScript error signatures in the cleared launch log
+- Restoration: cleanup restored Wi-Fi to on and mobile data to off; a subsequent read reported Wi-Fi enabled and connected, with mobile data still off
 
-1. Install this exact SHA-256 candidate on the authorized Pixel.
-2. Launch with network connectivity disabled and cleared application data.
-3. Observe `WORLD_CLOCK_HERMES_CONFORMANCE_PASS` for schema 1 with 19 named, 105 fixed-offset, and 124 total cases from the release process.
-4. Confirm the Local clock UI appears without network access and logcat contains no fatal exception, unhandled rejection, or React Native startup error.
-5. Restore the device's original connectivity state.
-
-Latest device discovery command/result:
-
-```text
-$ /home/mattias/Android/Sdk/platform-tools/adb devices -l
-List of devices attached
-
-```
+This checkpoint intentionally covers only exact-candidate installation, Android/Hermes corpus execution, and cleared-data offline launch smoke. Ticket 13 owns the full interactive, responsive, accessibility, lifecycle, mutation, and persistence acceptance pass.
