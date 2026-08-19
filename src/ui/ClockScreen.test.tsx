@@ -350,6 +350,23 @@ describe("clock collection screen", () => {
     expect(callbacks.onEndStatusScrub).not.toHaveBeenCalled();
   });
 
+  it("waits for real Android pan travel before choosing the gesture axis", async () => {
+    const callbacks = actions();
+    await render(<ClockScreen model={emptyModel} {...callbacks} />);
+    const gesture = getByGestureTestId("status-scrub-gesture");
+
+    await act(async () => {
+      gesture.handlers.onStart?.({ translationX: 0, translationY: 0 } as never);
+      gesture.handlers.onUpdate?.({ translationX: 18, translationY: 1 } as never);
+      gesture.handlers.onEnd?.({ translationX: 18, translationY: 1 } as never, true);
+      gesture.handlers.onFinalize?.({ translationX: 18, translationY: 1 } as never, true);
+    });
+
+    expect(callbacks.onBeginStatusScrub).toHaveBeenCalledTimes(1);
+    expect(callbacks.onUpdateStatusScrub).toHaveBeenCalledWith(-2);
+    expect(callbacks.onEndStatusScrub).toHaveBeenCalledTimes(1);
+  });
+
   it("exposes every row time as a separate adjustable with directional keyboard and accessibility mappings", async () => {
     const callbacks = actions();
     await render(

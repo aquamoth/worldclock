@@ -169,24 +169,34 @@ function ScrubSurface({
   readonly onFocus?: () => void;
 }) {
   const gestureAxis = useRef<"horizontal" | "vertical" | null>(null);
-  const panGesture = useMemo(
-    () =>
-      Gesture.Pan()
+  const panGesture = useMemo(() => {
+    const chooseAxis = (translationX: number, translationY: number) => {
+      if (gestureAxis.current !== null) return gestureAxis.current;
+      if (Math.max(Math.abs(translationX), Math.abs(translationY)) < 8) {
+        return null;
+      }
+      gestureAxis.current =
+        Math.abs(translationX) > Math.abs(translationY)
+          ? "horizontal"
+          : "vertical";
+      if (gestureAxis.current === "horizontal") {
+        onHorizontalLockChange(true);
+        onBegin();
+      }
+      return gestureAxis.current;
+    };
+
+    return Gesture.Pan()
         .withTestId(testId)
         .simultaneousWithExternalGesture(scrollGesture)
         .runOnJS(true)
         .onStart(({ translationX, translationY }) => {
-          gestureAxis.current =
-            Math.abs(translationX) > Math.abs(translationY)
-              ? "horizontal"
-              : "vertical";
-          if (gestureAxis.current !== "horizontal") return;
-          onHorizontalLockChange(true);
-          onBegin();
-          onUpdate(scrubStepsFromTravel(translationX));
+          if (chooseAxis(translationX, translationY) === "horizontal") {
+            onUpdate(scrubStepsFromTravel(translationX));
+          }
         })
-        .onUpdate(({ translationX }) => {
-          if (gestureAxis.current === "horizontal") {
+        .onUpdate(({ translationX, translationY }) => {
+          if (chooseAxis(translationX, translationY) === "horizontal") {
             onUpdate(scrubStepsFromTravel(translationX));
           }
         })
@@ -199,7 +209,8 @@ function ScrubSurface({
             onHorizontalLockChange(false);
           }
           gestureAxis.current = null;
-        }),
+        });
+  },
     [
       onBegin,
       onCancel,
