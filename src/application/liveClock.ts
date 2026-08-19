@@ -199,6 +199,10 @@ export interface LiveClockDependencies {
 const EMPTY_GUIDANCE = "Add a timezone to compare times around the world.";
 const MAX_SELECTED_CLOCKS = 24;
 
+// A virtual-time session survives a brief app switch, but not being left in
+// the background (or behind a locked screen) beyond this grace period.
+const VIRTUAL_TIME_BACKGROUND_GRACE_MS = 60_000;
+
 const formatVirtualOffset = (offsetMinutes: number): string => {
   const absolute = Math.abs(offsetMinutes);
   const hours = Math.floor(absolute / 60);
@@ -262,6 +266,7 @@ export function createLiveClockApplication(
   let announcementSequence = 0;
   let cancelScheduledTick: (() => void) | undefined;
   let minuteTicksActive = false;
+  let backgroundSinceMs: number | undefined;
   let initialization: Promise<void> | undefined;
   let persistenceState: PersistenceState = { status: "idle" };
   let virtualSession:
@@ -498,7 +503,25 @@ export function createLiveClockApplication(
     cancelScheduledTick = undefined;
   };
 
+  const enterBackground = (): void => {
+    backgroundSinceMs = dependencies.time.now();
+    pauseMinuteTicks();
+  };
+
   const enterForeground = (): void => {
+    if (
+      virtualSession !== undefined &&
+      backgroundSinceMs !== undefined &&
+      dependencies.time.now() - backgroundSinceMs >
+        VIRTUAL_TIME_BACKGROUND_GRACE_MS
+    ) {
+      virtualSession = undefined;
+      statusGesture = undefined;
+      rowGesture = undefined;
+      heldClockOrder = undefined;
+      announce("Live time.");
+    }
+    backgroundSinceMs = undefined;
     minuteTicksActive = true;
     resample();
     scheduleNextMinute();
@@ -686,7 +709,7 @@ export function createLiveClockApplication(
       scheduleNextMinute();
       void initialize();
     },
-    enterBackground: pauseMinuteTicks,
+    enterBackground,
     enterForeground,
     stop: pauseMinuteTicks,
     openSelector: () => {

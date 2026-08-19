@@ -114,7 +114,7 @@ describe("lifecycle-aware Live and Virtual time", () => {
     );
 
     app.enterBackground();
-    setNow("2026-01-15T12:00:00Z");
+    setNow("2026-01-15T07:32:45Z");
     setPreferences({
       timeZone: "America/New_York",
       locale: "en-US",
@@ -124,11 +124,11 @@ describe("lifecycle-aware Live and Virtual time", () => {
 
     expect(app.getScreen()).toMatchObject({
       mode: "virtual",
-      sampledInstantMs: Date.parse("2026-01-15T12:15:00Z"),
-      status: { offset: "+0:15", accessibilityValue: "15 minutes later, 7:15 AM" },
+      sampledInstantMs: Date.parse("2026-01-15T07:47:45Z"),
+      status: { offset: "+0:15", accessibilityValue: "15 minutes later, 2:47 AM" },
       clocks: [
-        { name: "Local", time: "7:15", period: "AM", effectiveOffset: "UTC−05:00" },
-        { name: "Office", time: "1:15", period: "PM", effectiveOffset: "UTC+01:00" },
+        { name: "Local", time: "2:47", period: "AM", effectiveOffset: "UTC−05:00" },
+        { name: "Office", time: "8:47", period: "AM", effectiveOffset: "UTC+01:00" },
       ],
     });
 
@@ -145,6 +145,61 @@ describe("lifecycle-aware Live and Virtual time", () => {
     expect(app.getScreen()).toMatchObject({
       mode: "live",
       sampledInstantMs: Date.parse("2026-01-15T12:01:00Z"),
+    });
+  });
+
+  it("ends a virtual session left in the background beyond the grace period", async () => {
+    const { app, setNow } = createLifecycleHarness();
+    await app.initialize();
+    app.start();
+    app.adjustStatus("later");
+    expect(app.getScreen().mode).toBe("virtual");
+
+    app.enterBackground();
+    setNow("2026-01-15T07:33:01Z");
+    app.enterForeground();
+
+    expect(app.getScreen()).toMatchObject({
+      mode: "live",
+      sampledInstantMs: Date.parse("2026-01-15T07:33:01Z"),
+      announcement: { message: "Live time." },
+    });
+  });
+
+  it("keeps a virtual session across a background stay of exactly the grace period", async () => {
+    const { app, setNow } = createLifecycleHarness();
+    await app.initialize();
+    app.start();
+    app.adjustStatus("later");
+
+    app.enterBackground();
+    setNow("2026-01-15T07:33:00Z");
+    app.enterForeground();
+
+    expect(app.getScreen()).toMatchObject({
+      mode: "virtual",
+      sampledInstantMs: Date.parse("2026-01-15T07:48:00Z"),
+    });
+  });
+
+  it("does not end a later virtual session using a stale background timestamp", async () => {
+    const { app, setNow } = createLifecycleHarness();
+    await app.initialize();
+    app.start();
+
+    app.enterBackground();
+    setNow("2026-01-15T09:00:00Z");
+    app.enterForeground();
+    expect(app.getScreen().mode).toBe("live");
+
+    app.adjustStatus("later");
+    app.enterBackground();
+    setNow("2026-01-15T09:00:30Z");
+    app.enterForeground();
+
+    expect(app.getScreen()).toMatchObject({
+      mode: "virtual",
+      sampledInstantMs: Date.parse("2026-01-15T09:15:30Z"),
     });
   });
 
