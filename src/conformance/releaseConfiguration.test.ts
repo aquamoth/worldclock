@@ -31,5 +31,6 @@ describe("Android release configuration", () => {
     });
     expect(packageManifest.author).toBe("Trustfall AB (https://www.trustfall.se)");
     expect(packageManifest.homepage).toBe("https://www.trustfall.se/worldclock");
+    expect(packageManifest.license).toBe("Apache-2.0");
   });
 });
