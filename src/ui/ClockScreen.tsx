@@ -863,6 +863,7 @@ export function ClockScreen({
           <Text style={[styles.selectorTitle, { color: colors.primary }]}>Add timezone</Text>
           <Pressable
             accessibilityRole="button"
+            accessibilityLabel="Cancel timezone selection"
             accessibilityState={{ disabled: model.selector.isAdding }}
             disabled={model.selector.isAdding}
             onPress={onCancelSelector}

@@ -494,7 +494,9 @@ describe("clock collection screen", () => {
       ),
     ).toMatchObject({ opacity: 1 });
 
-    await fireEvent.press(screen.getByRole("button", { name: "Cancel" }));
+    await fireEvent.press(
+      screen.getByRole("button", { name: "Cancel timezone selection" }),
+    );
     expect(callbacks.onCancelSelector).toHaveBeenCalledTimes(1);
   });
 
@@ -505,7 +507,9 @@ describe("clock collection screen", () => {
     };
     await render(<ClockScreen model={selectorModel} {...actions()} />);
 
-    expect(screen.getByRole("button", { name: "Cancel" })).toBeDisabled();
+    expect(
+      screen.getByRole("button", { name: "Cancel timezone selection" }),
+    ).toBeDisabled();
   });
 
   it("dismisses the selector when Android system Back is pressed", async () => {
