@@ -49,7 +49,7 @@ body::before {
   z-index: -3;
   pointer-events: none;
   background: url("mark.svg") center / 1400px no-repeat;
-  opacity: 0.03;
+  opacity: 0.012;
   filter: grayscale(1);
 }
 
@@ -202,9 +202,10 @@ section > h2,
 /* GitHub corner (pattern by Tim Holman, github.com/tholman/github-corners) */
 
 .github-corner {
-  position: absolute;
+  position: fixed;
   top: 0;
   right: 0;
+  z-index: 10;
 }
 
 .github-corner svg {
@@ -274,46 +275,47 @@ section > h2,
   margin-top: 56px;
 }
 
-/* Footer area: support, links, byline */
+/* Footer area: support grid, then the byline under its own rule */
 
 .site-footer {
-  border-top: 1px solid var(--hairline);
-  margin-top: 48px;
-  padding: 48px 24px 40px;
-  text-align: center;
+  max-width: 960px;
+  margin: 48px auto 0;
+  padding: 24px 24px 40px;
+  text-align: left;
 }
 
 .site-footer h2 {
-  margin-bottom: 20px;
+  text-align: left;
+  margin-bottom: 24px;
 }
 
 .site-footer .contact {
   list-style: none;
+  display: grid;
+  gap: 14px;
+  justify-content: start;
 }
 
-.site-footer .contact li + li {
-  margin-top: 6px;
+.site-footer .contact li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
-.site-footer .contact span {
-  display: inline-block;
-  min-width: 56px;
-  text-align: right;
-  margin-right: 12px;
+.site-footer .contact svg {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: var(--muted);
+  stroke-width: 1.8;
   color: var(--muted);
-  font-size: 15px;
-}
-
-.site-footer nav {
-  margin-top: 24px;
-}
-
-.site-footer nav a {
-  margin: 0 10px;
 }
 
 .site-footer .byline {
-  margin-top: 40px;
+  border-top: 1px solid var(--hairline);
+  margin-top: 72px;
+  padding-top: 24px;
   color: var(--muted);
   font-size: 14px;
 }
