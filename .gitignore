@@ -7,4 +7,5 @@ ios/
 *.jks
 *.keystore
 .scratch/world-clock-v1/release-artifacts/*.apk
+.scratch/world-clock-v1/acceptance-evidence/
 .DS_Store
