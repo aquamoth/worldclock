@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <!-- Draft 3: Zero Detent — solid disc; the hand and pivot are negative space.
+       The slot breaks the rim at 12: the hand snapped into its detent.
+       Single-color mark. Cutouts are drawn in canvas color for the draft;
+       the final would be one boolean path. -->
+  <circle cx="512" cy="512" r="512" fill="#E8DEF8"/>
+  <circle cx="512" cy="512" r="300" fill="#1D192B"/>
+  <!-- negative hand, snapped into the zero detent (breaks the rim) -->
+  <rect x="486" y="160" width="52" height="270" rx="26" fill="#E8DEF8"/>
+  <!-- negative pivot -->
+  <circle cx="512" cy="512" r="56" fill="#E8DEF8"/>
+</svg>

@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <!-- Draft 8: Offset Subdial — modern-luxury asymmetry: second timezone sits
+       lower-right (between 4 and 5), only cardinal indices, sword hands.
+       Gold on black lacquer duotone. -->
+  <circle cx="512" cy="512" r="512" fill="#14110C"/>
+  <g fill="#C8A45D">
+    <!-- thin double bezel -->
+    <circle cx="512" cy="512" r="302" fill="none" stroke="#C8A45D" stroke-width="10"/>
+    <circle cx="512" cy="512" r="282" fill="none" stroke="#C8A45D" stroke-width="3"/>
+    <!-- cardinal batons only; double at 12 -->
+    <rect x="493" y="228" width="15" height="52"/>
+    <rect x="516" y="228" width="15" height="52"/>
+    <rect x="502" y="228" width="20" height="52" transform="rotate(90 512 512)"/>
+    <rect x="502" y="228" width="20" height="52" transform="rotate(180 512 512)"/>
+    <rect x="502" y="228" width="20" height="52" transform="rotate(270 512 512)"/>
+    <!-- offset second-timezone subdial -->
+    <circle cx="618" cy="618" r="96" fill="none" stroke="#C8A45D" stroke-width="8"/>
+    <circle cx="618" cy="618" r="74" fill="none" stroke="#C8A45D" stroke-width="14"
+            pathLength="12" stroke-dasharray="0.14 0.86"/>
+    <line x1="618" y1="618" x2="618" y2="556" stroke="#C8A45D" stroke-width="12"
+          stroke-linecap="round" transform="rotate(150 618 618)"/>
+    <circle cx="618" cy="618" r="10"/>
+    <!-- sword hands, 10:08 -->
+    <path d="M 497 512 L 503 350 L 521 350 L 527 512 Z" transform="rotate(304 512 512)"/>
+    <path d="M 501 512 L 506 268 L 518 268 L 523 512 Z" transform="rotate(52 512 512)"/>
+    <circle cx="512" cy="512" r="18"/>
+  </g>
+  <circle cx="512" cy="512" r="7" fill="#14110C"/>
+</svg>

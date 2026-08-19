@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <!-- World Clock mark (from draft-6-small-seconds-classic): dress-watch dial,
+       baton indices with a double baton at 12, dauphine hands at 10:08, and a
+       second-timezone subdial at 6. Adaptive-icon foreground layer: transparent
+       background, mark inside the central safe zone. -->
+  <g fill="#1D192B">
+    <circle cx="512" cy="512" r="300" fill="none" stroke="#1D192B" stroke-width="14"/>
+    <circle cx="512" cy="512" r="276" fill="none" stroke="#1D192B" stroke-width="4"/>
+    <rect x="494" y="228" width="13" height="48"/>
+    <rect x="517" y="228" width="13" height="48"/>
+    <rect x="503" y="228" width="18" height="48" transform="rotate(30 512 512)"/>
+    <rect x="503" y="228" width="18" height="48" transform="rotate(60 512 512)"/>
+    <rect x="503" y="228" width="18" height="48" transform="rotate(90 512 512)"/>
+    <rect x="503" y="228" width="18" height="48" transform="rotate(120 512 512)"/>
+    <rect x="503" y="228" width="18" height="48" transform="rotate(150 512 512)"/>
+    <rect x="503" y="228" width="18" height="48" transform="rotate(210 512 512)"/>
+    <rect x="503" y="228" width="18" height="48" transform="rotate(240 512 512)"/>
+    <rect x="503" y="228" width="18" height="48" transform="rotate(270 512 512)"/>
+    <rect x="503" y="228" width="18" height="48" transform="rotate(300 512 512)"/>
+    <rect x="503" y="228" width="18" height="48" transform="rotate(330 512 512)"/>
+    <circle cx="512" cy="672" r="82" fill="none" stroke="#1D192B" stroke-width="10"/>
+    <circle cx="512" cy="672" r="62" fill="none" stroke="#1D192B" stroke-width="10"
+            pathLength="12" stroke-dasharray="0.16 0.84"/>
+    <line x1="512" y1="672" x2="512" y2="616" stroke="#1D192B" stroke-width="12"
+          stroke-linecap="round" transform="rotate(225 512 672)"/>
+    <circle cx="512" cy="672" r="11"/>
+    <path d="M 512 336 L 537 486 L 512 514 L 487 486 Z" transform="rotate(304 512 512)"/>
+    <path d="M 512 258 L 531 478 L 512 512 L 493 478 Z" transform="rotate(52 512 512)"/>
+    <circle cx="512" cy="512" r="19"/>
+  </g>
+</svg>

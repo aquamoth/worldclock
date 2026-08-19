@@ -46,7 +46,9 @@ required and pass.
 
 ## Not yet specified
 
-<!-- No remaining fog or implementation frontier: the v1 destination is reached. Physical TalkBack operation remains owner-deferred indefinitely. -->
+<!-- The v1 destination is reached. Physical TalkBack operation remains owner-deferred indefinitely. The frontier below is post-v1 work toward a public release. -->
+
+- [Prepare for public release](issues/14-prepare-for-public-release.md) — Publish v1 on the Play Store as Trustfall AB: landing page and privacy policy on www.trustfall.se, final logotype package from the drafts in `.scratch/branding/drafts/`, permission audit, signing custody, and re-validated release gates under the new `se.trustfall.worldclock` application ID.
 
 ## Out of scope
 

@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <!-- Draft 1: Shared Instant — three dials, one hand angle. Single-color mark. -->
+  <circle cx="512" cy="512" r="512" fill="#EADDFF"/>
+  <g fill="none" stroke="#21005D" stroke-linecap="round">
+    <!-- hero dial -->
+    <circle cx="400" cy="420" r="170" stroke-width="36"/>
+    <line x1="400" y1="420" x2="490.4" y2="344.1" stroke-width="36"/>
+    <!-- satellite dial A -->
+    <circle cx="660" cy="620" r="96" stroke-width="26"/>
+    <line x1="660" y1="620" x2="709" y2="578.9" stroke-width="26"/>
+    <!-- satellite dial B -->
+    <circle cx="784" cy="760" r="56" stroke-width="18"/>
+    <line x1="784" y1="760" x2="813.1" y2="735.6" stroke-width="18"/>
+  </g>
+  <g fill="#21005D">
+    <circle cx="400" cy="420" r="26"/>
+    <circle cx="660" cy="620" r="16"/>
+    <circle cx="784" cy="760" r="11"/>
+  </g>
+</svg>

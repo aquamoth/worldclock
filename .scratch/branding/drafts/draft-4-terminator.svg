@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <!-- Draft 4: Terminator — one disc split by the day/night curve;
+       a single negative-space hand crosses both worlds at the same instant. -->
+  <circle cx="512" cy="512" r="512" fill="#F3EDF7"/>
+  <!-- day half, bounded below by the terminator curve -->
+  <path fill="#FFB868" d="M 212 512 A 300 300 0 0 1 812 512 C 662 612 362 412 212 512 Z"/>
+  <!-- night half, bounded above by the terminator curve -->
+  <path fill="#4A4458" d="M 212 512 C 362 412 662 612 812 512 A 300 300 0 0 1 212 512 Z"/>
+  <!-- shared-instant hand, cut in canvas color across both halves -->
+  <line x1="512" y1="512" x2="680" y2="371" stroke="#F3EDF7" stroke-width="34" stroke-linecap="round"/>
+  <circle cx="512" cy="512" r="27" fill="#F3EDF7"/>
+</svg>

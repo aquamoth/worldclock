@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <!-- Draft 2: Offset Bands — concentric timezone arcs of different sweeps,
+       all terminating on one radius: the shared instant. -->
+  <circle cx="512" cy="512" r="512" fill="#1C1B1F"/>
+  <g fill="none" stroke="#D0BCFF" stroke-width="40" stroke-linecap="round">
+    <!-- 250-degree band, r=280 -->
+    <path d="M 775.1 607.8 A 280 280 0 1 1 512 232"/>
+    <!-- 170-degree band, r=210 -->
+    <path d="M 475.5 718.8 A 210 210 0 0 1 512 302"/>
+    <!-- 100-degree band, r=140 -->
+    <path d="M 374.1 536.3 A 140 140 0 0 1 512 372"/>
+  </g>
+  <!-- the instant: one hand pinning every band's endpoint -->
+  <line x1="512" y1="536" x2="512" y2="216" stroke="#FFB4AB" stroke-width="40" stroke-linecap="round"/>
+  <circle cx="512" cy="512" r="30" fill="#FFB4AB"/>
+</svg>

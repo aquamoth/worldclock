@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <!-- Draft 5: Monogram W — the W of World Clock drawn as two pairs of
+       clock hands sharing two pivots. Single-color mark with punched pivots. -->
+  <circle cx="512" cy="512" r="512" fill="#21005D"/>
+  <path d="M 310 370 L 415 650 L 512 420 L 609 650 L 714 370"
+        fill="none" stroke="#D0BCFF" stroke-width="56"
+        stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- pivot holes punched at the two hand pivots -->
+  <circle cx="415" cy="650" r="18" fill="#21005D"/>
+  <circle cx="609" cy="650" r="18" fill="#21005D"/>
+</svg>
