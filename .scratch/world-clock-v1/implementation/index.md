@@ -8,7 +8,7 @@ Specification: [World Clock v1 implementation specification](../spec.md)
 
 Approved breakdown: [Implementation-ticket breakdown](../implementation-tickets-draft.md)
 
-All tickets are single-session tracer-bullet slices. Work directly on `master`; do not create a branch or pull request. Keep the repository green and the delivered behavior demoable at the end of every ticket. Claim a ready ticket before work and take only tickets whose blockers are complete.
+All tickets are single-session tracer-bullet slices. v1 was implemented directly on `master`. From v1.1 onward, work on a topic branch and merge with `git merge --no-ff`; see [World Clock v1.1](../../world-clock-v1.1/map.md). Keep the repository green and the delivered behavior demoable at the end of every ticket. Claim a ready ticket before work and take only tickets whose blockers are complete.
 
 ## Dependency order
 
@@ -30,7 +30,7 @@ All tickets are single-session tracer-bullet slices. Work directly on `master`; 
 
 ## Current frontier
 
-The v1 destination is reached. All thirteen implementation tickets are complete;
-there is no remaining implementation frontier. Physical TalkBack operation is
-owner-deferred indefinitely, while automated native accessibility coverage remains
-part of the passing release gate.
+The v1 destination is reached. All thirteen implementation tickets are complete.
+Physical TalkBack operation is owner-deferred indefinitely, while automated
+native accessibility coverage remains part of the passing release gate. Further
+work is tracked in [World Clock v1.1](../../world-clock-v1.1/map.md).
