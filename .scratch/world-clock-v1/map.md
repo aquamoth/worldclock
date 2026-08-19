@@ -46,7 +46,7 @@ required and pass.
 
 ## Not yet specified
 
-<!-- No remaining fog: implementation execution is next; the indexed frontier starts with “Launch the live local clock.” -->
+<!-- No remaining fog or implementation frontier: the v1 destination is reached. Physical TalkBack operation remains owner-deferred indefinitely. -->
 
 ## Out of scope
 
