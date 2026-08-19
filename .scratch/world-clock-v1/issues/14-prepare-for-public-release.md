@@ -24,14 +24,19 @@ identity, and release hygiene that a public product requires.
   acceptance pass on the new ID before publishing; uninstall the old package from the
   Pixel 7a as part of that handoff.
 
-**Web presence on trustfall.se (owner populates the pages; work here only references them):**
+**GitHub Pages product presence (designed separately; work here publishes and references it):**
 
-- App landing page at `https://www.trustfall.se/worldclock` — description,
-  screenshots, and a support contact on the trustfall.se domain.
-- Privacy policy at `https://www.trustfall.se/worldclock/privacy` — the app is fully
-  offline and collects nothing, but the Play Store requires a reachable policy URL.
-- Keep the URLs above in sync with `app.json` (`extra.homepage`) and
-  `package.json` (`homepage`) if the final paths differ.
+- User-facing product site rooted at `https://aquamoth.github.io/worldclock/`,
+  with the development repository presented as a secondary destination.
+- A stable privacy-policy page on that site. The app is fully offline and
+  collects nothing, but Google Play requires the policy both in Play Console
+  and through a direct, discoverable in-app link.
+- The site's information architecture, exact policy URL, content, and visual
+  direction are decided in
+  [Design the GitHub Pages product site](../../world-clock-v1.1/issues/06-design-the-github-pages-product-site.md).
+- Once those URLs are settled, keep them in sync with `app.json`
+  (`extra.homepage`), `package.json` (`homepage`), the README, and release
+  conformance checks.
 
 **Logotype and store assets:**
 

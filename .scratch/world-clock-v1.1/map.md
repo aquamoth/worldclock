@@ -5,9 +5,10 @@ Label: wayfinder:map
 ## Destination
 
 Specify and implement the next product increment on top of the validated v1
-Android app: an About dialog, Play Store updates, an analog clock-face theme, a
-lock-screen widget, and a low-priority investigation of a live launcher icon.
-Finish the still-open public-release work that v1 left on the map.
+Android app: a user-facing GitHub Pages product site and required in-app privacy
+policy entry, Play Store updates, an analog clock-face theme, a lock-screen
+widget, and a low-priority investigation of a live launcher icon. Finish the
+still-open public-release work that v1 left on the map.
 
 Status: specified-as-open. v1 is closed as a privately validated app; v1.1 is
 the development line from this point.
@@ -31,13 +32,14 @@ the development line from this point.
 ## Decisions so far
 
 - [Add an analog clock-face theme](issues/05-add-an-analog-clock-face-theme.md) — App-wide analog/digital clock face, independent of layout design; reduced hour/minute dial with a compact digital caption and digital TalkBack labels.
+- [Add an About dialog](issues/01-add-an-about-dialog.md) — Skip the About UI; use a user-facing GitHub Pages site for product identity and expose the required privacy policy directly in-app.
 
 v1.1 inherits the closed v1 decisions in
 [World Clock v1](../world-clock-v1/map.md).
 
 ## Not yet specified
 
-- [Add an About dialog](issues/01-add-an-about-dialog.md) — Show publisher identity and a link to the Trustfall landing page.
+- [Design the GitHub Pages product site](issues/06-design-the-github-pages-product-site.md) — Grill a normal-user landing page, its required privacy policy, support and install paths, and a secondary link to the development repository.
 - [Support Play Store auto-updates](issues/02-support-play-store-auto-updates.md) — Let installed builds update once the app is on the Play Store. Blocked by v1 issue 14.
 - [Research a live launcher icon](issues/03-research-a-live-launcher-icon.md) — Low priority. Can the dress-watch mark move its hands while the app is not running?
 - [Add a lock-screen widget](issues/04-add-a-lock-screen-widget.md) — A lock-screen widget that reuses the v1 snapshot and projection contracts.
