@@ -30,7 +30,9 @@ the development line from this point.
 
 ## Decisions so far
 
-None yet. v1.1 inherits the closed v1 decisions in
+- [Add an analog clock-face theme](issues/05-add-an-analog-clock-face-theme.md) — App-wide analog/digital clock face, independent of layout design; reduced hour/minute dial with a compact digital caption and digital TalkBack labels.
+
+v1.1 inherits the closed v1 decisions in
 [World Clock v1](../world-clock-v1/map.md).
 
 ## Not yet specified
@@ -39,7 +41,7 @@ None yet. v1.1 inherits the closed v1 decisions in
 - [Support Play Store auto-updates](issues/02-support-play-store-auto-updates.md) — Let installed builds update once the app is on the Play Store. Blocked by v1 issue 14.
 - [Research a live launcher icon](issues/03-research-a-live-launcher-icon.md) — Low priority. Can the dress-watch mark move its hands while the app is not running?
 - [Add a lock-screen widget](issues/04-add-a-lock-screen-widget.md) — A lock-screen widget that reuses the v1 snapshot and projection contracts.
-- [Add an analog clock-face theme](issues/05-add-an-analog-clock-face-theme.md) — Optional analog faces instead of digital times, without changing the clock-collection model.
+
 
 Inherited from v1:
 

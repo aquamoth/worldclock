@@ -1,7 +1,7 @@
 # Add an analog clock-face theme
 
 Type: grilling
-Status: open
+Status: closed
 Assignee:
 Blocked by:
 
@@ -35,4 +35,16 @@ shared comparison instant, or the existing grouped/airy/tiles layout designs?
 
 ## Resolution
 
-Open.
+Analog is an app-wide **clock face**, defaulting to digital, independent of
+layout design (grouped / airy / tiles) and persisted like the other settings.
+
+The analog face is a reduced 12-hour dial: rim, cardinal ticks with a longer
+12, hour and minute hands, no seconds and no subdial. Hands are derived from
+`wallMinuteOfDay`, so 13:05 and 1:05 PM share a dial position. Material You
+colors ink the rim and hands.
+
+TalkBack still speaks the digital time on the existing adjustable control;
+the analog drawing is hidden from the accessibility tree. A compact digital
+caption (with AM/PM when the phone is in 12-hour mode) stays under the dial
+so 12/24-hour preference and small-size reading remain possible. Name,
+offset, and day difference are unchanged. Scrubbing is unchanged.

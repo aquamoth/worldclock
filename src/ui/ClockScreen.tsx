@@ -33,6 +33,7 @@ import type {
 } from "../application/liveClock";
 import type { ClockCollectionProjection } from "../domain/clockCollection";
 import { formatEffectiveOffset } from "../domain/clock";
+import { AnalogClockFace } from "./AnalogClockFace";
 import { revealClock } from "./nativeClockReveal";
 import {
   resolvePresentation,
@@ -77,6 +78,8 @@ interface ClockScreenProps {
   readonly onBackToLive: () => void;
   readonly design?: DesignVariant;
   readonly onSelectDesign?: (design: DesignVariant) => void;
+  readonly clockFace?: ClockFace;
+  readonly onSelectClockFace?: (clockFace: ClockFace) => void;
   readonly scrubDirection?: ScrubDirection;
   readonly onSelectScrubDirection?: (direction: ScrubDirection) => void;
 }
@@ -98,6 +101,16 @@ export const designVariants: readonly {
   { key: "grouped", label: "Tonal groups" },
   { key: "airy", label: "Airy type" },
   { key: "tiles", label: "Tile grid" },
+];
+
+export type ClockFace = "digital" | "analog";
+
+export const clockFaces: readonly {
+  readonly key: ClockFace;
+  readonly label: string;
+}[] = [
+  { key: "digital", label: "Digital" },
+  { key: "analog", label: "Analog" },
 ];
 
 const semanticTime = (clock: ClockCollectionProjection): string =>
@@ -293,11 +306,22 @@ function AdjustableSurface({
   );
 }
 
+function analogFaceSize(
+  design: DesignVariant,
+  isHero: boolean,
+  stackDenseContent: boolean,
+): number {
+  if (isHero) return stackDenseContent ? 72 : 96;
+  if (stackDenseContent) return 48;
+  return design === "tiles" ? 52 : 56;
+}
+
 function ClockRow({
   clock,
   model,
   colors,
   design,
+  clockFace,
   isHero,
   scrubDirection,
   stackDenseContent,
@@ -319,6 +343,7 @@ function ClockRow({
   readonly model: LiveClockScreenModel;
   readonly colors: SemanticTheme;
   readonly design: DesignVariant;
+  readonly clockFace: ClockFace;
   readonly isHero: boolean;
   readonly scrubDirection: ScrubDirection;
   readonly stackDenseContent: boolean;
@@ -362,6 +387,12 @@ function ClockRow({
     onCancel: onCancelScrub,
   });
   const stackedContent = stackDenseContent || isHero || design === "tiles";
+  const analogFace = clockFace === "analog";
+  const analogSize = analogFaceSize(design, isHero, stackDenseContent);
+  const analogInk =
+    isHero && design === "airy" ? colors.accent : colors.primary;
+  const analogMinuteInk =
+    isHero && design === "airy" ? colors.primary : colors.accent;
   return (
     <GestureDetector gesture={panGesture}>
     <View
@@ -425,15 +456,34 @@ function ClockRow({
             >
               ‹
             </Animated.Text>
-            <View style={[styles.timeValue, stackDenseContent && styles.timeValueDense]}>
+            <View
+              style={[
+                styles.timeValue,
+                (stackDenseContent || analogFace) && styles.timeValueDense,
+              ]}
+            >
+              {analogFace ? (
+                <AnalogClockFace
+                  testID={`clock-analog-${clock.id}`}
+                  wallMinuteOfDay={clock.wallMinuteOfDay}
+                  size={analogSize}
+                  rimColor={analogInk}
+                  hourHandColor={analogInk}
+                  minuteHandColor={analogMinuteInk}
+                />
+              ) : null}
               <Text
                 testID={`clock-time-${clock.id}`}
                 style={[
                   styles.time,
-                  design === "airy" && styles.timeAiry,
-                  design === "tiles" && styles.timeTile,
-                  isHero && styles.timeHero,
-                  stackDenseContent && styles.timeDense,
+                  analogFace
+                    ? styles.timeAnalogCaption
+                    : [
+                        design === "airy" && styles.timeAiry,
+                        design === "tiles" && styles.timeTile,
+                        isHero && styles.timeHero,
+                        stackDenseContent && styles.timeDense,
+                      ],
                   {
                     color:
                       isHero && design === "airy"
@@ -445,7 +495,13 @@ function ClockRow({
                 {clock.time}
               </Text>
               {clock.period ? (
-                <Text style={[styles.period, { color: colors.secondary }]}>
+                <Text
+                  style={[
+                    styles.period,
+                    analogFace && styles.periodAnalogCaption,
+                    { color: colors.secondary },
+                  ]}
+                >
                   {clock.period}
                 </Text>
               ) : null}
@@ -769,6 +825,8 @@ export function ClockScreen({
   onBackToLive,
   design = "grouped",
   onSelectDesign,
+  clockFace = "digital",
+  onSelectClockFace,
   scrubDirection = "rightEarlier",
   onSelectScrubDirection,
 }: ClockScreenProps) {
@@ -1137,6 +1195,7 @@ export function ClockScreen({
               <View />
             )}
             {onSelectDesign === undefined &&
+            onSelectClockFace === undefined &&
             onSelectScrubDirection === undefined ? null : (
               <Pressable
                 accessibilityRole="button"
@@ -1178,6 +1237,7 @@ export function ClockScreen({
                 model={model}
                 colors={colors}
                 design={design}
+                clockFace={clockFace}
                 isHero={isHero}
                 scrubDirection={scrubDirection}
                 stackDenseContent={presentation.stackDenseContent}
@@ -1290,6 +1350,7 @@ export function ClockScreen({
       </Pressable>
       {settingsVisible &&
       (onSelectDesign !== undefined ||
+        onSelectClockFace !== undefined ||
         onSelectScrubDirection !== undefined) ? (
         <Modal
           testID="settings-modal"
@@ -1299,6 +1360,12 @@ export function ClockScreen({
           onRequestClose={() => setSettingsVisible(false)}
         >
           <View style={styles.modalBackdrop}>
+            <ScrollView
+              testID="settings-scroll"
+              horizontal={false}
+              contentContainerStyle={styles.modalScrollContent}
+              style={{ maxHeight: presentation.modalMaxHeight }}
+            >
             <View
               accessibilityViewIsModal
               style={[styles.modalSurface, { backgroundColor: colors.surface }]}
@@ -1330,6 +1397,38 @@ export function ClockScreen({
                         style={[styles.settingRadioMark, { color: colors.accent }]}
                       >
                         {design === key ? "◉" : "○"}
+                      </Text>
+                      <Text style={[styles.settingLabel, { color: colors.primary }]}>
+                        {label}
+                      </Text>
+                    </Pressable>
+                  ))}
+                </View>
+              )}
+              {onSelectClockFace === undefined ? null : (
+                <View accessibilityRole="radiogroup" style={styles.settingGroup}>
+                  <Text
+                    style={[styles.settingGroupLabel, { color: colors.secondary }]}
+                  >
+                    Clock face
+                  </Text>
+                  {clockFaces.map(({ key, label }) => (
+                    <Pressable
+                      key={key}
+                      accessibilityRole="radio"
+                      accessibilityLabel={label}
+                      accessibilityState={{ checked: clockFace === key }}
+                      onPress={() => onSelectClockFace(key)}
+                      style={({ pressed }) => [
+                        styles.settingRadio,
+                        { opacity: pressed ? 0.7 : 1 },
+                      ]}
+                    >
+                      <Text
+                        importantForAccessibility="no-hide-descendants"
+                        style={[styles.settingRadioMark, { color: colors.accent }]}
+                      >
+                        {clockFace === key ? "◉" : "○"}
                       </Text>
                       <Text style={[styles.settingLabel, { color: colors.primary }]}>
                         {label}
@@ -1381,6 +1480,7 @@ export function ClockScreen({
                 </Pressable>
               </View>
             </View>
+            </ScrollView>
           </View>
         </Modal>
       ) : null}
@@ -1633,7 +1733,9 @@ const styles = StyleSheet.create({
   timeTile: { fontSize: 28 },
   timeHero: { fontSize: 56, fontWeight: "300", letterSpacing: -1 },
   timeDense: { fontSize: 30 },
+  timeAnalogCaption: { fontSize: 16, fontWeight: "600" },
   period: { fontSize: 16, fontWeight: "600", marginLeft: 5 },
+  periodAnalogCaption: { marginLeft: 0 },
   clockDetails: { flex: 1, minWidth: 0 },
   clockName: { fontSize: 19, fontWeight: "600" },
   metadataLine: { flexDirection: "row", alignItems: "center", flexWrap: "wrap", gap: 10, marginTop: 4 },

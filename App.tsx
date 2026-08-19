@@ -21,13 +21,16 @@ import { systemTime } from "./src/adapters/systemTime";
 import { createLiveClockApplication } from "./src/application/liveClock";
 import {
   ClockScreen,
+  clockFaces,
   designVariants,
   scrubDirections,
+  type ClockFace,
   type DesignVariant,
 } from "./src/ui/ClockScreen";
 import type { ScrubDirection } from "./src/ui/scrubGesture";
 
 const DESIGN_SETTING_KEY = "worldclock.design.v1";
+const CLOCK_FACE_SETTING_KEY = "worldclock.clockFace.v1";
 const SCRUB_DIRECTION_SETTING_KEY = "worldclock.scrubDirection.v1";
 
 export default function App() {
@@ -59,6 +62,19 @@ export default function App() {
   const selectDesign = useCallback((next: DesignVariant) => {
     setDesign(next);
     void AsyncStorage.setItem(DESIGN_SETTING_KEY, next);
+  }, []);
+
+  const [clockFace, setClockFace] = useState<ClockFace>("digital");
+  useEffect(() => {
+    void AsyncStorage.getItem(CLOCK_FACE_SETTING_KEY).then((stored) => {
+      if (clockFaces.some(({ key }) => key === stored)) {
+        setClockFace(stored as ClockFace);
+      }
+    });
+  }, []);
+  const selectClockFace = useCallback((next: ClockFace) => {
+    setClockFace(next);
+    void AsyncStorage.setItem(CLOCK_FACE_SETTING_KEY, next);
   }, []);
 
   const [scrubDirection, setScrubDirection] =
@@ -148,6 +164,8 @@ export default function App() {
           onBackToLive={application.backToLive}
           design={design}
           onSelectDesign={selectDesign}
+          clockFace={clockFace}
+          onSelectClockFace={selectClockFace}
           scrubDirection={scrubDirection}
           onSelectScrubDirection={selectScrubDirection}
         />

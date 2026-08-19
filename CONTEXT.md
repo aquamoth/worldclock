@@ -63,3 +63,13 @@ _Avoid_: Snap, magnet
 **Day difference**:
 The signed marker showing how many calendar dates a selected clock is ahead of or behind the local clock at the same instant. It is omitted when both clocks have the same calendar date.
 _Avoid_: Timezone difference, date selector
+
+**Clock face**:
+The presentation of projected wall time on a collection row: digital numerals or analog hands. It is an app-wide choice, independent of layout design.
+_Avoid_: Theme, watch face, design
+
+**Digital clock face**:
+The default clock face, showing hour and minute as numerals, with an AM/PM marker when the phone uses 12-hour time.
+
+**Analog clock face**:
+A clock face that shows the same projected hour and minute as hour and minute hands on a 12-hour dial. It does not show seconds. A compact digital caption remains so 12/24-hour preference stays visible.
