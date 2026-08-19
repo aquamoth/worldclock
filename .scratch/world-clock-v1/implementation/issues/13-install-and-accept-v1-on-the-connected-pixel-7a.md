@@ -12,6 +12,13 @@ Index: [World Clock v1 implementation tickets](../index.md)
 
 **Status:** in-progress (claimed by `/root/impl_01_live_local`)
 
+**Checkpoint:** The exact-candidate automated, gesture, Virtual-mutation,
+lifecycle/preference, responsive collection/overlay, and non-TalkBack time-rule
+checks are recorded in [the Pixel acceptance record](../release-gates/ticket-13-pixel-acceptance.md).
+TalkBack 17's first-run/update tutorial currently requires a physical activation
+gesture before the normative nonvisual journey can proceed; ticket completion and
+the remaining exact-candidate empty/cap/error reruns stay open.
+
 **Delivery workflow:** Work directly on `master`; do not create a branch or pull request. Make no new product decision or opportunistic redesign. Finish only when the destination is genuinely accepted.
 
 ## Scoped seams

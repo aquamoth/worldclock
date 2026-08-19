@@ -78,3 +78,29 @@ The clean install reported the repository's existing dependency audit result of 
 - Restoration: cleanup restored Wi-Fi to on and mobile data to off; a subsequent read reported Wi-Fi enabled and connected, with mobile data still off
 
 This checkpoint intentionally covers only exact-candidate installation, Android/Hermes corpus execution, and cleared-data offline launch smoke. Ticket 13 owns the full interactive, responsive, accessibility, lifecycle, mutation, and persistence acceptance pass.
+
+## Ticket 13 superseding candidate
+
+Pixel acceptance exposed an Android gesture-start defect: a real pan begins with zero
+translation, while the UI chose and locked an axis at that zero-valued start event.
+The fix waits for post-slop travel before choosing the dominant axis and is covered by
+a native-handler regression test. Selector cancellation also gained an explicit native
+accessibility label, and the clean gate was made independent of host Watchman state.
+
+- Source commit: `bfe544ab7e6c6cb62de8b1929a35a8cbee79a245`
+- Artifact: `.scratch/world-clock-v1/release-artifacts/worldclock-v1-1.0.0-release.apk`
+- SHA-256: `7e92c3d3f15eb1bf466888ae816ab5acdb7a4eb28486d2f182aa542080d93d36`
+- Size: `83,622,031` bytes
+- Automated results: catalog `312/312`; TypeScript passed; Jest `29/29`
+  suites and `236/236` tests; Expo Doctor `21/21`; CNG SHA-256
+  `f46678646a47314b4ee5e7b4e2d032310701236c151ffafc1d206d8e540e867e`
+  with zero tracked native files; signed production build passed in `38s`.
+- Connected checkpoint: installed with `adb install -r` on serial
+  `34051JEHN12837`; release-process logcat emitted exactly one
+  `WORLD_CLOCK_HERMES_CONFORMANCE_PASS` marker for all `124` cases during
+  the later offline process-death launch; no application crash or unhandled
+  rejection signature was found.
+
+This candidate supersedes the earlier artifact identity above for final v1
+acceptance. The earlier record remains as the original ticket-12 checkpoint audit
+trail.
