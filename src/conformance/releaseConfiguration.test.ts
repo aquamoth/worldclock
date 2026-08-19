@@ -6,7 +6,7 @@ describe("Android release configuration", () => {
   it("pins Hermes, API 29, and reusable clean/CNG release gates", () => {
     expect(appConfiguration.expo).not.toHaveProperty("jsEngine");
     expect(appConfiguration.expo).toMatchObject({
-      android: { package: "se.trustfall.worldclock", versionCode: 1 },
+      android: { package: "se.trustfall.worldclock" },
       plugins: expect.arrayContaining([
         [
           "expo-build-properties",
@@ -21,6 +21,11 @@ describe("Android release configuration", () => {
     expect(packageManifest.devDependencies).toMatchObject({
       "expo-doctor": "1.20.2",
     });
+  });
+
+  it("leaves versioning to app.config.ts, which derives it from git", () => {
+    expect(appConfiguration.expo).not.toHaveProperty("version");
+    expect(appConfiguration.expo.android).not.toHaveProperty("versionCode");
   });
 
   it("declares the Trustfall AB publisher identity", () => {
