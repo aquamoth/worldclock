@@ -2,7 +2,7 @@
 
 Type: grilling
 Status: open
-Assignee:
+Assignee: Mattias Åslund
 Blocked by:
 
 ## Question
