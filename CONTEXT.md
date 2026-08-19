@@ -33,16 +33,32 @@ The normal mode in which every clock displays the current instant.
 _Avoid_: Real-time mode
 
 **Virtual time**:
-The temporary mode entered by scrubbing a clock or the time-status section, in which every clock displays one shared frozen comparison instant.
+The temporary mode entered by scrubbing a clock or the time-status section, in which every clock displays one shared comparison instant. A session is either offset-anchored or instant-anchored, depending on which surface entered it.
 _Avoid_: Calendar mode, edit mode
 
+**Offset-anchored virtual time**:
+The virtual-time session created by scrubbing the time-status section. The virtual offset is held fixed while the comparison instant keeps tracking live time, so every clock advances with the real clock at the held offset.
+_Avoid_: Frozen offset
+
+**Instant-anchored virtual time**:
+The virtual-time session created by scrubbing a clock row. The comparison instant is frozen at the scrubbed wall time while the displayed virtual offset counts down (and past zero) as live time approaches and passes it.
+_Avoid_: Frozen clocks
+
 **Comparison instant**:
-The frozen absolute instant projected through every clock while virtual time is active.
+The absolute instant projected through every clock while virtual time is active. It tracks live time in an offset-anchored session and is frozen in an instant-anchored session.
 _Avoid_: Selected time, scrubbed time
 
 **Virtual offset**:
-The signed duration from the live reference instant captured on entering virtual time to the comparison instant.
+The signed duration from the current live instant to the comparison instant. It is held in an offset-anchored session and derived (counting down) in an instant-anchored session.
 _Avoid_: Timezone difference, timezone offset
+
+**Scrub direction**:
+The user preference for which horizontal swipe direction moves time later. "Swipe right goes earlier" drags the timeline itself (the default); "Swipe right goes later" pushes time forward. Hardware arrow keys follow the same preference; accessibility increment/decrement always mean later/earlier.
+_Avoid_: Inverted controls
+
+**Zero detent**:
+The friction applied while a scrub gesture crosses live time: no single movement may jump across zero without landing on it first, and landing re-anchors the gesture at zero — a finger that stops moving stays caught on the current time indefinitely, and passing requires deliberate further travel beyond the catch point.
+_Avoid_: Snap, magnet
 
 **Day difference**:
 The signed marker showing how many calendar dates a selected clock is ahead of or behind the local clock at the same instant. It is omitted when both clocks have the same calendar date.

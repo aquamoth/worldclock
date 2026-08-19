@@ -266,16 +266,20 @@ export function createLiveClockApplication(
   let persistenceState: PersistenceState = { status: "idle" };
   let virtualSession:
     | {
-        readonly liveReferenceMs: number;
-        readonly comparisonInstantMs: number;
+        readonly anchor: "offset";
         readonly offsetMinutes: number;
+      }
+    | {
+        readonly anchor: "instant";
+        readonly comparisonInstantMs: number;
       }
     | undefined;
   let statusGesture:
     | {
         readonly startSession: typeof virtualSession;
-        readonly liveReferenceMs: number;
-        readonly startOffsetMinutes: number;
+        anchorOffsetMinutes: number;
+        anchorSteps: number;
+        anchorEscapeSteps: number;
       }
     | undefined;
   let rowGesture:
@@ -283,10 +287,21 @@ export function createLiveClockApplication(
         readonly clockId: string;
         readonly startSession: typeof virtualSession;
         readonly liveReferenceMs: number;
-        readonly startOffsetMinutes: number;
-        readonly rowWallMinuteOfDay: number;
+        anchorOffsetMinutes: number;
+        anchorSteps: number;
+        anchorEscapeSteps: number;
+        anchorWallMinuteOfDay: number;
       }
     | undefined;
+
+  const effectiveOffsetMinutes = (
+    nowMs = dependencies.time.now(),
+  ): number =>
+    virtualSession === undefined
+      ? 0
+      : virtualSession.anchor === "offset"
+        ? virtualSession.offsetMinutes
+        : Math.round((virtualSession.comparisonInstantMs - nowMs) / 60_000);
 
   const selectorResults = (): readonly SelectorResultModel[] => {
     if (selectorQuery === undefined) return [];
@@ -305,8 +320,14 @@ export function createLiveClockApplication(
   };
 
   const sampleScreen = (): LiveClockScreenModel => {
+    const nowMs = dependencies.time.now();
+    const virtualOffsetMinutes = effectiveOffsetMinutes(nowMs);
     const sampledInstantMs =
-      virtualSession?.comparisonInstantMs ?? dependencies.time.now();
+      virtualSession === undefined
+        ? nowMs
+        : virtualSession.anchor === "instant"
+          ? virtualSession.comparisonInstantMs
+          : nowMs + virtualOffsetMinutes * 60_000;
     const preferences = dependencies.devicePreferences.read();
     let clocks = projectClockCollection(
       {
@@ -363,13 +384,13 @@ export function createLiveClockApplication(
             mode: "virtual",
             status: {
               label: "Virtual time",
-              offset: formatVirtualOffset(virtualSession.offsetMinutes),
-              offsetMinutes: virtualSession.offsetMinutes,
+              offset: formatVirtualOffset(virtualOffsetMinutes),
+              offsetMinutes: virtualOffsetMinutes,
               offsetAccessibilityLabel: `${formatOffsetDuration(
-                virtualSession.offsetMinutes,
-              )} ${virtualSession.offsetMinutes < 0 ? "earlier" : "later"}`,
+                virtualOffsetMinutes,
+              )} ${virtualOffsetMinutes < 0 ? "earlier" : "later"}`,
               accessibilityValue: formatAccessibleOffset(
-                virtualSession.offsetMinutes,
+                virtualOffsetMinutes,
                 localTime,
               ),
             },
@@ -589,24 +610,22 @@ export function createLiveClockApplication(
   const applyVirtualOffset = (
     offsetMinutes: number,
     wrapped: boolean,
-    liveReferenceMs?: number,
+    instantReferenceMs?: number,
   ): void => {
-    const previousOffset = virtualSession?.offsetMinutes ?? 0;
+    const previousOffset = effectiveOffsetMinutes();
     if (offsetMinutes === previousOffset) return;
     const enteringVirtual = virtualSession === undefined && offsetMinutes !== 0;
     if (offsetMinutes === 0) {
       virtualSession = undefined;
       announce("Live time.");
     } else {
-      const reference =
-        liveReferenceMs ??
-        virtualSession?.liveReferenceMs ??
-        dependencies.time.now();
-      virtualSession = {
-        liveReferenceMs: reference,
-        comparisonInstantMs: reference + offsetMinutes * 60_000,
-        offsetMinutes,
-      };
+      virtualSession =
+        instantReferenceMs === undefined
+          ? { anchor: "offset", offsetMinutes }
+          : {
+              anchor: "instant",
+              comparisonInstantMs: instantReferenceMs + offsetMinutes * 60_000,
+            };
       const prefix = wrapped
         ? "Wrapped. "
         : enteringVirtual
@@ -616,6 +635,31 @@ export function createLiveClockApplication(
       return;
     }
     resample();
+  };
+
+  // A scrub update may not jump across live time in one movement: it lands on
+  // zero first, and only a later update in the same gesture may pass it.
+  const clampCrossThroughZero = (offsetMinutes: number, wrapped: boolean): number => {
+    if (wrapped || offsetMinutes === 0) return offsetMinutes;
+    const previous = effectiveOffsetMinutes();
+    if (previous !== 0 && previous > 0 !== offsetMinutes > 0) return 0;
+    return offsetMinutes;
+  };
+
+  // When a scrub gesture lands on live time it re-anchors there: a finger
+  // that stops moving stays caught on "now" indefinitely, and escaping
+  // requires deliberate further travel beyond the catch point.
+  const ZERO_ESCAPE_STEPS = 2;
+  const anchoredSteps = (
+    anchor: {
+      readonly anchorSteps: number;
+      readonly anchorEscapeSteps: number;
+    },
+    signedStepsFromGestureStart: number,
+  ): number => {
+    const delta = signedStepsFromGestureStart - anchor.anchorSteps;
+    if (Math.abs(delta) <= anchor.anchorEscapeSteps) return 0;
+    return delta - Math.sign(delta) * anchor.anchorEscapeSteps;
   };
 
   const restoreScrubStart = (startSession: typeof virtualSession): void => {
@@ -1010,33 +1054,32 @@ export function createLiveClockApplication(
       return retry();
     },
     adjustStatus: (direction) => {
-      const result = stepStatusOffset(
-        virtualSession?.offsetMinutes ?? 0,
-        direction,
-      );
+      const result = stepStatusOffset(effectiveOffsetMinutes(), direction);
       applyVirtualOffset(result.offsetMinutes, result.wrapped);
     },
     beginStatusScrub: () => {
       if (statusGesture !== undefined || rowGesture !== undefined) return;
       statusGesture = {
         startSession: virtualSession,
-        liveReferenceMs:
-          virtualSession?.liveReferenceMs ?? dependencies.time.now(),
-        startOffsetMinutes: virtualSession?.offsetMinutes ?? 0,
+        anchorOffsetMinutes: effectiveOffsetMinutes(),
+        anchorSteps: 0,
+        anchorEscapeSteps: 0,
       };
       heldClockOrder = screen.clocks.map(({ id }) => id);
     },
     updateStatusScrub: (signedStepsFromGestureStart) => {
       if (statusGesture === undefined) return;
       const result = moveStatusOffset(
-        statusGesture.startOffsetMinutes,
-        signedStepsFromGestureStart,
+        statusGesture.anchorOffsetMinutes,
+        anchoredSteps(statusGesture, signedStepsFromGestureStart),
       );
-      applyVirtualOffset(
-        result.offsetMinutes,
-        result.wrapped,
-        statusGesture.liveReferenceMs,
-      );
+      const target = clampCrossThroughZero(result.offsetMinutes, result.wrapped);
+      if (target === 0 && !result.wrapped && effectiveOffsetMinutes() !== 0) {
+        statusGesture.anchorOffsetMinutes = 0;
+        statusGesture.anchorSteps = signedStepsFromGestureStart;
+        statusGesture.anchorEscapeSteps = ZERO_ESCAPE_STEPS;
+      }
+      applyVirtualOffset(target, result.wrapped);
     },
     endStatusScrub: () => {
       if (statusGesture === undefined) return;
@@ -1055,12 +1098,16 @@ export function createLiveClockApplication(
       const clock = screen.clocks.find(({ id }) => id === clockId);
       if (clock?.wallMinuteOfDay === undefined) return false;
       const result = stepRowOffset(
-        virtualSession?.offsetMinutes ?? 0,
+        effectiveOffsetMinutes(),
         clock.wallMinuteOfDay,
         direction,
       );
       requestFocus({ clockId }, false);
-      applyVirtualOffset(result.offsetMinutes, result.wrapped);
+      applyVirtualOffset(
+        result.offsetMinutes,
+        result.wrapped,
+        dependencies.time.now(),
+      );
       return true;
     },
     beginRowScrub: (clockId) => {
@@ -1070,10 +1117,11 @@ export function createLiveClockApplication(
       rowGesture = {
         clockId,
         startSession: virtualSession,
-        liveReferenceMs:
-          virtualSession?.liveReferenceMs ?? dependencies.time.now(),
-        startOffsetMinutes: virtualSession?.offsetMinutes ?? 0,
-        rowWallMinuteOfDay: clock.wallMinuteOfDay,
+        liveReferenceMs: dependencies.time.now(),
+        anchorOffsetMinutes: effectiveOffsetMinutes(),
+        anchorSteps: 0,
+        anchorEscapeSteps: 0,
+        anchorWallMinuteOfDay: clock.wallMinuteOfDay,
       };
       heldClockOrder = screen.clocks.map(({ id }) => id);
       return true;
@@ -1081,15 +1129,23 @@ export function createLiveClockApplication(
     updateRowScrub: (signedStepsFromGestureStart) => {
       if (rowGesture === undefined) return;
       const result = moveRowOffset(
-        rowGesture.startOffsetMinutes,
-        rowGesture.rowWallMinuteOfDay,
-        signedStepsFromGestureStart,
+        rowGesture.anchorOffsetMinutes,
+        rowGesture.anchorWallMinuteOfDay,
+        anchoredSteps(rowGesture, signedStepsFromGestureStart),
       );
-      applyVirtualOffset(
-        result.offsetMinutes,
-        result.wrapped,
-        rowGesture.liveReferenceMs,
-      );
+      const target = clampCrossThroughZero(result.offsetMinutes, result.wrapped);
+      if (target === 0 && !result.wrapped && effectiveOffsetMinutes() !== 0) {
+        rowGesture.anchorWallMinuteOfDay =
+          ((((rowGesture.anchorWallMinuteOfDay -
+            rowGesture.anchorOffsetMinutes) %
+            1440) +
+            1440) %
+            1440);
+        rowGesture.anchorOffsetMinutes = 0;
+        rowGesture.anchorSteps = signedStepsFromGestureStart;
+        rowGesture.anchorEscapeSteps = ZERO_ESCAPE_STEPS;
+      }
+      applyVirtualOffset(target, result.wrapped, rowGesture.liveReferenceMs);
     },
     endRowScrub: () => {
       if (rowGesture === undefined) return;

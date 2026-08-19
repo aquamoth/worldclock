@@ -59,7 +59,7 @@ const createHarness = () => {
 };
 
 describe("status-surface Virtual time", () => {
-  it("moves every clock from one captured live reference and freezes until Back", async () => {
+  it("keeps every clock tracking live time at the held offset until Back", async () => {
     const { app, setNow, writes } = createHarness();
     await app.initialize();
 
@@ -77,12 +77,14 @@ describe("status-surface Virtual time", () => {
 
     setNow("2026-01-15T09:10:00Z");
     app.refresh();
-    expect(app.getScreen().sampledInstantMs).toBe(
-      Date.parse("2026-01-15T07:17:00Z"),
-    );
+    expect(app.getScreen()).toMatchObject({
+      mode: "virtual",
+      sampledInstantMs: Date.parse("2026-01-15T08:55:00Z"),
+      status: { offset: "−0:15" },
+    });
     expect(app.getScreen().clocks.map(({ time }) => time)).toEqual([
-      "07:17",
-      "08:17",
+      "08:55",
+      "09:55",
     ]);
 
     app.backToLive();
@@ -153,6 +155,39 @@ describe("status-surface Virtual time", () => {
       mode: "virtual",
       status: { offset: "+0:15" },
     });
+  });
+
+  it("catches a fast swipe on live time until the finger travels past the catch point", async () => {
+    const { app } = createHarness();
+    await app.initialize();
+
+    app.beginStatusScrub();
+    app.updateStatusScrub(1);
+    expect(app.getScreen().status?.offset).toBe("+0:15");
+
+    app.updateStatusScrub(-4);
+    expect(app.getScreen()).toMatchObject({
+      mode: "live",
+      announcement: { message: "Live time." },
+    });
+
+    // A resting or drifting finger stays caught on now indefinitely.
+    app.updateStatusScrub(-5);
+    expect(app.getScreen().mode).toBe("live");
+    app.updateStatusScrub(-6);
+    expect(app.getScreen().mode).toBe("live");
+
+    // Deliberate travel beyond the catch point escapes, one step at a time.
+    app.updateStatusScrub(-7);
+    expect(app.getScreen()).toMatchObject({
+      mode: "virtual",
+      status: { offset: "−0:15" },
+    });
+
+    // Coming back toward the catch point parks on now again.
+    app.updateStatusScrub(-6);
+    expect(app.getScreen().mode).toBe("live");
+    app.endStatusScrub();
   });
 
   it("keeps the comparison while mutating but never writes Virtual state", async () => {

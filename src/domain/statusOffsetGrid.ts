@@ -8,6 +8,20 @@ export interface StatusOffsetResult {
 const STEP_MINUTES = 15;
 const WINDOW_EDGE_MINUTES = 24 * 60;
 const WINDOW_SPAN_MINUTES = 48 * 60;
+const DETENT_MINUTES = 30;
+
+export const applyZeroDetent = (
+  gestureStartOffsetMinutes: number,
+  offsetMinutes: number,
+): number => {
+  if (gestureStartOffsetMinutes === 0) return offsetMinutes;
+  const towardZero = gestureStartOffsetMinutes > 0 ? 1 : -1;
+  const overshoot = -towardZero * offsetMinutes;
+  if (overshoot < 0) return offsetMinutes;
+  return overshoot <= DETENT_MINUTES
+    ? 0
+    : offsetMinutes + towardZero * DETENT_MINUTES;
+};
 
 export const wrapVirtualOffset = (offsetMinutes: number): StatusOffsetResult => {
   let wrappedOffset = offsetMinutes;
@@ -39,6 +53,9 @@ export function moveStatusOffset(
     return { offsetMinutes: gestureStartOffsetMinutes, wrapped: false };
   }
   return wrapVirtualOffset(
-    gestureStartOffsetMinutes + signedSteps * STEP_MINUTES,
+    applyZeroDetent(
+      gestureStartOffsetMinutes,
+      gestureStartOffsetMinutes + signedSteps * STEP_MINUTES,
+    ),
   );
 }

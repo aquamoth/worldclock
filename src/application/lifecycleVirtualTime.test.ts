@@ -104,13 +104,14 @@ describe("lifecycle-aware Live and Virtual time", () => {
     expect(scheduled.at(-1)?.delayMs).toBe(15_000);
   });
 
-  it("reprojects changed device preferences without changing either Virtual instant", async () => {
+  it("reprojects changed device preferences while the held offset keeps tracking live time", async () => {
     const { app, scheduled, setNow, setPreferences } = createLifecycleHarness();
     await app.initialize();
     app.start();
     app.adjustStatus("later");
-    const frozenComparison = app.getScreen().sampledInstantMs;
-    const frozenReference = frozenComparison - 15 * 60_000;
+    expect(app.getScreen().sampledInstantMs).toBe(
+      Date.parse("2026-01-15T07:47:00Z"),
+    );
 
     app.enterBackground();
     setNow("2026-01-15T12:00:00Z");
@@ -123,28 +124,22 @@ describe("lifecycle-aware Live and Virtual time", () => {
 
     expect(app.getScreen()).toMatchObject({
       mode: "virtual",
-      sampledInstantMs: frozenComparison,
-      status: { offset: "+0:15", accessibilityValue: "15 minutes later, 2:47 AM" },
+      sampledInstantMs: Date.parse("2026-01-15T12:15:00Z"),
+      status: { offset: "+0:15", accessibilityValue: "15 minutes later, 7:15 AM" },
       clocks: [
-        { name: "Local", time: "2:47", period: "AM", effectiveOffset: "UTC−05:00" },
-        { name: "Office", time: "8:47", period: "AM", effectiveOffset: "UTC+01:00" },
+        { name: "Local", time: "7:15", period: "AM", effectiveOffset: "UTC−05:00" },
+        { name: "Office", time: "1:15", period: "PM", effectiveOffset: "UTC+01:00" },
       ],
     });
-    const foregroundScreen = app.getScreen();
-    if (foregroundScreen.mode !== "virtual") throw new Error("expected Virtual time");
-    expect(
-      foregroundScreen.sampledInstantMs -
-        foregroundScreen.status.offsetMinutes * 60_000,
-    ).toBe(frozenReference);
 
     setNow("2026-01-15T12:01:00Z");
     scheduled.at(-1)?.callback();
     const tickedScreen = app.getScreen();
     if (tickedScreen.mode !== "virtual") throw new Error("expected Virtual time");
-    expect(tickedScreen.sampledInstantMs).toBe(frozenComparison);
-    expect(
-      tickedScreen.sampledInstantMs - tickedScreen.status.offsetMinutes * 60_000,
-    ).toBe(frozenReference);
+    expect(tickedScreen.sampledInstantMs).toBe(
+      Date.parse("2026-01-15T12:16:00Z"),
+    );
+    expect(tickedScreen.status.offsetMinutes).toBe(15);
 
     app.backToLive();
     expect(app.getScreen()).toMatchObject({

@@ -184,6 +184,7 @@ describe("clock-row Virtual time", () => {
     expect(app.getScreen().sampledInstantMs).toBe(
       Date.parse("2026-01-15T08:00:00Z"),
     );
+    expect(app.getScreen().status).toMatchObject({ offset: "−2:00" });
     expect(app.getScreen().clocks.map(({ id }) => id)).toEqual([
       "flip-city",
       "local",
@@ -200,6 +201,63 @@ describe("clock-row Virtual time", () => {
       clockId: "local",
       scrollIntoView: false,
       focus: true,
+    });
+  });
+
+  it("catches a fast row swipe on live time until the finger travels past the catch point", async () => {
+    const { app } = createHarness();
+    await app.initialize();
+
+    app.beginRowScrub("local");
+    app.updateRowScrub(1);
+    expect(app.getScreen().status).toMatchObject({ offset: "+0:13" });
+
+    app.updateRowScrub(-2);
+    expect(app.getScreen()).toMatchObject({
+      mode: "live",
+      announcement: { message: "Live time." },
+    });
+
+    // A resting or drifting finger stays caught on now indefinitely.
+    app.updateRowScrub(-3);
+    expect(app.getScreen().mode).toBe("live");
+    app.updateRowScrub(-4);
+    expect(app.getScreen().mode).toBe("live");
+
+    // Deliberate travel beyond the catch point escapes on the row lattice.
+    app.updateRowScrub(-5);
+    expect(app.getScreen()).toMatchObject({
+      mode: "virtual",
+      status: { offset: "−0:02" },
+    });
+    app.endRowScrub();
+  });
+
+  it("freezes the comparison instant while the virtual offset counts down live", async () => {
+    const { app, setNow } = createHarness();
+    await app.initialize();
+
+    app.adjustRow("office", "later");
+    expect(app.getScreen()).toMatchObject({
+      mode: "virtual",
+      sampledInstantMs: Date.parse("2026-01-15T07:45:00Z"),
+      status: { offset: "+0:13" },
+    });
+
+    setNow("2026-01-15T07:40:00Z");
+    app.refresh();
+    expect(app.getScreen()).toMatchObject({
+      mode: "virtual",
+      sampledInstantMs: Date.parse("2026-01-15T07:45:00Z"),
+      status: { offset: "+0:05" },
+    });
+
+    setNow("2026-01-15T07:50:00Z");
+    app.refresh();
+    expect(app.getScreen()).toMatchObject({
+      mode: "virtual",
+      sampledInstantMs: Date.parse("2026-01-15T07:45:00Z"),
+      status: { offset: "−0:05" },
     });
   });
 });

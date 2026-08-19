@@ -1,4 +1,5 @@
 import {
+  applyZeroDetent,
   wrapVirtualOffset,
   type StatusOffsetResult,
   type VirtualDirection,
@@ -40,6 +41,9 @@ export function moveRowOffset(
   const laterSteps = Math.max(0, Math.abs(signedSteps) - 1) * QUARTER_MINUTES;
   const signedLaterSteps = direction === "earlier" ? -laterSteps : laterSteps;
   return wrapVirtualOffset(
-    gestureStartOffsetMinutes + first + signedLaterSteps,
+    applyZeroDetent(
+      gestureStartOffsetMinutes,
+      gestureStartOffsetMinutes + first + signedLaterSteps,
+    ),
   );
 }

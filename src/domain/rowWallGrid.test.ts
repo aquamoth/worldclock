@@ -39,6 +39,21 @@ describe("row wall-clock quarter-hour grid", () => {
     });
   });
 
+  it("holds a detent at live time when a row gesture crosses zero", () => {
+    expect(moveRowOffset(28, 8 * 60, -2)).toEqual({
+      offsetMinutes: 0,
+      wrapped: false,
+    });
+    expect(moveRowOffset(28, 8 * 60, -3)).toEqual({
+      offsetMinutes: 0,
+      wrapped: false,
+    });
+    expect(moveRowOffset(28, 8 * 60, -4)).toEqual({
+      offsetMinutes: -2,
+      wrapped: false,
+    });
+  });
+
   it("preserves a nonzero row-derived remainder across both wrap directions", () => {
     expect(stepRowOffset(23 * 60 + 58, 7 * 60 + 30, "later")).toEqual({
       offsetMinutes: -(23 * 60 + 47),
