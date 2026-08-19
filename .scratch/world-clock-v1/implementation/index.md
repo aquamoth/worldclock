@@ -30,4 +30,7 @@ All tickets are single-session tracer-bullet slices. Work directly on `master`; 
 
 ## Current frontier
 
-[13 — Install and accept v1 on the connected Pixel 7a](issues/13-install-and-accept-v1-on-the-connected-pixel-7a.md) is now the sole frontier after completion of [12 — Prove the clean Android release and Hermes conformance gate](issues/12-prove-the-clean-android-release-and-hermes-conformance-gate.md).
+The v1 destination is reached. All thirteen implementation tickets are complete;
+there is no remaining implementation frontier. Physical TalkBack operation is
+owner-deferred indefinitely, while automated native accessibility coverage remains
+part of the passing release gate.

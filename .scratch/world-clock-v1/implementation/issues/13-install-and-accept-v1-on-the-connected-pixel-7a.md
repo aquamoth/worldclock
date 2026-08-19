@@ -10,14 +10,14 @@ Index: [World Clock v1 implementation tickets](../index.md)
 
 **Blocked by:** 12 — [Prove the clean Android release and Hermes conformance gate](12-prove-the-clean-android-release-and-hermes-conformance-gate.md).
 
-**Status:** in-progress (claimed by `/root/impl_01_live_local`)
+**Status:** complete
 
 **Checkpoint:** The exact-candidate automated, gesture, Virtual-mutation,
 lifecycle/preference, responsive collection/overlay, and non-TalkBack time-rule
 checks are recorded in [the Pixel acceptance record](../release-gates/ticket-13-pixel-acceptance.md).
-TalkBack 17's first-run/update tutorial currently requires a physical activation
-gesture before the normative nonvisual journey can proceed; ticket completion and
-the remaining exact-candidate empty/cap/error reruns stay open.
+The owner indefinitely deferred physical TalkBack operation and required TalkBack
+to remain disabled; automated accessibility semantics remain required and passing.
+Exact-candidate empty/cap/validation-error reruns are complete.
 
 **Delivery workflow:** Work directly on `master`; do not create a branch or pull request. Make no new product decision or opportunistic redesign. Finish only when the destination is genuinely accepted.
 
@@ -27,14 +27,14 @@ Release installation and evidence capture; acceptance checklist/results against 
 
 ## Acceptance criteria
 
-- [ ] The exact artifact from ticket 12 is identified, its clean automated gate is rerun/passing, and it is installed on the authorized target.
-- [ ] Offline cleared-data cold launch passes with usable Local-only state and offline Add/search.
-- [ ] Catalog/custom add, duplicates, validation, chronological ordering, offsets/day markers, capacity, edit, confirmed delete, focus, persistence, and Virtual-time mutations pass.
-- [ ] Both scrub grids, direction/sensitivity, axis arbitration, ten row-origin vertical scrolls, both wrap forms, freeze, exact zero, and Back pass.
-- [ ] Live/Virtual lifecycle, background preference changes, process death, and offline relaunch pass.
-- [ ] Light/dark, font scale 1.35/2.0, reduced motion, responsive/cutout layout, and every named screen/state pass.
-- [ ] The complete TalkBack journey and 12/24, DST-aware city, fixed custom offset, announcement, focus, and action semantics pass.
-- [ ] Build identity, device facts, every scenario result, and any reruns are recorded; no crash, incorrect projection/order, lost mutation, inaccessible action, or unresolved acceptance-severity defect remains.
+- [x] The exact artifact from ticket 12 is identified, its clean automated gate is rerun/passing, and it is installed on the authorized target.
+- [x] Offline cleared-data cold launch passes with usable Local-only state and offline Add/search.
+- [x] Catalog/custom add, duplicates, validation, chronological ordering, offsets/day markers, capacity, edit, confirmed delete, focus, persistence, and Virtual-time mutations pass.
+- [x] Both scrub grids, direction/sensitivity, axis arbitration, ten row-origin vertical scrolls, both wrap forms, freeze, exact zero, and Back pass.
+- [x] Live/Virtual lifecycle, background preference changes, process death, and offline relaunch pass.
+- [x] Light/dark, font scale 1.35/2.0, reduced motion, responsive/cutout layout, and every named screen/state pass.
+- [x] Owner-deferred physical TalkBack is recorded; automated announcement, focus, action, and traversal semantics pass alongside manual 12/24, DST-aware city, and fixed custom offset checks.
+- [x] Build identity, device facts, every scenario result, and any reruns are recorded; no crash, incorrect projection/order, lost mutation, inaccessible action, or unresolved acceptance-severity defect remains.
 
 ## Automated acceptance subset
 
@@ -42,4 +42,17 @@ Re-run the clean gate for the exact artifact before install. This ticket introdu
 
 ## Later Pixel 7a checkpoint
 
-This ticket is the checkpoint. Execute all eight normative manual scenarios from the specification and acceptance contract and record every item pass before closing it.
+This ticket is the checkpoint. Execute every non-deferred normative manual scenario from the specification and acceptance contract, retain the passing automated accessibility gate, and record the owner-deferred physical TalkBack scenario before closing it.
+
+## Resolution
+
+Accepted the signed Hermes production candidate from source `bfe544a` on the
+authorized Pixel 7a. The clean gate passed `29/29` suites and `236/236` tests; the
+installed APK SHA-256 is
+`7e92c3d3f15eb1bf466888ae816ab5acdb7a4eb28486d2f182aa542080d93d36`.
+Physical acceptance found and fixed Android's zero-translation gesture-start axis
+lock and verified all non-deferred offline collection, gesture, lifecycle,
+responsive, and time-rule scenarios. The owner indefinitely deferred physical
+TalkBack operation while retaining the passing automated native accessibility gate.
+The durable evidence and exact restoration audit are recorded in the linked Pixel
+acceptance record.

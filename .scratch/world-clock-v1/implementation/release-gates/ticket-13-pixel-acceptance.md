@@ -2,8 +2,7 @@
 
 Recorded: 2026-08-19
 
-Status: in progress; TalkBack first-run onboarding requires a physical activation
-gesture before the nonvisual journey can be completed.
+Status: passed, with the physical TalkBack journey owner-deferred indefinitely.
 
 ## Candidate and device
 
@@ -25,11 +24,12 @@ installed with `adb install -r`.
 
 ## Acceptance progress
 
-1. **Offline cleared launch — passed before the final gesture-only rebuild; exact
-   candidate rerun pending.** Local-only launch, exact empty guidance, offline Add,
-   selector/search, and Hermes marker were visible with Wi-Fi and mobile data off.
-2. **Catalog/custom collection — passed before the final gesture-only rebuild;
-   exact candidate empty/cap rerun pending.** Offline normalized and token-reordered
+1. **Offline cleared launch — passed on the exact candidate.** Local-only launch,
+   exact empty guidance, offline Add, selector/search, and the Hermes marker were
+   visible with Wi-Fi and mobile data off. The final offline cold relaunch emitted
+   exactly one `124`-case marker and zero application crash/unhandled-rejection
+   signatures.
+2. **Catalog/custom collection — passed on the exact candidate.** Offline normalized and token-reordered
    search, city/custom additions, unavailable duplicate city, normalized custom
    duplicate validation, stable chronological ordering, offsets/day markers, cap 24,
    edit identity, named confirmation cancel/Back/confirm, and offline persistence were
@@ -50,18 +50,23 @@ installed with `adb install -r`.
    changes reprojected the frozen `+19:18` model; restoration reprojected it back.
    Back returned to current Live. Force-stop plus offline cold launch restored the
    committed collection in Live, not transient Virtual state.
-6. **Responsive presentation — partially passed on the exact candidate.** Actual
+6. **Responsive presentation — passed on the exact candidate.** Actual
    screenshots and UI trees cover collection top/bottom, selector, custom form,
    confirmation, and Virtual in all four dark/light × font 1.35/2.0 combinations.
    Visual inspection found no cutout collision, action-column overlap, clipped
    essential text, or horizontal page scroll. Reduced-motion was enabled through all
    three zero animation scales and retained static scrub chevrons. Exact-candidate
-   empty, cap, and persistence-error surface captures remain pending.
-7. **TalkBack — blocked on a physical prerequisite, product journey not yet run.**
-   TalkBack 17 opens its first-run/update tutorial and notification-permission prompt.
-   ADB can enable the service and move accessibility focus, but injected taps are not
-   accepted as TalkBack's activation double-tap. No acceptance result is inferred.
-8. **Time/device rules — non-TalkBack portion passed on the exact candidate.** Actual
+   cleared empty, duplicate-validation error, and offline 24-clock cap surfaces were
+   captured; at capacity Add remained visible but disabled with the exact maximum
+   explanation. Retryable persistence-error semantics remain covered by the passing
+   native component/application suite without adding a production fault injector.
+7. **TalkBack — owner-deferred indefinitely; not a closure blocker.** TalkBack 17's
+   first-run/update tutorial was observed, but the owner explicitly required TalkBack
+   to be disabled and not enabled again. The physical journey is not represented as a
+   pass. The release still requires and passes automated native accessibility coverage
+   for logical traversal, Local/selected semantics, named actions, adjustable scrub
+   actions, stable focus, concise announcements, and hidden decorative glyphs.
+8. **Time/device rules — passed on the exact candidate.** Actual
    UI changed between 24-hour and 12-hour forms. With the phone changed from Stockholm
    to New York, Local became UTC−04:00, the New York IANA city projected UTC−04:00,
    and the custom clock remained fixed at UTC+05:30. The installed Hermes runtime
@@ -77,5 +82,11 @@ device data.
 
 Every temporary network, timezone, locale, 12/24, theme, font, animation,
 accessibility-service, touch-exploration, and TalkBack notification-permission change
-was restored. The final readback matched the baseline listed above. App collection
-data remains the scoped acceptance collection so the TalkBack journey can resume.
+was restored. Final readback showed Bitwarden as the only enabled/bound service,
+touch exploration `0`, and TalkBack notification permission revoked. TalkBack was
+force-stopped and must not be enabled again during this pass.
+
+Final device readback: Wi-Fi `1`, mobile data `0`, automatic time/timezone `1/1`,
+timezone `Europe/Stockholm`, locale `sv-SE`, 24-hour, dark, font scale `1.35`, all
+animation scales `1.0`, Bitwarden-only accessibility, touch exploration `0`, and
+TalkBack notification permission revoked.

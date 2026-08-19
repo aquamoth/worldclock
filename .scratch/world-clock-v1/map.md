@@ -6,6 +6,11 @@ Label: wayfinder:map
 
 Reach an implementation-ready v1 product and technical specification, then hand it into tracer-bullet implementation tasks whose completion produces an offline Android world-clock app installed and validated on the connected Pixel 7a.
 
+Status: reached on 2026-08-19. The signed offline Hermes app is installed and its
+non-deferred acceptance scenarios pass on the Pixel 7a. The owner indefinitely
+deferred physical TalkBack operation; automated native accessibility semantics remain
+required and pass.
+
 ## Notes
 
 - Use the `grilling` and `domain-modeling` skills for product decisions, `prototype` for interaction questions, and `research` for external facts.
@@ -19,7 +24,7 @@ Reach an implementation-ready v1 product and technical specification, then hand 
 - Selection is offline and searchable by city or country, with a separate custom-offset path.
 - Show the city/custom name and effective `UTC±HH:MM` offset to the right of each digital time.
 - Support system light/dark appearance, portrait-first responsive layout, font scaling, and screen readers.
-- Automated timezone/UI coverage and a manual acceptance pass on the connected Pixel 7a are required.
+- Automated timezone/UI/accessibility coverage and the non-deferred manual acceptance pass on the connected Pixel 7a are required. Physical TalkBack operation is owner-deferred indefinitely.
 - ADB is authorized for the connected Google Pixel 7a (`lynx`), serial `34051JEHN12837`.
 - The approved implementation set is indexed at [World Clock v1 implementation tickets](implementation/index.md). Work its ready, unblocked frontier directly on `master`; do not use branches or pull requests.
 
