@@ -1,0 +1,368 @@
+:root {
+  --bg: #111114;
+  --ink: #e9e7e2;
+  --muted: #9b9890;
+  --accent: #c8a961;
+  --hairline: rgba(233, 231, 226, 0.14);
+  --glass: rgba(255, 255, 255, 0.04);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue",
+    Arial, sans-serif;
+  font-size: 17px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Faint smeared color blobs — barely there, just enough life. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: -20%;
+  z-index: -2;
+  pointer-events: none;
+  background:
+    radial-gradient(640px circle at 16% 18%, rgba(224, 74, 74, 0.07), transparent 62%),
+    radial-gradient(720px circle at 84% 12%, rgba(84, 118, 230, 0.07), transparent 62%),
+    radial-gradient(660px circle at 22% 86%, rgba(74, 186, 108, 0.06), transparent 62%),
+    radial-gradient(700px circle at 82% 74%, rgba(230, 196, 74, 0.05), transparent 62%);
+  filter: blur(64px);
+}
+
+/* The watch mark, huge and barely-there, centered behind everything. */
+.watermark {
+  position: fixed;
+  inset: 0;
+  z-index: -3;
+  pointer-events: none;
+  background: url("mark.svg") center / 1400px no-repeat;
+  opacity: 0.012;
+  filter: grayscale(1);
+}
+
+/* Fine grain over the blur. */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+main {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* Hero */
+
+.hero {
+  text-align: center;
+  padding: 96px 0 64px;
+}
+
+.hero .mark {
+  width: 150px;
+  height: 150px;
+}
+
+.hero .wordmark {
+  margin-top: 32px;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.45em;
+  text-indent: 0.45em; /* balances the trailing letter-space so the line centers */
+  text-transform: uppercase;
+}
+
+.hero h1 {
+  margin: 18px auto 0;
+  max-width: 560px;
+  font-size: clamp(30px, 6vw, 42px);
+  font-weight: 650;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+}
+
+.hero .store {
+  display: inline-block;
+  margin-top: 40px;
+  padding: 10px 26px;
+  border: 1px solid var(--hairline);
+  border-radius: 999px;
+  background: var(--glass);
+  backdrop-filter: blur(10px);
+  color: var(--muted);
+  font-size: 13px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+/* Sections */
+
+section {
+  padding: 56px 0;
+}
+
+section > h2,
+.site-footer h2 {
+  text-align: center;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 32px;
+}
+
+/* Demo */
+
+.demo figure {
+  text-align: center;
+}
+
+/* The recording sits in the transparent screen cutout of a Pixel 8
+   frame image; the cutout spans 33,49–935,2051 of the 978x2100 frame. */
+
+.demo .phone {
+  position: relative;
+  margin: 0 auto;
+  width: 293px;
+  filter: drop-shadow(0 24px 48px rgba(0, 0, 0, 0.45));
+}
+
+.demo .phone .frame {
+  position: relative;
+  display: block;
+  width: 100%;
+}
+
+.demo .phone video {
+  position: absolute;
+  left: 3.37%;
+  top: 2.33%;
+  width: 92.23%;
+  height: 95.33%;
+  object-fit: cover;
+  background: #301400;
+}
+
+.demo figcaption {
+  margin-top: 14px;
+  color: var(--muted);
+  font-size: 15px;
+}
+
+/* Feature cards — a row on wide screens, a stack on phones. */
+
+.features .cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.feature {
+  padding: 28px 24px;
+  border: 1px solid var(--hairline);
+  border-radius: 20px;
+  background: var(--glass);
+  backdrop-filter: blur(10px);
+}
+
+.feature h3 {
+  font-size: 19px;
+  font-weight: 650;
+}
+
+.feature p {
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 16px;
+}
+
+@media (max-width: 720px) {
+  .features .cards {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+
+  /* On phones the cards dissolve into plain paragraphs. */
+  .feature {
+    border: none;
+    border-radius: 0;
+    background: none;
+    backdrop-filter: none;
+    padding: 0;
+  }
+}
+
+/* GitHub corner (pattern by Tim Holman, github.com/tholman/github-corners) */
+
+.github-corner {
+  position: fixed;
+  top: 0;
+  right: 0;
+  z-index: 10;
+}
+
+.github-corner svg {
+  display: block;
+  fill: var(--ink);
+  color: var(--bg);
+}
+
+.github-corner .octo-arm {
+  transform-origin: 130px 106px;
+}
+
+.github-corner:hover .octo-arm {
+  animation: octocat-wave 560ms ease-in-out;
+}
+
+@keyframes octocat-wave {
+  0%,
+  100% {
+    transform: rotate(0);
+  }
+  20%,
+  60% {
+    transform: rotate(-25deg);
+  }
+  40%,
+  80% {
+    transform: rotate(10deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .github-corner:hover .octo-arm {
+    animation: none;
+  }
+}
+
+/* Privacy page */
+
+.policy {
+  max-width: 660px;
+}
+
+.policy h1 {
+  font-size: 32px;
+  font-weight: 650;
+  margin: 88px 0 8px;
+}
+
+.policy .updated {
+  color: var(--muted);
+  font-size: 15px;
+}
+
+.policy h2 {
+  font-size: 21px;
+  font-weight: 650;
+  margin: 40px 0 10px;
+}
+
+.policy p + p {
+  margin-top: 12px;
+}
+
+.policy .back {
+  display: inline-block;
+  margin-top: 56px;
+}
+
+/* Footer area: centered support grid, then the byline under a full-bleed rule */
+
+.site-footer {
+  margin-top: 48px;
+}
+
+.site-footer .footer-inner {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 24px 24px 0;
+  text-align: center;
+}
+
+.site-footer h2 {
+  margin-bottom: 24px;
+}
+
+/* The grid block centers on screen; each row stays left-aligned inside it. */
+.site-footer .contact {
+  list-style: none;
+  display: grid;
+  gap: 14px;
+  justify-content: center;
+  text-align: left;
+}
+
+.site-footer .contact li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.site-footer .contact svg {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: var(--muted);
+  stroke-width: 1.8;
+  color: var(--muted);
+}
+
+.site-footer .byline-bar {
+  border-top: 1px solid var(--hairline);
+  margin-top: 72px;
+}
+
+.site-footer .byline {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 12px 24px 20px;
+  text-align: left;
+  font-size: 13px;
+}
+
+.site-footer .byline a {
+  color: var(--muted);
+}
+
+.site-footer .byline a:hover {
+  color: var(--accent);
+}
+
+@media (max-width: 480px) {
+  .hero {
+    padding-top: 72px;
+  }
+}

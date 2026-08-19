@@ -2,14 +2,12 @@
   "expo": {
     "name": "World Clock",
     "slug": "worldclock",
-    "version": "1.0.0",
     "description": "Offline world clock that projects one shared instant through the phone's local timezone and a collection of selected city and custom clocks. Created by Trustfall AB, https://www.trustfall.se.",
     "orientation": "portrait",
     "userInterfaceStyle": "automatic",
     "icon": "./assets/icon/icon.png",
     "android": {
       "package": "se.trustfall.worldclock",
-      "versionCode": 1,
       "softwareKeyboardLayoutMode": "resize",
       "adaptiveIcon": {
         "foregroundImage": "./assets/icon/adaptive-foreground.png",
@@ -20,7 +18,7 @@
     "extra": {
       "publisher": "Trustfall AB",
       "publisherUrl": "https://www.trustfall.se",
-      "homepage": "https://www.trustfall.se/worldclock"
+      "homepage": "https://aquamoth.github.io/worldclock/"
     },
     "plugins": [
       "expo-localization",

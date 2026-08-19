@@ -73,3 +73,7 @@ The default clock face, showing hour and minute as numerals, with an AM/PM marke
 
 **Analog clock face**:
 A clock face that shows the same projected hour and minute as hour and minute hands on a 12-hour dial. It does not show seconds. A compact digital caption remains so 12/24-hour preference stays visible.
+
+**Product site**:
+The user-facing World Clock website at https://aquamoth.github.io/worldclock/, carrying product identity, support, and the privacy policy. The development repository is a secondary destination linked from it.
+_Avoid_: Repository README, About page

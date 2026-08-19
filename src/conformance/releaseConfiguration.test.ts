@@ -1,11 +1,12 @@
 import appConfiguration from "../../app.json";
 import packageManifest from "../../package.json";
+import { HOMEPAGE_URL, PRIVACY_POLICY_URL } from "../application/productLinks";
 
 describe("Android release configuration", () => {
   it("pins Hermes, API 29, and reusable clean/CNG release gates", () => {
     expect(appConfiguration.expo).not.toHaveProperty("jsEngine");
     expect(appConfiguration.expo).toMatchObject({
-      android: { package: "se.trustfall.worldclock", versionCode: 1 },
+      android: { package: "se.trustfall.worldclock" },
       plugins: expect.arrayContaining([
         [
           "expo-build-properties",
@@ -22,15 +23,25 @@ describe("Android release configuration", () => {
     });
   });
 
+  it("leaves versioning to app.config.ts, which derives it from git", () => {
+    expect(appConfiguration.expo).not.toHaveProperty("version");
+    expect(appConfiguration.expo.android).not.toHaveProperty("versionCode");
+  });
+
   it("declares the Trustfall AB publisher identity", () => {
     expect(appConfiguration.expo.description).toContain("Trustfall AB");
     expect(appConfiguration.expo.extra).toMatchObject({
       publisher: "Trustfall AB",
       publisherUrl: "https://www.trustfall.se",
-      homepage: "https://www.trustfall.se/worldclock",
+      homepage: "https://aquamoth.github.io/worldclock/",
     });
     expect(packageManifest.author).toBe("Trustfall AB (https://www.trustfall.se)");
-    expect(packageManifest.homepage).toBe("https://www.trustfall.se/worldclock");
+    expect(packageManifest.homepage).toBe("https://aquamoth.github.io/worldclock/");
     expect(packageManifest.license).toBe("Apache-2.0");
+  });
+
+  it("keeps the in-app product links aligned with the published homepage", () => {
+    expect(HOMEPAGE_URL).toBe(appConfiguration.expo.extra.homepage);
+    expect(PRIVACY_POLICY_URL).toBe(`${HOMEPAGE_URL}privacy/`);
   });
 });

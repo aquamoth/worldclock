@@ -1447,6 +1447,35 @@ describe("clock collection screen", () => {
     expect(screen.queryByRole("radio", { name: "Tonal groups" })).not.toBeOnTheScreen();
   });
 
+  it("offers the privacy policy from settings without requiring other handlers", async () => {
+    const onOpenPrivacyPolicy = jest.fn();
+    const withoutHandler = await render(
+      <ClockScreen
+        model={emptyModel}
+        {...actions()}
+        design="grouped"
+        onSelectDesign={jest.fn()}
+      />,
+    );
+    await fireEvent.press(screen.getByRole("button", { name: "Open settings" }));
+    expect(
+      screen.queryByRole("link", { name: "Privacy policy" }),
+    ).not.toBeOnTheScreen();
+    await fireEvent.press(screen.getByRole("button", { name: "Close settings" }));
+    await withoutHandler.unmount();
+
+    await render(
+      <ClockScreen
+        model={emptyModel}
+        {...actions()}
+        onOpenPrivacyPolicy={onOpenPrivacyPolicy}
+      />,
+    );
+    await fireEvent.press(screen.getByRole("button", { name: "Open settings" }));
+    await fireEvent.press(screen.getByRole("link", { name: "Privacy policy" }));
+    expect(onOpenPrivacyPolicy).toHaveBeenCalledTimes(1);
+  });
+
   it("mirrors swipe travel and arrow keys when rightward swipes are set to move later", async () => {
     const onSelectScrubDirection = jest.fn();
     const callbacks = actions();

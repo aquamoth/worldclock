@@ -8,17 +8,18 @@ import {
   useState,
   useSyncExternalStore,
 } from "react";
-import { AppState } from "react-native";
+import { AppState, Linking } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
-import { createBundledClockCatalog } from "./src/adapters/bundledClockCatalog";
-import { observeAppLifecycle } from "./src/adapters/appLifecycle";
-import { createDevicePreferences } from "./src/adapters/devicePreferences";
-import { createIntlTimezoneRules } from "./src/adapters/intlTimezoneRules";
-import { createAsyncSelectedClockStorage } from "./src/adapters/selectedClockStorage";
-import { systemTime } from "./src/adapters/systemTime";
-import { createLiveClockApplication } from "./src/application/liveClock";
+import { createBundledClockCatalog } from "./adapters/bundledClockCatalog";
+import { observeAppLifecycle } from "./adapters/appLifecycle";
+import { createDevicePreferences } from "./adapters/devicePreferences";
+import { createIntlTimezoneRules } from "./adapters/intlTimezoneRules";
+import { createAsyncSelectedClockStorage } from "./adapters/selectedClockStorage";
+import { systemTime } from "./adapters/systemTime";
+import { createLiveClockApplication } from "./application/liveClock";
+import { PRIVACY_POLICY_URL } from "./application/productLinks";
 import {
   ClockScreen,
   clockFaces,
@@ -26,8 +27,8 @@ import {
   scrubDirections,
   type ClockFace,
   type DesignVariant,
-} from "./src/ui/ClockScreen";
-import type { ScrubDirection } from "./src/ui/scrubGesture";
+} from "./ui/ClockScreen";
+import type { ScrubDirection } from "./ui/scrubGesture";
 
 const DESIGN_SETTING_KEY = "worldclock.design.v1";
 const CLOCK_FACE_SETTING_KEY = "worldclock.clockFace.v1";
@@ -168,6 +169,9 @@ export default function App() {
           onSelectClockFace={selectClockFace}
           scrubDirection={scrubDirection}
           onSelectScrubDirection={selectScrubDirection}
+          onOpenPrivacyPolicy={() => {
+            void Linking.openURL(PRIVACY_POLICY_URL);
+          }}
         />
         <StatusBar style="auto" />
       </SafeAreaProvider>

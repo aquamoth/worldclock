@@ -1,8 +1,8 @@
 # Add an About dialog
 
 Type: story
-Status: open
-Assignee:
+Status: closed
+Assignee: Mattias Åslund
 Blocked by:
 
 ## Question
@@ -33,4 +33,20 @@ network?
 
 ## Resolution
 
-Open.
+Do not add an About dialog. Android does not prescribe one, and its Settings
+guidance says app information such as version and licensing information should
+not normally appear among behavioral preferences. Google Play does not require
+an About surface.
+
+Move product identity, explanation, support, and discovery to the Play listing
+and a user-facing GitHub Pages product site. Keep the development repository a
+secondary destination from that site.
+
+Google Play does require every app, including an app that collects no data, to
+provide a privacy-policy link or text inside the app as well as a policy URL in
+Play Console. World Clock will therefore expose a direct, discoverable Privacy
+policy entry without wrapping it in an About dialog. The policy and site are to
+be designed in
+[Design the GitHub Pages product site](06-design-the-github-pages-product-site.md).
+
+Research: [Android and Google Play guidance on an About surface](../research/android-about-surface.md).

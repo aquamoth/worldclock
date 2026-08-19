@@ -82,6 +82,7 @@ interface ClockScreenProps {
   readonly onSelectClockFace?: (clockFace: ClockFace) => void;
   readonly scrubDirection?: ScrubDirection;
   readonly onSelectScrubDirection?: (direction: ScrubDirection) => void;
+  readonly onOpenPrivacyPolicy?: () => void;
 }
 
 export const scrubDirections: readonly {
@@ -829,6 +830,7 @@ export function ClockScreen({
   onSelectClockFace,
   scrubDirection = "rightEarlier",
   onSelectScrubDirection,
+  onOpenPrivacyPolicy,
 }: ClockScreenProps) {
   const colorScheme = useColorScheme() === "dark" ? "dark" : "light";
   const viewport = useWindowDimensions();
@@ -1196,7 +1198,8 @@ export function ClockScreen({
             )}
             {onSelectDesign === undefined &&
             onSelectClockFace === undefined &&
-            onSelectScrubDirection === undefined ? null : (
+            onSelectScrubDirection === undefined &&
+            onOpenPrivacyPolicy === undefined ? null : (
               <Pressable
                 accessibilityRole="button"
                 accessibilityLabel="Open settings"
@@ -1351,7 +1354,8 @@ export function ClockScreen({
       {settingsVisible &&
       (onSelectDesign !== undefined ||
         onSelectClockFace !== undefined ||
-        onSelectScrubDirection !== undefined) ? (
+        onSelectScrubDirection !== undefined ||
+        onOpenPrivacyPolicy !== undefined) ? (
         <Modal
           testID="settings-modal"
           visible
@@ -1468,6 +1472,21 @@ export function ClockScreen({
                     </Pressable>
                   ))}
                 </View>
+              )}
+              {onOpenPrivacyPolicy === undefined ? null : (
+                <Pressable
+                  accessibilityRole="link"
+                  accessibilityLabel="Privacy policy"
+                  onPress={onOpenPrivacyPolicy}
+                  style={({ pressed }) => [
+                    styles.settingLink,
+                    { opacity: pressed ? 0.7 : 1 },
+                  ]}
+                >
+                  <Text style={[styles.settingLabel, { color: colors.accent }]}>
+                    Privacy policy
+                  </Text>
+                </Pressable>
               )}
               <View style={styles.modalActions}>
                 <Pressable
@@ -1595,6 +1614,12 @@ const styles = StyleSheet.create({
     minHeight: 44,
   },
   settingRadioMark: { fontSize: 18 },
+  settingLink: {
+    flexDirection: "row",
+    alignItems: "center",
+    minHeight: 44,
+    marginTop: 20,
+  },
   fab: {
     position: "absolute",
     right: 20,

@@ -4,7 +4,7 @@ Offline Android world clock by [Trustfall AB](https://www.trustfall.se). It
 projects one shared instant through the phone's local timezone and a collection
 of selected city and custom clocks.
 
-Product page: <https://www.trustfall.se/worldclock>
+Product page: <https://aquamoth.github.io/worldclock/>
 
 The local clock is always present. Selected clocks persist on the device: city
 clocks follow IANA timezone rules including DST, and custom clocks use a name
@@ -27,19 +27,24 @@ The bundled city catalog includes IANA Time Zone Database data, which IANA
 places in the public domain. See
 [catalog/iana/2026c/LICENSE](catalog/iana/2026c/LICENSE).
 
+The Pixel 8 device frame on the product site (`docs/assets/pixel8-frame.png`)
+comes from [MockUPhone](https://github.com/oursky/mockuphone.com) by Oursky
+(Apache License 2.0), frame artwork credited to
+[Sajjad Mohammadi Nia](https://www.figma.com/@sajjadmohamamdi).
+
 ## Development
 
-Requirements: Node.js `^20.19.4`, `^22.13.0`, `^24.3.0`, or `>=25.0.0`; Java 21;
-and an Android SDK accepted by the pinned Expo SDK.
+Requirements: Node.js `^20.19.4`, `^22.13.0`, `^24.3.0`, or `>=25.0.0`; pnpm 10;
+Java 21; and an Android SDK accepted by the pinned Expo SDK.
 
 ```sh
-npm ci
-npm run typecheck
-npm test
-npm run build:android
+pnpm install --frozen-lockfile
+pnpm run typecheck
+pnpm test
+pnpm run build:android
 ```
 
-`npm run build:android` regenerates `android/` from [app.json](app.json) before
+`pnpm run build:android` regenerates `android/` from [app.json](app.json) before
 compiling a debug APK. The generated native directory is intentionally ignored;
 app configuration and config plugins are the source of truth. Android 10/API 29
 is the minimum supported release.
@@ -48,8 +53,8 @@ To run the development build without an internet connection after dependencies
 are installed:
 
 ```sh
-npm start -- --offline
-npm run android
+pnpm start --offline
+pnpm run android
 ```
 
 ## Contributing

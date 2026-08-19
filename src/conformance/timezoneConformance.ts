@@ -1,4 +1,4 @@
-import fixtureCorpus from "../../conformance/timezone-projection-fixtures.json";
+import fixtureCorpus from "./timezone-projection-fixtures.json";
 import { formatEffectiveOffset, type HourPreference } from "../domain/clock";
 import {
   projectClockCollection,
