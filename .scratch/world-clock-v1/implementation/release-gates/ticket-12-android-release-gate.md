@@ -22,10 +22,11 @@ The APK itself is intentionally ignored. Rebuild it from the recorded source com
 The passing run cloned the repository without hard links into a new temporary directory and ran:
 
 ```sh
-git clone --no-hardlinks /home/mattias/Source/repos/worldclock "$gate_checkout"
-ANDROID_HOME=/home/mattias/Android/Sdk \
+repo="$(git rev-parse --show-toplevel)"
+git clone --no-hardlinks "$repo" "$gate_checkout"
+ANDROID_HOME="${ANDROID_HOME:-$HOME/Android/Sdk}" \
   bash "$gate_checkout/scripts/release/run-clean-android-gate.sh" \
-  /home/mattias/Source/repos/worldclock/.scratch/world-clock-v1/release-artifacts
+  "$repo/.scratch/world-clock-v1/release-artifacts"
 ```
 
 `run-clean-android-gate.sh` executed these gates in order:
